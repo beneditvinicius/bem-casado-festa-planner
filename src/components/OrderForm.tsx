@@ -7,19 +7,25 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { format } from "date-fns";
+import { format, isBefore } from "date-fns";
 import { ptBR } from 'date-fns/locale';
-import { CalendarIcon, Send } from "lucide-react";
+import { CalendarIcon, Send, Whatsapp } from "lucide-react";
 import { cn } from '@/lib/utils';
 import { formatCPF, formatPhone } from '@/utils/formatter';
 import { useProductsStore } from '@/data/products';
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 interface FormData {
   name: string;
   cpf: string;
   phone: string;
-  address: string;
+  cep: string;
+  street: string;
+  number: string;
+  complement: string;
+  neighborhood: string;
+  city: string;
+  state: string;
   eventDate: Date | undefined;
   eventLocation: string;
   quantity: number;
@@ -27,6 +33,37 @@ interface FormData {
   ribbonId: string;
   packageId: string;
 }
+
+// Lista de estados brasileiros
+const brazilianStates = [
+  { value: 'AC', label: 'Acre' },
+  { value: 'AL', label: 'Alagoas' },
+  { value: 'AP', label: 'Amapá' },
+  { value: 'AM', label: 'Amazonas' },
+  { value: 'BA', label: 'Bahia' },
+  { value: 'CE', label: 'Ceará' },
+  { value: 'DF', label: 'Distrito Federal' },
+  { value: 'ES', label: 'Espírito Santo' },
+  { value: 'GO', label: 'Goiás' },
+  { value: 'MA', label: 'Maranhão' },
+  { value: 'MT', label: 'Mato Grosso' },
+  { value: 'MS', label: 'Mato Grosso do Sul' },
+  { value: 'MG', label: 'Minas Gerais' },
+  { value: 'PA', label: 'Pará' },
+  { value: 'PB', label: 'Paraíba' },
+  { value: 'PR', label: 'Paraná' },
+  { value: 'PE', label: 'Pernambuco' },
+  { value: 'PI', label: 'Piauí' },
+  { value: 'RJ', label: 'Rio de Janeiro' },
+  { value: 'RN', label: 'Rio Grande do Norte' },
+  { value: 'RS', label: 'Rio Grande do Sul' },
+  { value: 'RO', label: 'Rondônia' },
+  { value: 'RR', label: 'Roraima' },
+  { value: 'SC', label: 'Santa Catarina' },
+  { value: 'SP', label: 'São Paulo' },
+  { value: 'SE', label: 'Sergipe' },
+  { value: 'TO', label: 'Tocantins' },
+];
 
 const OrderForm: React.FC = () => {
   const { toast } = useToast();
@@ -39,7 +76,13 @@ const OrderForm: React.FC = () => {
     name: '',
     cpf: '',
     phone: '',
-    address: '',
+    cep: '',
+    street: '',
+    number: '',
+    complement: '',
+    neighborhood: '',
+    city: '',
+    state: 'SP',
     eventDate: undefined,
     eventLocation: '',
     quantity: 100,
@@ -50,6 +93,15 @@ const OrderForm: React.FC = () => {
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
+  const formatCEP = (value: string): string => {
+    const numbers = value.replace(/\D/g, '');
+    if (numbers.length <= 5) {
+      return numbers;
+    } else {
+      return `${numbers.slice(0, 5)}-${numbers.slice(5, 8)}`;
+    }
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     
@@ -57,6 +109,8 @@ const OrderForm: React.FC = () => {
       setFormData({ ...formData, [name]: formatCPF(value) });
     } else if (name === 'phone') {
       setFormData({ ...formData, [name]: formatPhone(value) });
+    } else if (name === 'cep') {
+      setFormData({ ...formData, [name]: formatCEP(value) });
     } else if (name === 'quantity') {
       setFormData({ ...formData, [name]: parseInt(value) || 0 });
     } else {
@@ -78,8 +132,17 @@ const OrderForm: React.FC = () => {
     if (!formData.name.trim()) newErrors.name = 'Nome é obrigatório';
     if (!formData.cpf.trim() || formData.cpf.length < 14) newErrors.cpf = 'CPF inválido';
     if (!formData.phone.trim() || formData.phone.length < 14) newErrors.phone = 'Telefone inválido';
-    if (!formData.address.trim()) newErrors.address = 'Endereço é obrigatório';
-    if (!formData.eventDate) newErrors.eventDate = 'Data do evento é obrigatória';
+    if (!formData.cep.trim() || formData.cep.length < 9) newErrors.cep = 'CEP inválido';
+    if (!formData.street.trim()) newErrors.street = 'Rua é obrigatória';
+    if (!formData.number.trim()) newErrors.number = 'Número é obrigatório';
+    if (!formData.neighborhood.trim()) newErrors.neighborhood = 'Bairro é obrigatório';
+    if (!formData.city.trim()) newErrors.city = 'Cidade é obrigatória';
+    if (!formData.state) newErrors.state = 'Estado é obrigatório';
+    if (!formData.eventDate) {
+      newErrors.eventDate = 'Data do evento é obrigatória';
+    } else if (isBefore(formData.eventDate, new Date())) {
+      newErrors.eventDate = 'A data do evento não pode ser no passado';
+    }
     if (!formData.eventLocation.trim()) newErrors.eventLocation = 'Local do evento é obrigatório';
     if (!formData.quantity || formData.quantity <= 0) newErrors.quantity = 'Quantidade inválida';
     if (!formData.flavorId) newErrors.flavorId = 'Selecione um sabor';
@@ -101,25 +164,30 @@ const OrderForm: React.FC = () => {
       
       // Build WhatsApp message
       const message = `
-*Novo Orçamento de Bem-Casados*
+🎉 Novo Pedido de Orçamento (Site) 🎉
 
-*Dados Pessoais:*
-Nome: ${formData.name}
+Cliente: ${formData.name}
 CPF: ${formData.cpf}
 Telefone: ${formData.phone}
-Endereço: ${formData.address}
 
-*Dados do Evento:*
+Detalhes do Evento:
 Data: ${formData.eventDate ? format(formData.eventDate, 'dd/MM/yyyy', { locale: ptBR }) : ''}
 Local: ${formData.eventLocation}
 
-*Pedido:*
+Endereço de Entrega:
+${formData.street}, ${formData.number}${formData.complement ? `, ${formData.complement}` : ''}
+${formData.neighborhood}, ${formData.city} - ${formData.state}
+CEP: ${formData.cep}
+
+Pedido de Bem-Casados:
 Quantidade: ${formData.quantity} unidades
 Sabor: ${selectedFlavor?.name || ''}
-Cor da fita: ${selectedRibbon?.name || ''}
-Cor da embalagem: ${selectedPackage?.name || ''}
+Cor da Fita: ${selectedRibbon?.name || ''} (${selectedRibbon?.code || ''})
+Cor da Embalagem: ${selectedPackage?.name || ''} (${selectedPackage?.code || ''})
 
-*Total:* ${selectedFlavor ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(selectedFlavor.price * formData.quantity) : ''}
+Valor Total: ${selectedFlavor ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(selectedFlavor.price * formData.quantity) : ''}
+
+Aguardando contato para finalização.
       `.trim();
       
       // Encode the message for WhatsApp
@@ -144,7 +212,13 @@ Cor da embalagem: ${selectedPackage?.name || ''}
       name: '',
       cpf: '',
       phone: '',
-      address: '',
+      cep: '',
+      street: '',
+      number: '',
+      complement: '',
+      neighborhood: '',
+      city: '',
+      state: 'SP',
       eventDate: undefined,
       eventLocation: '',
       quantity: 100,
@@ -164,10 +238,12 @@ Cor da embalagem: ${selectedPackage?.name || ''}
       <CardContent className="pt-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Personal Information */}
+            {/* Informações Pessoais */}
             <div className="space-y-4">
+              <h3 className="text-lg font-medium">Dados Pessoais</h3>
+              
               <div>
-                <Label htmlFor="name" className="text-lg">Nome</Label>
+                <Label htmlFor="name" className="text-base">Nome Completo</Label>
                 <Input
                   id="name"
                   name="name"
@@ -179,7 +255,7 @@ Cor da embalagem: ${selectedPackage?.name || ''}
               </div>
               
               <div>
-                <Label htmlFor="cpf" className="text-lg">CPF</Label>
+                <Label htmlFor="cpf" className="text-base">CPF</Label>
                 <Input
                   id="cpf"
                   name="cpf"
@@ -193,7 +269,7 @@ Cor da embalagem: ${selectedPackage?.name || ''}
               </div>
               
               <div>
-                <Label htmlFor="phone" className="text-lg">Telefone</Label>
+                <Label htmlFor="phone" className="text-base">Telefone/WhatsApp</Label>
                 <Input
                   id="phone"
                   name="phone"
@@ -206,23 +282,113 @@ Cor da embalagem: ${selectedPackage?.name || ''}
                 {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
               </div>
               
+              <h3 className="text-lg font-medium mt-6">Endereço Completo</h3>
+              
               <div>
-                <Label htmlFor="address" className="text-lg">Endereço</Label>
+                <Label htmlFor="cep" className="text-base">CEP</Label>
                 <Input
-                  id="address"
-                  name="address"
-                  value={formData.address}
+                  id="cep"
+                  name="cep"
+                  value={formData.cep}
                   onChange={handleInputChange}
-                  className={cn("h-12", errors.address && "border-red-500")}
+                  placeholder="00000-000"
+                  maxLength={9}
+                  className={cn("h-12", errors.cep && "border-red-500")}
                 />
-                {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
+                {errors.cep && <p className="text-red-500 text-sm mt-1">{errors.cep}</p>}
+              </div>
+              
+              <div>
+                <Label htmlFor="street" className="text-base">Rua/Avenida</Label>
+                <Input
+                  id="street"
+                  name="street"
+                  value={formData.street}
+                  onChange={handleInputChange}
+                  className={cn("h-12", errors.street && "border-red-500")}
+                />
+                {errors.street && <p className="text-red-500 text-sm mt-1">{errors.street}</p>}
+              </div>
+              
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="number" className="text-base">Número</Label>
+                  <Input
+                    id="number"
+                    name="number"
+                    value={formData.number}
+                    onChange={handleInputChange}
+                    className={cn("h-12", errors.number && "border-red-500")}
+                  />
+                  {errors.number && <p className="text-red-500 text-sm mt-1">{errors.number}</p>}
+                </div>
+                
+                <div>
+                  <Label htmlFor="complement" className="text-base">Complemento</Label>
+                  <Input
+                    id="complement"
+                    name="complement"
+                    value={formData.complement}
+                    onChange={handleInputChange}
+                    placeholder="Opcional"
+                    className="h-12"
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <Label htmlFor="neighborhood" className="text-base">Bairro</Label>
+                <Input
+                  id="neighborhood"
+                  name="neighborhood"
+                  value={formData.neighborhood}
+                  onChange={handleInputChange}
+                  className={cn("h-12", errors.neighborhood && "border-red-500")}
+                />
+                {errors.neighborhood && <p className="text-red-500 text-sm mt-1">{errors.neighborhood}</p>}
+              </div>
+              
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="city" className="text-base">Cidade</Label>
+                  <Input
+                    id="city"
+                    name="city"
+                    value={formData.city}
+                    onChange={handleInputChange}
+                    className={cn("h-12", errors.city && "border-red-500")}
+                  />
+                  {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city}</p>}
+                </div>
+                
+                <div>
+                  <Label htmlFor="state" className="text-base">Estado</Label>
+                  <Select 
+                    value={formData.state} 
+                    onValueChange={(value) => handleSelectChange('state', value)}
+                  >
+                    <SelectTrigger id="state" className={cn("h-12", errors.state && "border-red-500")}>
+                      <SelectValue placeholder="UF" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {brazilianStates.map((state) => (
+                        <SelectItem key={state.value} value={state.value}>
+                          {state.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {errors.state && <p className="text-red-500 text-sm mt-1">{errors.state}</p>}
+                </div>
               </div>
             </div>
             
-            {/* Event and Order Information */}
+            {/* Informações do Evento e Pedido */}
             <div className="space-y-4">
+              <h3 className="text-lg font-medium">Dados do Evento</h3>
+              
               <div>
-                <Label htmlFor="eventDate" className="text-lg">Data do Evento</Label>
+                <Label htmlFor="eventDate" className="text-base">Data do Evento</Label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
@@ -248,6 +414,7 @@ Cor da embalagem: ${selectedPackage?.name || ''}
                       onSelect={handleDateChange}
                       initialFocus
                       locale={ptBR}
+                      disabled={(date) => isBefore(date, new Date())}
                     />
                   </PopoverContent>
                 </Popover>
@@ -255,7 +422,7 @@ Cor da embalagem: ${selectedPackage?.name || ''}
               </div>
               
               <div>
-                <Label htmlFor="eventLocation" className="text-lg">Local do Evento</Label>
+                <Label htmlFor="eventLocation" className="text-base">Local do Evento</Label>
                 <Input
                   id="eventLocation"
                   name="eventLocation"
@@ -266,8 +433,10 @@ Cor da embalagem: ${selectedPackage?.name || ''}
                 {errors.eventLocation && <p className="text-red-500 text-sm mt-1">{errors.eventLocation}</p>}
               </div>
               
+              <h3 className="text-lg font-medium mt-6">Detalhes do Pedido</h3>
+              
               <div>
-                <Label htmlFor="quantity" className="text-lg">Quantidade</Label>
+                <Label htmlFor="quantity" className="text-base">Quantidade</Label>
                 <Input
                   id="quantity"
                   name="quantity"
@@ -281,7 +450,7 @@ Cor da embalagem: ${selectedPackage?.name || ''}
               </div>
               
               <div>
-                <Label htmlFor="flavor" className="text-lg">Sabor</Label>
+                <Label htmlFor="flavor" className="text-base">Sabor</Label>
                 <Select 
                   value={formData.flavorId} 
                   onValueChange={(value) => handleSelectChange('flavorId', value)}
@@ -292,7 +461,7 @@ Cor da embalagem: ${selectedPackage?.name || ''}
                   <SelectContent>
                     {flavors.map((flavor) => (
                       <SelectItem key={flavor.id} value={flavor.id}>
-                        {flavor.name}
+                        {flavor.name} - {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(flavor.price)}/un
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -301,7 +470,7 @@ Cor da embalagem: ${selectedPackage?.name || ''}
               </div>
               
               <div>
-                <Label htmlFor="ribbonColor" className="text-lg">Cor da Fita</Label>
+                <Label htmlFor="ribbonColor" className="text-base">Cor da Fita</Label>
                 <Select 
                   value={formData.ribbonId} 
                   onValueChange={(value) => handleSelectChange('ribbonId', value)}
@@ -315,9 +484,9 @@ Cor da embalagem: ${selectedPackage?.name || ''}
                         <div className="flex items-center">
                           <div
                             className="w-4 h-4 rounded-full mr-2"
-                            style={{ backgroundColor: color.color }}
+                            style={{ backgroundColor: color.color, border: color.color === '#FFFFFF' || color.color === '#F8F4E3' ? '1px solid #E2E8F0' : 'none' }}
                           />
-                          {color.name}
+                          {color.name} - {color.code}
                         </div>
                       </SelectItem>
                     ))}
@@ -327,7 +496,7 @@ Cor da embalagem: ${selectedPackage?.name || ''}
               </div>
               
               <div>
-                <Label htmlFor="packageColor" className="text-lg">Cor da Embalagem</Label>
+                <Label htmlFor="packageColor" className="text-base">Cor da Embalagem</Label>
                 <Select 
                   value={formData.packageId} 
                   onValueChange={(value) => handleSelectChange('packageId', value)}
@@ -341,15 +510,32 @@ Cor da embalagem: ${selectedPackage?.name || ''}
                         <div className="flex items-center">
                           <div
                             className="w-4 h-4 rounded-full mr-2"
-                            style={{ backgroundColor: color.color, border: color.color === '#FFFFFF' ? '1px solid #E2E8F0' : 'none' }}
+                            style={{ backgroundColor: color.color, border: color.color === '#FFFFFF' || color.color === '#F8F4E3' ? '1px solid #E2E8F0' : 'none' }}
                           />
-                          {color.name}
+                          {color.name} - {color.code}
                         </div>
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
                 {errors.packageId && <p className="text-red-500 text-sm mt-1">{errors.packageId}</p>}
+              </div>
+
+              <div className="pt-4">
+                {/* Valor total calculado */}
+                <div className="bg-muted p-4 rounded-md mb-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-base">Valor Total (estimado):</span>
+                    <span className="text-bem text-xl font-bold">
+                      {formData.flavorId && formData.quantity 
+                        ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+                            (flavors.find(f => f.id === formData.flavorId)?.price || 0) * formData.quantity
+                          )
+                        : 'R$ 0,00'
+                      }
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -367,7 +553,7 @@ Cor da embalagem: ${selectedPackage?.name || ''}
               type="submit"
               className="h-12 bg-bem hover:bg-bem-dark text-white"
             >
-              <Send className="mr-2 h-4 w-4" />
+              <Whatsapp className="mr-2 h-4 w-4" />
               Enviar Orçamento via WhatsApp
             </Button>
           </div>

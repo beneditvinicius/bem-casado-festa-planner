@@ -58,3 +58,38 @@
     @apply w-full h-0.5 bg-gray-100 my-16;
   }
 }
+
+/* Cores personalizadas para Bem Casados */
+:root {
+  --color-bem: 14 82% 53%; /* #eb6824 */
+  --color-bem-light: 21 98% 88%; /* #FED7C3 */
+  --color-bem-dark: 19 82% 43%; /* #C54E15 */
+}
+
+/* Override de estilos do UI para padrão do projeto */
+.text-bem {
+  color: #eb6824;
+}
+.bg-bem {
+  background-color: #eb6824;
+}
+.bg-bem-light {
+  background-color: #FED7C3;
+}
+.bg-bem-dark {
+  background-color: #C54E15;
+}
+.hover\:bg-bem-dark:hover {
+  background-color: #C54E15;
+}
+.hover\:text-bem:hover {
+  color: #eb6824;
+}
+
+/* Melhoria de acessibilidade */
+button:focus-visible, 
+input:focus-visible, 
+select:focus-visible, 
+[role="button"]:focus-visible {
+  @apply outline-2 outline-offset-2 outline-bem;
+}

@@ -7,7 +7,7 @@ import Visualizer from '@/components/Visualizer';
 import AdminPanel from '@/components/AdminPanel';
 import { Button } from "@/components/ui/button";
 import { Lock, Unlock } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 const Index: React.FC = () => {
   const { toast } = useToast();
@@ -15,7 +15,7 @@ const Index: React.FC = () => {
   const [password, setPassword] = useState('');
   const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
   
-  const ADMIN_PASSWORD = "admin123"; // In a real app, this would be stored securely
+  const ADMIN_PASSWORD = "admin123"; // Em um app real, isso seria armazenado de forma segura
 
   const handleAdminToggle = () => {
     if (adminMode) {
@@ -47,17 +47,17 @@ const Index: React.FC = () => {
   const sections = [
     {
       id: 'calculator',
-      title: 'Calculadora de Bem-Casados',
+      title: 'Calcule seu Orçamento de Bem-Casados',
       component: <Calculator />,
     },
     {
       id: 'order',
-      title: 'Formulário de Orçamento',
+      title: 'Solicite seu Orçamento Detalhado',
       component: <OrderForm />,
     },
     {
       id: 'visualizer',
-      title: 'Visualizador de Combinações',
+      title: 'Visualize seu Bem-Casado',
       component: <Visualizer />,
     },
   ];
@@ -92,7 +92,7 @@ const Index: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex justify-between items-center">
             <p className="text-gray-600 text-sm">
-              © {new Date().getFullYear()} Bem-Casados. Todos os direitos reservados.
+              © {new Date().getFullYear()} La Badiane Bem Casados. Todos os direitos reservados.
             </p>
             <Button 
               variant="ghost" 

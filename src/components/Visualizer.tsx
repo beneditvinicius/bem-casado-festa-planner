@@ -23,7 +23,7 @@ const Visualizer: React.FC = () => {
       if (combo) {
         setImageSrc(combo.imageUrl);
       } else {
-        // Fallback if combination doesn't exist
+        // Fallback se a combinação não existir
         setImageSrc('');
       }
     }
@@ -49,9 +49,9 @@ const Visualizer: React.FC = () => {
                       <div className="flex items-center">
                         <div
                           className="w-4 h-4 rounded-full mr-2"
-                          style={{ backgroundColor: color.color }}
+                          style={{ backgroundColor: color.color, border: color.color === '#FFFFFF' || color.color === '#F8F4E3' ? '1px solid #E2E8F0' : 'none' }}
                         />
-                        {color.name}
+                        {color.name} - {color.code}
                       </div>
                     </SelectItem>
                   ))}
@@ -74,9 +74,9 @@ const Visualizer: React.FC = () => {
                       <div className="flex items-center">
                         <div
                           className="w-4 h-4 rounded-full mr-2"
-                          style={{ backgroundColor: color.color, border: color.color === '#FFFFFF' ? '1px solid #E2E8F0' : 'none' }}
+                          style={{ backgroundColor: color.color, border: color.color === '#FFFFFF' || color.color === '#F8F4E3' ? '1px solid #E2E8F0' : 'none' }}
                         />
-                        {color.name}
+                        {color.name} - {color.code}
                       </div>
                     </SelectItem>
                   ))}
@@ -94,11 +94,32 @@ const Visualizer: React.FC = () => {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="text-muted-foreground">
-                  Nenhuma imagem disponível para esta combinação
+                <div className="text-muted-foreground text-center p-4">
+                  <div className="w-56 h-32 mx-auto relative bg-white rounded shadow-md border">
+                    {/* Representação visual simples quando não há imagem */}
+                    <div 
+                      className="absolute inset-0 m-4 border"
+                      style={{ backgroundColor: packageColors.find(c => c.id === selectedPackageId)?.color || '#FFFFFF' }}
+                    ></div>
+                    <div 
+                      className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-1.5"
+                      style={{ backgroundColor: ribbonColors.find(c => c.id === selectedRibbonId)?.color || '#000000' }}
+                    ></div>
+                  </div>
+                  <p className="mt-4">
+                    Esta combinação de cores não possui uma imagem disponível no momento.<br/>
+                    A visualização acima é uma representação simplificada.
+                  </p>
                 </div>
               )}
             </div>
+          </div>
+          
+          <div className="bg-amber-50 p-4 rounded-md border border-amber-200">
+            <p className="text-amber-800 text-sm">
+              As cores exibidas na tela podem variar ligeiramente das cores reais dos produtos devido às configurações do seu dispositivo.
+              Para uma visualização mais precisa, recomendamos solicitar amostras físicas.
+            </p>
           </div>
         </div>
       </CardContent>
