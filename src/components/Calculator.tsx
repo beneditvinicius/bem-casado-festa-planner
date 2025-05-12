@@ -15,7 +15,7 @@ const Calculator: React.FC = () => {
   const { toast } = useToast();
   const flavors = useProductsStore((state) => state.flavors);
   
-  const [quantity, setQuantity] = useState<number>(100);
+  const [quantity, setQuantity] = useState<number>(20);
   const [selectedFlavorId, setSelectedFlavorId] = useState<string>(flavors[0]?.id || '');
   const [selectedFlavor, setSelectedFlavor] = useState<Flavor | null>(null);
   const [total, setTotal] = useState<number>(0);
@@ -37,7 +37,17 @@ const Calculator: React.FC = () => {
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value);
-    setQuantity(isNaN(value) ? 0 : value);
+    if (isNaN(value)) {
+      setQuantity(20);
+    } else if (value < 20) {
+      setQuantity(20);
+      toast({
+        title: "Quantidade mínima",
+        description: "O pedido mínimo é de 20 unidades.",
+      });
+    } else {
+      setQuantity(value);
+    }
   };
 
   const incrementQuantity = () => {
@@ -45,11 +55,18 @@ const Calculator: React.FC = () => {
   };
 
   const decrementQuantity = () => {
-    setQuantity(prev => Math.max(10, prev - 10));
+    if (quantity <= 20) {
+      toast({
+        title: "Quantidade mínima",
+        description: "O pedido mínimo é de 20 unidades.",
+      });
+      return;
+    }
+    setQuantity(prev => Math.max(20, prev - 10));
   };
 
   const handleReset = () => {
-    setQuantity(100);
+    setQuantity(20);
     setSelectedFlavorId(flavors[0]?.id || '');
     toast({
       title: "Calculadora reiniciada",
@@ -107,7 +124,7 @@ const Calculator: React.FC = () => {
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent className="max-w-xs">
-                    <p>Digite a quantidade de bem-casados desejada. Você também pode usar os botões para aumentar ou diminuir a quantidade em intervalos de 10.</p>
+                    <p>Digite a quantidade de bem-casados desejada. O pedido mínimo é de 20 unidades. Você também pode usar os botões para aumentar ou diminuir a quantidade em intervalos de 10.</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -118,14 +135,14 @@ const Calculator: React.FC = () => {
                 size="icon"
                 onClick={decrementQuantity}
                 className="rounded-r-none h-14 w-14"
-                disabled={quantity <= 10}
+                disabled={quantity <= 20}
               >
                 <Minus className="h-5 w-5" />
               </Button>
               <Input
                 id="quantity"
                 type="number"
-                min="1"
+                min="20"
                 value={quantity}
                 onChange={handleQuantityChange}
                 className="text-xl h-14 text-center rounded-none border-x-0"

@@ -15,12 +15,14 @@ const OrderForm: React.FC = () => {
     flavors,
     ribbonColors,
     packageColors,
+    isLoadingCep,
     handleInputChange,
     handleSelectChange,
     handleDateChange,
     handleSubmit,
     handleReset,
-    calculateTotal
+    calculateTotal,
+    searchCep
   } = useOrderForm();
 
   return (
@@ -32,8 +34,10 @@ const OrderForm: React.FC = () => {
             <PersonalInfoForm
               formData={formData}
               errors={errors}
+              isLoadingCep={isLoadingCep}
               handleInputChange={handleInputChange}
               handleSelectChange={handleSelectChange}
+              searchCep={searchCep}
             />
             
             {/* Informações do Evento e Pedido */}

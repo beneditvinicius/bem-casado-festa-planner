@@ -39,3 +39,15 @@ export const formatCPF = (value: string): string => {
     return `${numbers.slice(0, 3)}.${numbers.slice(3, 6)}.${numbers.slice(6, 9)}-${numbers.slice(9, 11)}`;
   }
 };
+
+export const formatCEP = (value: string): string => {
+  // Remove non-numeric characters
+  const numbers = value.replace(/\D/g, '');
+  
+  // Format for Brazilian CEP (postal code)
+  if (numbers.length <= 5) {
+    return numbers;
+  } else {
+    return `${numbers.slice(0, 5)}-${numbers.slice(5, 8)}`;
+  }
+};

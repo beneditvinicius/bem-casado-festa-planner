@@ -31,12 +31,14 @@ interface UseOrderFormReturn {
   ribbonColors: RibbonColor[];
   packageColors: PackageColor[];
   whatsappNumber: string;
+  isLoadingCep: boolean;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSelectChange: (name: string, value: string) => void;
   handleDateChange: (date: Date | undefined) => void;
   handleSubmit: (e: React.FormEvent) => void;
   handleReset: () => void;
   calculateTotal: () => string;
+  searchCep: () => void;
 }
 
 export function useOrderForm(): UseOrderFormReturn {
@@ -59,13 +61,14 @@ export function useOrderForm(): UseOrderFormReturn {
     state: 'SP',
     eventDate: undefined,
     eventLocation: '',
-    quantity: 100,
+    quantity: 20,
     flavorId: flavors[0]?.id || '',
     ribbonId: ribbonColors[0]?.id || '',
     packageId: packageColors[0]?.id || '',
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [isLoadingCep, setIsLoadingCep] = useState<boolean>(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -77,9 +80,67 @@ export function useOrderForm(): UseOrderFormReturn {
     } else if (name === 'cep') {
       setFormData({ ...formData, [name]: formatCEP(value) });
     } else if (name === 'quantity') {
-      setFormData({ ...formData, [name]: parseInt(value) || 0 });
+      const newQuantity = parseInt(value) || 0;
+      
+      if (newQuantity < 20) {
+        toast({
+          title: "Quantidade mínima",
+          description: "O pedido mínimo é de 20 unidades."
+        });
+        setFormData({ ...formData, [name]: 20 });
+      } else {
+        setFormData({ ...formData, [name]: newQuantity });
+      }
     } else {
       setFormData({ ...formData, [name]: value });
+    }
+  };
+
+  const searchCep = async () => {
+    if (!formData.cep || formData.cep.length < 8) {
+      toast({
+        title: "CEP inválido",
+        description: "Digite um CEP válido para buscar o endereço.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsLoadingCep(true);
+      const cleanCep = formData.cep.replace(/\D/g, '');
+      const response = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+      const data = await response.json();
+
+      if (data.erro) {
+        toast({
+          title: "CEP não encontrado",
+          description: "O CEP informado não foi encontrado.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setFormData({
+        ...formData,
+        street: data.logradouro,
+        neighborhood: data.bairro,
+        city: data.localidade,
+        state: data.uf,
+      });
+
+      toast({
+        title: "Endereço encontrado",
+        description: "Os dados de endereço foram preenchidos automaticamente.",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro ao buscar CEP",
+        description: "Não foi possível buscar o endereço. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingCep(false);
     }
   };
 
@@ -109,7 +170,7 @@ export function useOrderForm(): UseOrderFormReturn {
       newErrors.eventDate = 'A data do evento não pode ser no passado';
     }
     if (!formData.eventLocation.trim()) newErrors.eventLocation = 'Local do evento é obrigatório';
-    if (!formData.quantity || formData.quantity <= 0) newErrors.quantity = 'Quantidade inválida';
+    if (!formData.quantity || formData.quantity < 20) newErrors.quantity = 'A quantidade mínima é de 20 unidades';
     if (!formData.flavorId) newErrors.flavorId = 'Selecione um sabor';
     if (!formData.ribbonId) newErrors.ribbonId = 'Selecione a cor da fita';
     if (!formData.packageId) newErrors.packageId = 'Selecione a cor da embalagem';
@@ -158,7 +219,7 @@ Aguardando contato para finalização.
       // Encode the message for WhatsApp
       const encodedMessage = encodeURIComponent(message);
       
-      // Create WhatsApp URL
+      // Create WhatsApp URL with the company number
       const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
       
       // Show success message
@@ -186,7 +247,7 @@ Aguardando contato para finalização.
       state: 'SP',
       eventDate: undefined,
       eventLocation: '',
-      quantity: 100,
+      quantity: 20,
       flavorId: flavors[0]?.id || '',
       ribbonId: ribbonColors[0]?.id || '',
       packageId: packageColors[0]?.id || '',
@@ -213,11 +274,13 @@ Aguardando contato para finalização.
     ribbonColors,
     packageColors,
     whatsappNumber,
+    isLoadingCep,
     handleInputChange,
     handleSelectChange,
     handleDateChange,
     handleSubmit,
     handleReset,
-    calculateTotal
+    calculateTotal,
+    searchCep
   };
 }

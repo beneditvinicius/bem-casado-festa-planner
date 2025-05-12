@@ -2,6 +2,8 @@
 import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
 import { formatCPF, formatPhone, formatCEP } from '@/utils/formatter';
 import { cn } from '@/lib/utils';
 
@@ -19,8 +21,10 @@ interface PersonalInfoFormProps {
     state: string;
   };
   errors: { [key: string]: string };
+  isLoadingCep: boolean;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSelectChange: (name: string, value: string) => void;
+  searchCep: () => void;
 }
 
 const brazilianStates = [
@@ -56,8 +60,10 @@ const brazilianStates = [
 const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
   formData,
   errors,
+  isLoadingCep,
   handleInputChange,
   handleSelectChange,
+  searchCep
 }) => {
   return (
     <div className="space-y-4">
@@ -107,15 +113,25 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
       
       <div>
         <Label htmlFor="cep" className="text-base">CEP</Label>
-        <Input
-          id="cep"
-          name="cep"
-          value={formData.cep}
-          onChange={handleInputChange}
-          placeholder="00000-000"
-          maxLength={9}
-          className={cn("h-12", errors.cep && "border-red-500")}
-        />
+        <div className="flex space-x-2">
+          <Input
+            id="cep"
+            name="cep"
+            value={formData.cep}
+            onChange={handleInputChange}
+            placeholder="00000-000"
+            maxLength={9}
+            className={cn("h-12 flex-1", errors.cep && "border-red-500")}
+          />
+          <Button 
+            type="button" 
+            onClick={searchCep} 
+            disabled={isLoadingCep || formData.cep.length < 8}
+            className="h-12 w-12 px-0"
+          >
+            <Search className="h-5 w-5" />
+          </Button>
+        </div>
         {errors.cep && <p className="text-red-500 text-sm mt-1">{errors.cep}</p>}
       </div>
       

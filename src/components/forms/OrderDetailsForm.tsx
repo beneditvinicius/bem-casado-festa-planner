@@ -44,10 +44,11 @@ const OrderDetailsForm: React.FC<OrderDetailsFormProps> = ({
           type="number"
           value={formData.quantity}
           onChange={handleInputChange}
-          min="1"
+          min="20"
           className={cn("h-12", errors.quantity && "border-red-500")}
         />
         {errors.quantity && <p className="text-red-500 text-sm mt-1">{errors.quantity}</p>}
+        <p className="text-sm text-muted-foreground mt-1">O pedido mínimo é de 20 unidades.</p>
       </div>
       
       <div>
