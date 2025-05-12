@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -28,8 +27,8 @@ const AdminPanel: React.FC = () => {
   const setWhatsappNumber = useProductsStore((state) => state.setWhatsappNumber);
   
   const [newFlavor, setNewFlavor] = useState({ name: '', price: 0 });
-  const [newRibbon, setNewRibbon] = useState({ name: '', color: '#000000' });
-  const [newPackage, setNewPackage] = useState({ name: '', color: '#000000' });
+  const [newRibbon, setNewRibbon] = useState({ name: '', code: '', color: '#000000' });
+  const [newPackage, setNewPackage] = useState({ name: '', code: '', color: '#000000' });
   const [newCombination, setNewCombination] = useState({ ribbonId: '', packageId: '', imageUrl: '' });
   const [newWhatsappNumber, setNewWhatsappNumber] = useState(whatsappNumber);
 
@@ -49,31 +48,45 @@ const AdminPanel: React.FC = () => {
   };
 
   const handleAddRibbon = () => {
-    if (newRibbon.name && newRibbon.color) {
+    if (newRibbon.name && newRibbon.color && newRibbon.code) {
       addRibbonColor({
         id: Date.now().toString(),
         name: newRibbon.name,
+        code: newRibbon.code,
         color: newRibbon.color,
       });
-      setNewRibbon({ name: '', color: '#000000' });
+      setNewRibbon({ name: '', code: '', color: '#000000' });
       toast({
         title: "Sucesso",
         description: "Cor de fita adicionada com sucesso.",
+      });
+    } else {
+      toast({
+        title: "Erro",
+        description: "Preencha todos os campos: nome, código e cor.",
+        variant: "destructive"
       });
     }
   };
 
   const handleAddPackage = () => {
-    if (newPackage.name && newPackage.color) {
+    if (newPackage.name && newPackage.color && newPackage.code) {
       addPackageColor({
         id: Date.now().toString(),
         name: newPackage.name,
+        code: newPackage.code,
         color: newPackage.color,
       });
-      setNewPackage({ name: '', color: '#000000' });
+      setNewPackage({ name: '', code: '', color: '#000000' });
       toast({
         title: "Sucesso",
         description: "Cor de embalagem adicionada com sucesso.",
+      });
+    } else {
+      toast({
+        title: "Erro",
+        description: "Preencha todos os campos: nome, código e cor.",
+        variant: "destructive"
       });
     }
   };
@@ -189,13 +202,21 @@ const AdminPanel: React.FC = () => {
           
           {/* Ribbons Tab */}
           <TabsContent value="ribbons" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
               <div>
                 <Label htmlFor="ribbonName">Nome da Cor</Label>
                 <Input 
                   id="ribbonName" 
                   value={newRibbon.name} 
                   onChange={(e) => setNewRibbon({ ...newRibbon, name: e.target.value })} 
+                />
+              </div>
+              <div>
+                <Label htmlFor="ribbonCode">Código da Cor</Label>
+                <Input 
+                  id="ribbonCode" 
+                  value={newRibbon.code} 
+                  onChange={(e) => setNewRibbon({ ...newRibbon, code: e.target.value })} 
                 />
               </div>
               <div>
@@ -219,6 +240,7 @@ const AdminPanel: React.FC = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Nome</TableHead>
+                  <TableHead>Código</TableHead>
                   <TableHead>Cor</TableHead>
                   <TableHead className="w-[100px]">Ações</TableHead>
                 </TableRow>
@@ -227,6 +249,7 @@ const AdminPanel: React.FC = () => {
                 {ribbonColors.map((ribbon) => (
                   <TableRow key={ribbon.id}>
                     <TableCell>{ribbon.name}</TableCell>
+                    <TableCell>{ribbon.code}</TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-2">
                         <div 
@@ -253,13 +276,21 @@ const AdminPanel: React.FC = () => {
           
           {/* Packages Tab */}
           <TabsContent value="packages" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
               <div>
                 <Label htmlFor="packageName">Nome da Cor</Label>
                 <Input 
                   id="packageName" 
                   value={newPackage.name} 
                   onChange={(e) => setNewPackage({ ...newPackage, name: e.target.value })} 
+                />
+              </div>
+              <div>
+                <Label htmlFor="packageCode">Código da Cor</Label>
+                <Input 
+                  id="packageCode" 
+                  value={newPackage.code} 
+                  onChange={(e) => setNewPackage({ ...newPackage, code: e.target.value })} 
                 />
               </div>
               <div>
@@ -283,6 +314,7 @@ const AdminPanel: React.FC = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Nome</TableHead>
+                  <TableHead>Código</TableHead>
                   <TableHead>Cor</TableHead>
                   <TableHead className="w-[100px]">Ações</TableHead>
                 </TableRow>
@@ -291,6 +323,7 @@ const AdminPanel: React.FC = () => {
                 {packageColors.map((pkg) => (
                   <TableRow key={pkg.id}>
                     <TableCell>{pkg.name}</TableCell>
+                    <TableCell>{pkg.code}</TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-2">
                         <div 
