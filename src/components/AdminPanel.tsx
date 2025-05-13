@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -880,4 +881,495 @@ const AdminPanel: React.FC = () => {
               </Table>
             </TabsContent>
             
-            {/* Ribbons Tab
+            {/* Ribbons Tab */}
+            <TabsContent value="ribbons" className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                <div>
+                  <Label htmlFor="ribbonName">Nome da Cor</Label>
+                  <Input 
+                    id="ribbonName" 
+                    value={newRibbon.name} 
+                    onChange={(e) => setNewRibbon({ ...newRibbon, name: e.target.value })} 
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="ribbonCode">Código da Cor</Label>
+                  <Input 
+                    id="ribbonCode" 
+                    value={newRibbon.code} 
+                    onChange={(e) => setNewRibbon({ ...newRibbon, code: e.target.value })} 
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="ribbonColor">Cor (Hex)</Label>
+                  <div className="flex space-x-2">
+                    <Input 
+                      id="ribbonColor" 
+                      value={newRibbon.color} 
+                      onChange={(e) => setNewRibbon({ ...newRibbon, color: e.target.value })} 
+                    />
+                    <div 
+                      className="w-10 h-10 rounded border"
+                      style={{ backgroundColor: newRibbon.color }}
+                    />
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <Switch 
+                    id="isNewRibbon" 
+                    checked={newRibbon.isNew}
+                    onCheckedChange={(checked) => setNewRibbon({ ...newRibbon, isNew: checked })}
+                  />
+                  <Label htmlFor="isNewRibbon" className="ml-2">Marcar como "Novidade"</Label>
+                </div>
+                <div className="md:col-span-2">
+                  <Button onClick={handleAddRibbon}>Adicionar Cor de Fita</Button>
+                </div>
+              </div>
+              
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>Código</TableHead>
+                    <TableHead>Cor</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="w-[180px]">Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {ribbonColors.map((ribbon) => (
+                    <TableRow key={ribbon.id}>
+                      <TableCell>{ribbon.name}</TableCell>
+                      <TableCell>{ribbon.code}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-2">
+                          <div 
+                            className="w-6 h-6 rounded-full"
+                            style={{ backgroundColor: ribbon.color }}
+                          />
+                          <span>{ribbon.color}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {ribbon.isNew && <Badge className="bg-[#eb6824]">Novidade</Badge>}
+                      </TableCell>
+                      <TableCell className="space-x-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => openEditModal('ribbon', ribbon)}
+                        >
+                          <Edit className="h-4 w-4 mr-1" /> Editar
+                        </Button>
+                        <Button 
+                          variant="destructive" 
+                          size="sm"
+                          onClick={() => removeRibbonColor(ribbon.id)}
+                        >
+                          Remover
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TabsContent>
+            
+            {/* Packages Tab */}
+            <TabsContent value="packages" className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                <div>
+                  <Label htmlFor="packageName">Nome da Cor</Label>
+                  <Input 
+                    id="packageName" 
+                    value={newPackage.name} 
+                    onChange={(e) => setNewPackage({ ...newPackage, name: e.target.value })} 
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="packageCode">Código da Cor</Label>
+                  <Input 
+                    id="packageCode" 
+                    value={newPackage.code} 
+                    onChange={(e) => setNewPackage({ ...newPackage, code: e.target.value })} 
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="packageColor">Cor (Hex)</Label>
+                  <div className="flex space-x-2">
+                    <Input 
+                      id="packageColor" 
+                      value={newPackage.color} 
+                      onChange={(e) => setNewPackage({ ...newPackage, color: e.target.value })} 
+                    />
+                    <div 
+                      className="w-10 h-10 rounded border"
+                      style={{ backgroundColor: newPackage.color }}
+                    />
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <Switch 
+                    id="isNewPackage" 
+                    checked={newPackage.isNew}
+                    onCheckedChange={(checked) => setNewPackage({ ...newPackage, isNew: checked })}
+                  />
+                  <Label htmlFor="isNewPackage" className="ml-2">Marcar como "Novidade"</Label>
+                </div>
+                <div className="md:col-span-2">
+                  <Button onClick={handleAddPackage}>Adicionar Cor de Embalagem</Button>
+                </div>
+              </div>
+              
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>Código</TableHead>
+                    <TableHead>Cor</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="w-[180px]">Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {packageColors.map((pkg) => (
+                    <TableRow key={pkg.id}>
+                      <TableCell>{pkg.name}</TableCell>
+                      <TableCell>{pkg.code}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-2">
+                          <div 
+                            className="w-6 h-6 rounded-full border"
+                            style={{ backgroundColor: pkg.color }}
+                          />
+                          <span>{pkg.color}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {pkg.isNew && <Badge className="bg-[#eb6824]">Novidade</Badge>}
+                      </TableCell>
+                      <TableCell className="space-x-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => openEditModal('package', pkg)}
+                        >
+                          <Edit className="h-4 w-4 mr-1" /> Editar
+                        </Button>
+                        <Button 
+                          variant="destructive" 
+                          size="sm"
+                          onClick={() => removePackageColor(pkg.id)}
+                        >
+                          Remover
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TabsContent>
+            
+            {/* Combinations Tab */}
+            <TabsContent value="combinations" className="space-y-4">
+              <div className="bg-amber-50 p-4 rounded-md border border-amber-200">
+                <div className="flex items-start mb-2">
+                  <Info className="h-5 w-5 text-amber-800 mr-2 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="font-medium text-amber-800">Upload de Imagens em Massa</h3>
+                    <p className="text-sm text-amber-800">
+                      Para melhor organização, nomeie suas imagens seguindo o padrão: 
+                      <span className="font-medium"> fita_[nome]_embalagem_[nome].jpg</span> 
+                      (ex: fita_dourado_embalagem_rose.jpg)
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 gap-4">
+                <div className="border-dashed border-2 rounded-md p-6 flex flex-col items-center justify-center">
+                  <Upload className="h-10 w-10 text-gray-400 mb-2" />
+                  <p className="text-center text-sm text-gray-500 mb-4">
+                    Arraste e solte suas imagens aqui, ou clique para selecionar
+                  </p>
+                  <input
+                    type="file"
+                    id="image-upload"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={handleImageUpload}
+                  />
+                  <label htmlFor="image-upload">
+                    <Button variant="default" className="cursor-pointer">
+                      Selecionar Imagens
+                    </Button>
+                  </label>
+                </div>
+                
+                {uploadedImages.length > 0 && (
+                  <div className="mt-4">
+                    <h4 className="font-medium mb-2">Imagens para upload ({uploadedImages.length})</h4>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                      {uploadedImages.map((image, index) => (
+                        <div key={index} className="relative group">
+                          <div className="aspect-square bg-gray-100 rounded-md overflow-hidden">
+                            <img
+                              src={URL.createObjectURL(image)}
+                              alt={`Upload ${index + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
+                            <Button
+                              variant="destructive"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={() => removeUploadedImage(index)}
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </Button>
+                          </div>
+                          <p className="text-xs mt-1 truncate">{image.name}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-4 flex justify-end">
+                      <Button className="bg-[#eb6824] hover:bg-[#d25618]">
+                        Carregar {uploadedImages.length} imagens
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              <div className="mt-8">
+                <h4 className="font-medium mb-4">Adicionar Combinação Manual</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 items-end">
+                  <div>
+                    <Label htmlFor="comboRibbon">Fita</Label>
+                    <Select 
+                      value={newCombination.ribbonId} 
+                      onValueChange={(value) => setNewCombination({ ...newCombination, ribbonId: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione uma fita" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {ribbonColors.map((ribbon) => (
+                          <SelectItem key={ribbon.id} value={ribbon.id}>{ribbon.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="comboPackage">Embalagem</Label>
+                    <Select
+                      value={newCombination.packageId}
+                      onValueChange={(value) => setNewCombination({ ...newCombination, packageId: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione uma embalagem" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {packageColors.map((pkg) => (
+                          <SelectItem key={pkg.id} value={pkg.id}>{pkg.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="imageUrl">URL da Imagem</Label>
+                    <Input 
+                      id="imageUrl" 
+                      value={newCombination.imageUrl} 
+                      onChange={(e) => setNewCombination({ ...newCombination, imageUrl: e.target.value })} 
+                    />
+                  </div>
+                  <div>
+                    <Button onClick={handleAddCombination} className="w-full">Adicionar Combinação</Button>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-4">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Fita</TableHead>
+                      <TableHead>Embalagem</TableHead>
+                      <TableHead>Imagem</TableHead>
+                      <TableHead>Ações</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {combinations.map((combo) => {
+                      const ribbon = ribbonColors.find(r => r.id === combo.ribbonId);
+                      const pkg = packageColors.find(p => p.id === combo.packageId);
+                      
+                      return (
+                        <TableRow key={`${combo.ribbonId}-${combo.packageId}`}>
+                          <TableCell>{ribbon?.name || combo.ribbonId}</TableCell>
+                          <TableCell>{pkg?.name || combo.packageId}</TableCell>
+                          <TableCell>
+                            <div className="w-16 h-16 rounded overflow-hidden bg-muted">
+                              <img 
+                                src={combo.imageUrl} 
+                                alt="Preview" 
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src = "https://placehold.co/100?text=Erro";
+                                }}
+                              />
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Button 
+                              variant="destructive" 
+                              size="sm"
+                              onClick={() => removeCombination(combo.ribbonId, combo.packageId)}
+                            >
+                              Remover
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            </TabsContent>
+            
+            {/* Settings Tab */}
+            <TabsContent value="settings" className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+                <div>
+                  <Label htmlFor="whatsappNumber">Número de WhatsApp (com código do país)</Label>
+                  <div className="flex items-center">
+                    <MessageSquare className="mr-2 text-[#eb6824]" />
+                    <Input 
+                      id="whatsappNumber" 
+                      value={newWhatsappNumber} 
+                      onChange={(e) => setNewWhatsappNumber(e.target.value)}
+                      placeholder="Ex: 5511999999999"
+                    />
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Atualmente configurado: {newWhatsappNumber || "Não configurado"}
+                  </p>
+                </div>
+                <div className="flex items-end">
+                  <Button onClick={handleUpdateWhatsapp} className="bg-[#eb6824] hover:bg-[#d25618]">
+                    Atualizar Número
+                  </Button>
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
+        )}
+      </CardContent>
+      
+      {/* Edit Modal */}
+      <Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {editType === 'flavor' && 'Editar Sabor'}
+              {editType === 'ribbon' && 'Editar Fita'}
+              {editType === 'package' && 'Editar Embalagem'}
+            </DialogTitle>
+          </DialogHeader>
+          
+          {editItem && (
+            <div className="space-y-4 py-4">
+              {editType === 'flavor' && (
+                <>
+                  <div className="grid gap-2">
+                    <Label htmlFor="edit-name">Nome</Label>
+                    <Input 
+                      id="edit-name" 
+                      value={editItem.name} 
+                      onChange={(e) => setEditItem({ ...editItem, name: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="edit-price">Preço</Label>
+                    <Input 
+                      id="edit-price" 
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={editItem.price} 
+                      onChange={(e) => setEditItem({ ...editItem, price: parseFloat(e.target.value) || 0 })}
+                    />
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch 
+                      id="edit-isNew" 
+                      checked={editItem.isNew}
+                      onCheckedChange={(checked) => setEditItem({ ...editItem, isNew: checked })}
+                    />
+                    <Label htmlFor="edit-isNew">Marcar como "Novidade"</Label>
+                  </div>
+                </>
+              )}
+              
+              {(editType === 'ribbon' || editType === 'package') && (
+                <>
+                  <div className="grid gap-2">
+                    <Label htmlFor="edit-name">Nome</Label>
+                    <Input 
+                      id="edit-name" 
+                      value={editItem.name} 
+                      onChange={(e) => setEditItem({ ...editItem, name: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="edit-code">Código</Label>
+                    <Input 
+                      id="edit-code" 
+                      value={editItem.code} 
+                      onChange={(e) => setEditItem({ ...editItem, code: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="edit-color">Cor (Hex)</Label>
+                    <div className="flex space-x-2">
+                      <Input 
+                        id="edit-color" 
+                        value={editItem.color} 
+                        onChange={(e) => setEditItem({ ...editItem, color: e.target.value })}
+                      />
+                      <div 
+                        className="w-10 h-10 rounded border"
+                        style={{ backgroundColor: editItem.color }}
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch 
+                      id="edit-isNew" 
+                      checked={editItem.isNew}
+                      onCheckedChange={(checked) => setEditItem({ ...editItem, isNew: checked })}
+                    />
+                    <Label htmlFor="edit-isNew">Marcar como "Novidade"</Label>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditModalOpen(false)}>Cancelar</Button>
+            <Button onClick={handleSaveEdit}>Salvar Alterações</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </Card>
+  );
+};
+
+export default AdminPanel;
