@@ -49,13 +49,15 @@ const faqItems = [
 
 const Faq: React.FC = () => {
   return (
-    <Card className="w-full">
-      <CardContent className="pt-6">
+    <Card className="w-full bg-white">
+      <CardContent className="pt-6 px-3 sm:px-6">
         <Accordion type="single" collapsible className="w-full">
           {faqItems.map((item, index) => (
-            <AccordionItem key={index} value={`item-${index}`}>
-              <AccordionTrigger className="text-lg font-medium">{item.question}</AccordionTrigger>
-              <AccordionContent className="text-base whitespace-pre-line">
+            <AccordionItem key={index} value={`item-${index}`} className="border-b border-gray-200">
+              <AccordionTrigger className="text-base sm:text-lg font-medium py-3 sm:py-4 text-left">
+                {item.question}
+              </AccordionTrigger>
+              <AccordionContent className="text-sm sm:text-base whitespace-pre-line pb-3 sm:pb-4">
                 {item.answer}
               </AccordionContent>
             </AccordionItem>

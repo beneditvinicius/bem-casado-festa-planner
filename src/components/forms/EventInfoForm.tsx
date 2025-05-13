@@ -26,21 +26,12 @@ const EventInfoForm: React.FC<EventInfoFormProps> = ({
   handleInputChange,
   handleDateChange,
 }) => {
-  // Add a ref to control popover state
-  const popoverRef = React.useRef<HTMLButtonElement>(null);
+  const [open, setOpen] = React.useState(false);
   
   const handleDateSelect = (date: Date | undefined) => {
     handleDateChange(date);
     // Close popover after selection
-    setTimeout(() => {
-      if (popoverRef.current) {
-        const popoverInstance = document.querySelector('[data-state="open"]');
-        if (popoverInstance) {
-          // This triggers the close action in the Radix UI popover
-          document.body.click();
-        }
-      }
-    }, 100);
+    setOpen(false);
   };
   
   return (
@@ -49,10 +40,9 @@ const EventInfoForm: React.FC<EventInfoFormProps> = ({
       
       <div>
         <Label htmlFor="eventDate" className="text-base">Data do Evento</Label>
-        <Popover>
+        <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <Button
-              ref={popoverRef}
               variant="outline"
               className={cn(
                 "w-full justify-start text-left h-12",
@@ -76,10 +66,12 @@ const EventInfoForm: React.FC<EventInfoFormProps> = ({
               initialFocus
               locale={ptBR}
               disabled={(date) => isBefore(date, new Date())}
+              className="pointer-events-auto"
             />
           </PopoverContent>
         </Popover>
         {errors.eventDate && <p className="text-red-500 text-sm mt-1">{errors.eventDate}</p>}
+        <p className="text-xs text-gray-500 mt-1">Mediante disponibilidade na nossa agenda</p>
       </div>
       
       <div>
