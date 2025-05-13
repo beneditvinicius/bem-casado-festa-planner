@@ -1,9 +1,9 @@
 
 import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import App from './App';
 
-test('App loads without crashing', () => {
-  const { container } = render(<App />);
-  expect(container).toBeInTheDocument();
+test('renders app without crashing', () => {
+  render(<App />);
+  // Basic test to ensure the app renders without errors
+  expect(document.body).toBeTruthy();
 });
