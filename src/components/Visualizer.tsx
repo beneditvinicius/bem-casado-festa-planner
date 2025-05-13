@@ -16,22 +16,38 @@ const Visualizer: React.FC = () => {
   
   const [selectedRibbonId, setSelectedRibbonId] = useState<string>(ribbonColors[0]?.id || '');
   const [selectedPackageId, setSelectedPackageId] = useState<string>(packageColors[0]?.id || '');
-  const [imageSrc, setImageSrc] = useState<string>('');
   
-  useEffect(() => {
-    if (selectedRibbonId && selectedPackageId) {
-      const combo = combinations.find(c => c.ribbonId === selectedRibbonId && c.packageId === selectedPackageId);
-      if (combo) {
-        setImageSrc(combo.imageUrl);
-      } else {
-        // Fallback se a combinação não existir
-        setImageSrc('');
-      }
-    }
-  }, [selectedRibbonId, selectedPackageId, combinations]);
-  
+  // Check if we can use separate overlay images
   const selectedRibbon = ribbonColors.find(r => r.id === selectedRibbonId);
   const selectedPackage = packageColors.find(p => p.id === selectedPackageId);
+  
+  // Try to get overlay images based on color codes
+  const getOverlayImages = () => {
+    const ribbonCode = selectedRibbon?.code || '';
+    const packageCode = selectedPackage?.code || '';
+    
+    const ribbonUrl = ribbonCode ? `/ribbon_${ribbonCode}.png` : '';
+    const packageUrl = packageCode ? `/package_${packageCode}.png` : '';
+    
+    // Check if we found both images for overlay
+    if (ribbonUrl && packageUrl) {
+      return { ribbonUrl, packageUrl, canUseOverlay: true };
+    }
+    
+    // If we don't have overlay images, fall back to existing combinations
+    const combo = combinations.find(c => 
+      c.ribbonId === selectedRibbonId && c.packageId === selectedPackageId
+    );
+    
+    return { 
+      ribbonUrl: '', 
+      packageUrl: '', 
+      canUseOverlay: false, 
+      fallbackImage: combo?.imageUrl || '' 
+    };
+  };
+  
+  const { ribbonUrl, packageUrl, canUseOverlay, fallbackImage } = getOverlayImages();
   
   return (
     <Card className="w-full">
@@ -93,9 +109,22 @@ const Visualizer: React.FC = () => {
           
           <div className="mt-4 sm:mt-8">
             <div className="aspect-video rounded-md overflow-hidden bg-muted flex items-center justify-center">
-              {imageSrc ? (
+              {canUseOverlay ? (
+                <div className="w-full h-full relative">
+                  <img 
+                    src={packageUrl} 
+                    alt={`Embalagem ${selectedPackage?.name}`} 
+                    className="w-full h-full object-cover block"
+                  />
+                  <img 
+                    src={ribbonUrl} 
+                    alt={`Fita ${selectedRibbon?.name}`} 
+                    className="absolute top-0 left-0 w-full h-full object-cover"
+                  />
+                </div>
+              ) : fallbackImage ? (
                 <img 
-                  src={imageSrc} 
+                  src={fallbackImage} 
                   alt="Visualização da combinação" 
                   className="w-full h-full object-cover" 
                 />

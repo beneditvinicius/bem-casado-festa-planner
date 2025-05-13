@@ -16,7 +16,7 @@ interface UseFlavorManagementReturn {
 export const useFlavorManagement = (initialFlavors: Flavor[]): UseFlavorManagementReturn => {
   const { toast } = useToast();
   const [flavorSelections, setFlavorSelections] = useState<FlavorSelection[]>([
-    { id: '1', flavorId: initialFlavors[0]?.id || '', quantity: 20 }
+    { id: '1', flavorId: initialFlavors[0]?.id || '', quantity: null }
   ]);
 
   const handleAddFlavor = () => {
@@ -24,11 +24,21 @@ export const useFlavorManagement = (initialFlavors: Flavor[]): UseFlavorManageme
     setFlavorSelections(prev => [...prev, { 
       id: newId, 
       flavorId: initialFlavors[0]?.id || '', 
-      quantity: 20 
+      quantity: null 
     }]);
   };
 
   const handleRemoveFlavor = (id: string) => {
+    if (id === 'all-except-first') {
+      // Reset to just the first item
+      const firstItem = flavorSelections[0];
+      setFlavorSelections([{
+        ...firstItem,
+        quantity: null
+      }]);
+      return;
+    }
+    
     if (flavorSelections.length <= 1) {
       toast({
         title: "Ação não permitida",
@@ -47,25 +57,7 @@ export const useFlavorManagement = (initialFlavors: Flavor[]): UseFlavorManageme
   };
 
   const handleFlavorQuantityChange = (id: string, value: string) => {
-    const quantity = parseInt(value);
-    
-    if (isNaN(quantity) || quantity === 0) {
-      setFlavorSelections(prev => prev.map(item => 
-        item.id === id ? { ...item, quantity: 0 } : item
-      ));
-      return;
-    }
-    
-    if (quantity < 20) {
-      toast({
-        title: "Quantidade mínima",
-        description: "O pedido mínimo é de 20 unidades.",
-      });
-      setFlavorSelections(prev => prev.map(item => 
-        item.id === id ? { ...item, quantity: 20 } : item
-      ));
-      return;
-    }
+    const quantity = value === '' ? null : parseInt(value);
     
     setFlavorSelections(prev => prev.map(item => 
       item.id === id ? { ...item, quantity } : item
@@ -77,7 +69,7 @@ export const useFlavorManagement = (initialFlavors: Flavor[]): UseFlavorManageme
     
     flavorSelections.forEach(selection => {
       const flavor = flavors.find(f => f.id === selection.flavorId);
-      if (flavor && selection.quantity > 0) {
+      if (flavor && selection.quantity && selection.quantity > 0) {
         total += flavor.price * selection.quantity;
       }
     });

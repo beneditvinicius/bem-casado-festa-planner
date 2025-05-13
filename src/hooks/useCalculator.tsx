@@ -10,7 +10,7 @@ export const useCalculator = (flavors: Flavor[]) => {
   const [flavorSelections, setFlavorSelections] = useState<FlavorSelection[]>([{
     id: '1',
     flavorId: flavors[0]?.id || '',
-    quantity: 0
+    quantity: null
   }]);
   
   const [total, setTotal] = useState<number>(0);
@@ -23,7 +23,7 @@ export const useCalculator = (flavors: Flavor[]) => {
     let sum = 0;
     flavorSelections.forEach(selection => {
       const flavor = flavors.find(f => f.id === selection.flavorId);
-      if (flavor && selection.quantity > 0) {
+      if (flavor && selection.quantity && selection.quantity > 0) {
         sum += flavor.price * selection.quantity;
       }
     });
@@ -38,26 +38,7 @@ export const useCalculator = (flavors: Flavor[]) => {
   };
   
   const handleQuantityChange = (id: string, value: string) => {
-    const quantity = parseInt(value);
-    if (isNaN(quantity) || quantity === 0) {
-      setFlavorSelections(prev => prev.map(item => item.id === id ? {
-        ...item,
-        quantity: 0
-      } : item));
-      return;
-    }
-    
-    if (quantity < 20) {
-      toast({
-        title: "Quantidade mínima",
-        description: "O pedido mínimo é de 20 unidades."
-      });
-      setFlavorSelections(prev => prev.map(item => item.id === id ? {
-        ...item,
-        quantity: 20
-      } : item));
-      return;
-    }
+    const quantity = value === '' ? null : parseInt(value);
     
     setFlavorSelections(prev => prev.map(item => item.id === id ? {
       ...item,
@@ -68,14 +49,16 @@ export const useCalculator = (flavors: Flavor[]) => {
   const incrementQuantity = (id: string) => {
     setFlavorSelections(prev => prev.map(item => item.id === id ? {
       ...item,
-      quantity: Math.max(1, (item.quantity || 0) + 1)
+      quantity: (item.quantity || 0) + 1
     } : item));
   };
   
   const decrementQuantity = (id: string) => {
     setFlavorSelections(prev => prev.map(item => {
       if (item.id !== id) return item;
+      
       const newQuantity = (item.quantity || 0) - 1;
+      
       if (newQuantity < 20 && newQuantity > 0) {
         toast({
           title: "Quantidade mínima",
@@ -83,12 +66,13 @@ export const useCalculator = (flavors: Flavor[]) => {
         });
         return {
           ...item,
-          quantity: 20
+          quantity: null
         };
       }
+      
       return {
         ...item,
-        quantity: Math.max(0, newQuantity)
+        quantity: newQuantity <= 0 ? null : newQuantity
       };
     }));
   };
@@ -98,7 +82,7 @@ export const useCalculator = (flavors: Flavor[]) => {
     setFlavorSelections(prev => [...prev, {
       id: newId,
       flavorId: flavors[0]?.id || '',
-      quantity: 0
+      quantity: null
     }]);
   };
   
@@ -117,7 +101,7 @@ export const useCalculator = (flavors: Flavor[]) => {
     setFlavorSelections([{
       id: '1',
       flavorId: flavors[0]?.id || '',
-      quantity: 0
+      quantity: null
     }]);
     toast({
       title: "Calculadora reiniciada",

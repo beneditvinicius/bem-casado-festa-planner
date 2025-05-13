@@ -4,7 +4,7 @@ import { Flavor, RibbonColor, PackageColor } from '@/data/products';
 export interface FlavorSelection {
   id: string;
   flavorId: string;
-  quantity: number;
+  quantity: number | null;
 }
 
 export interface FormData {

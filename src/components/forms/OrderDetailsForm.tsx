@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from '@/lib/utils';
 import { Flavor, RibbonColor, PackageColor } from '@/data/products';
 import { FlavorSelection } from '@/hooks/useOrderForm';
+import { QuantityField } from '@/components/ui/quantity-field';
 
 interface OrderDetailsFormProps {
   formData: {
@@ -45,6 +46,10 @@ const OrderDetailsForm: React.FC<OrderDetailsFormProps> = ({
   handleFlavorQuantityChange,
   calculateTotal,
 }) => {
+  const handleQuantityChange = (id: string, value: number | null) => {
+    handleFlavorQuantityChange(id, value !== null ? value.toString() : '');
+  };
+
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-medium">Detalhes do Pedido</h3>
@@ -88,14 +93,13 @@ const OrderDetailsForm: React.FC<OrderDetailsFormProps> = ({
             
             <div>
               <Label htmlFor={`quantity-${selection.id}`} className="text-base">Quantidade</Label>
-              <Input
+              <QuantityField
                 id={`quantity-${selection.id}`}
-                type="number"
-                min="20"
-                value={selection.quantity || ""}
-                placeholder="Mínimo 20"
-                onChange={(e) => handleFlavorQuantityChange(selection.id, e.target.value)}
-                className={cn("h-12", errors[`quantity-${selection.id}`] && "border-red-500")}
+                value={selection.quantity || null}
+                onChange={(value) => handleQuantityChange(selection.id, value)}
+                hasButtons={false}
+                className="h-12"
+                error={errors[`quantity-${selection.id}`]}
               />
               {errors[`quantity-${selection.id}`] && <p className="text-red-500 text-sm mt-1">{errors[`quantity-${selection.id}`]}</p>}
               <p className="text-sm text-muted-foreground mt-1">O pedido mínimo é de 20 unidades.</p>

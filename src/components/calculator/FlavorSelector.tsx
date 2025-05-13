@@ -1,13 +1,13 @@
 
 import React from 'react';
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
-import { HelpCircle, Minus, Plus, Trash2 } from "lucide-react";
+import { HelpCircle, Trash2 } from "lucide-react";
 import { formatCurrency } from '@/utils/formatter.tsx';
 import { FlavorSelectorProps } from './types';
+import { QuantityField } from '@/components/ui/quantity-field';
 
 const FlavorSelector: React.FC<FlavorSelectorProps> = ({
   selection,
@@ -20,6 +20,10 @@ const FlavorSelector: React.FC<FlavorSelectorProps> = ({
   showRemoveButton
 }) => {
   const selectedFlavor = flavors.find(f => f.id === selection.flavorId);
+
+  const handleQuantityChange = (value: number | null) => {
+    onQuantityChange(selection.id, value !== null ? value.toString() : '');
+  };
 
   return (
     <div className="p-4 border rounded-lg">
@@ -89,34 +93,13 @@ const FlavorSelector: React.FC<FlavorSelectorProps> = ({
               </Tooltip>
             </TooltipProvider>
           </div>
-          <div className="flex items-center">
-            <Button 
-              variant="outline" 
-              size="icon" 
-              onClick={() => onDecrement(selection.id)} 
-              className="rounded-r-none h-12 w-12" 
-              disabled={selection.quantity <= 0}
-            >
-              <Minus className="h-4 w-4" />
-            </Button>
-            <Input 
-              id={`quantity-${selection.id}`} 
-              type="number" 
-              min="20" 
-              value={selection.quantity || ""} 
-              placeholder="Mínimo 20" 
-              onChange={e => onQuantityChange(selection.id, e.target.value)} 
-              className="text-sm sm:text-base h-12 text-center rounded-none border-x-0" 
-            />
-            <Button 
-              variant="outline" 
-              size="icon" 
-              onClick={() => onIncrement(selection.id)} 
-              className="rounded-l-none h-12 w-12"
-            >
-              <Plus className="h-4 w-4" />
-            </Button>
-          </div>
+          <QuantityField
+            id={`quantity-${selection.id}`}
+            value={selection.quantity || null}
+            onChange={handleQuantityChange}
+            onIncrement={() => onIncrement(selection.id)}
+            onDecrement={() => onDecrement(selection.id)}
+          />
           <p className="text-xs text-muted-foreground">Pedido mínimo de 20 unidades.</p>
         </div>
         
