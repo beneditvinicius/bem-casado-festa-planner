@@ -1,30 +1,41 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import Calculator from '@/components/Calculator';
 import OrderForm from '@/components/OrderForm';
 import Visualizer from '@/components/Visualizer';
 import Faq from '@/components/Faq';
+import AdminPanel from '@/components/AdminPanel';
 import { Button } from "@/components/ui/button";
-import { Lock } from "lucide-react";
+import { Lock, Unlock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Index: React.FC = () => {
   const { toast } = useToast();
+  const [adminMode, setAdminMode] = useState(false);
   const [password, setPassword] = useState('');
   const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
   const ADMIN_PASSWORD = "libertines12";
   
-  const handleAdminAccess = () => {
-    setShowPasswordPrompt(true);
+  const handleAdminToggle = () => {
+    if (adminMode) {
+      setAdminMode(false);
+      toast({
+        title: "Modo administrador desativado"
+      });
+    } else {
+      setShowPasswordPrompt(true);
+    }
   };
   
   const handlePasswordSubmit = () => {
     if (password === ADMIN_PASSWORD) {
+      setAdminMode(true);
       setShowPasswordPrompt(false);
       setPassword('');
-      window.location.href = '/painel-controle';
+      toast({
+        title: "Modo administrador ativado"
+      });
     } else {
       toast({
         title: "Senha incorreta",
@@ -54,7 +65,7 @@ const Index: React.FC = () => {
       id: 'faq',
       title: 'Dúvidas Frequentes',
       component: <Faq />,
-      bg: 'bg-[#fef2e6]'
+      bg: 'bg-white'
     }
   ];
   
@@ -64,12 +75,24 @@ const Index: React.FC = () => {
       
       <main className="pb-16">
         {sections.map((section, index) => (
-          <section key={section.id} id={section.id} className={`section-container ${section.bg || 'bg-white'}`}>
-            <h2 className="section-title">{section.title}</h2>
-            {section.component}
+          <React.Fragment key={section.id}>
+            <section id={section.id} className={`section-container ${section.bg || 'bg-white'}`}>
+              <h2 className="section-title">{section.title}</h2>
+              {section.component}
+            </section>
             {index < sections.length - 1 && <div className="section-divider" />}
-          </section>
+          </React.Fragment>
         ))}
+        
+        {adminMode && (
+          <>
+            <div className="section-divider" />
+            <section id="admin" className="section-container">
+              <h2 className="section-title">Administração</h2>
+              <AdminPanel />
+            </section>
+          </>
+        )}
       </main>
       
       <footer className="bg-gray-100 py-6">
@@ -78,9 +101,9 @@ const Index: React.FC = () => {
             <p className="text-gray-600 text-sm">
               © {new Date().getFullYear()} La Badiane Bem Casados. Todos os direitos reservados.
             </p>
-            <Button variant="ghost" size="sm" className="text-gray-600" onClick={handleAdminAccess}>
-              <Lock className="h-4 w-4 mr-2" />
-              Painel de Controle
+            <Button variant="ghost" size="sm" className="text-gray-600" onClick={handleAdminToggle}>
+              {adminMode ? <Unlock className="h-4 w-4 mr-2" /> : <Lock className="h-4 w-4 mr-2" />}
+              {adminMode ? 'Sair do Modo Admin' : 'Área Admin'}
             </Button>
           </div>
         </div>
@@ -90,7 +113,7 @@ const Index: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-md shadow-lg max-w-md w-full">
             <h3 className="text-xl font-bold mb-4">Área Restrita</h3>
-            <p className="mb-4">Digite a senha para acessar o painel de controle.</p>
+            <p className="mb-4">Digite a senha para acessar o painel de administração.</p>
             <input 
               type="password" 
               value={password} 

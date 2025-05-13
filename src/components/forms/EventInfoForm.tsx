@@ -76,12 +76,10 @@ const EventInfoForm: React.FC<EventInfoFormProps> = ({
               initialFocus
               locale={ptBR}
               disabled={(date) => isBefore(date, new Date())}
-              className={cn("p-3 pointer-events-auto")}
             />
           </PopoverContent>
         </Popover>
         {errors.eventDate && <p className="text-red-500 text-sm mt-1">{errors.eventDate}</p>}
-        <p className="text-sm text-muted-foreground mt-1">Mediante disponibilidade na nossa agenda</p>
       </div>
       
       <div>

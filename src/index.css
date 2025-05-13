@@ -75,18 +75,6 @@
     .card-content {
       padding: 1rem;
     }
-    
-    /* Stack tabs vertically on mobile */
-    .mobile-tabs {
-      flex-direction: column !important;
-      gap: 0.5rem !important;
-      width: 100% !important;
-    }
-    
-    .mobile-tabs button {
-      width: 100% !important;
-      justify-content: center !important;
-    }
   }
 }
 
