@@ -1,3 +1,3 @@
 
-import '@testing-library/jest-dom/extend-expect';
-
+// Import the required testing library extensions
+import '@testing-library/jest-dom';
