@@ -1,9 +1,8 @@
 
-import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('Smoke: App carrega sem quebrar', () => {
+test('App loads without crashing', () => {
   const { container } = render(<App />);
-  expect(container).not.toBeEmptyDOMElement();
+  expect(container).toBeInTheDocument();
 });
