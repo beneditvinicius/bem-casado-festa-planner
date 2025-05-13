@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -43,7 +42,7 @@ const AdminPanel: React.FC = () => {
         id: Date.now().toString(),
         name: newFlavor.name,
         price: newFlavor.price,
-        isNew: newFlavor.isNew
+        isNew: true
       });
       setNewFlavor({ name: '', price: 0, isNew: false });
       toast({
@@ -66,7 +65,7 @@ const AdminPanel: React.FC = () => {
         name: newRibbon.name,
         code: newRibbon.code,
         color: newRibbon.color,
-        isNew: newRibbon.isNew
+        isNew: true
       });
       setNewRibbon({ name: '', code: '', color: '#000000', isNew: false });
       toast({
@@ -89,7 +88,7 @@ const AdminPanel: React.FC = () => {
         name: newPackage.name,
         code: newPackage.code,
         color: newPackage.color,
-        isNew: newPackage.isNew
+        isNew: true
       });
       setNewPackage({ name: '', code: '', color: '#000000', isNew: false });
       toast({

@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -6,6 +5,8 @@ export interface Flavor {
   id: string;
   name: string;
   price: number;
+  /** Marca itens recém-cadastrados como novidade */
+  isNew?: boolean;
 }
 
 export interface RibbonColor {
@@ -13,6 +14,8 @@ export interface RibbonColor {
   name: string;
   code: string;
   color: string;
+  /** Marca itens recém-cadastrados como novidade */
+  isNew?: boolean;
 }
 
 export interface PackageColor {
@@ -20,6 +23,8 @@ export interface PackageColor {
   name: string;
   code: string;
   color: string;
+  /** Marca itens recém-cadastrados como novidade */
+  isNew?: boolean;
 }
 
 export interface Combination {
