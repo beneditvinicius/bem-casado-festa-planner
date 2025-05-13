@@ -60,7 +60,7 @@ export const formatMultiline = (text: string): JSX.Element => {
       {text.split('\n').map((line, i) => (
         <React.Fragment key={i}>
           {line}
-          <br />
+          {i < text.split('\n').length - 1 && <br />}
         </React.Fragment>
       ))}
     </>
