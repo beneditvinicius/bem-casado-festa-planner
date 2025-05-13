@@ -20,7 +20,7 @@ const Header: React.FC = () => {
         <img 
           src="/lovable-uploads/f59e834a-effd-4659-a7d2-ac466e9aa740.png" 
           alt="La Badiane Bem Casados" 
-          className="h-[16.1px] sm:h-[18.4px] mb-3 sm:mb-4" 
+          className="h-[30px] sm:h-[35px] mb-3 sm:mb-4" 
         />
         
         <nav className="flex space-x-4 sm:space-x-6 text-sm sm:text-base">

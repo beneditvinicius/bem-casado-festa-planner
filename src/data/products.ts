@@ -101,10 +101,10 @@ export const useProductsStore = create<ProductsStore>()(
       ],
       packageColors: [
         { id: '1', name: 'Branco', code: 'B001', color: '#FFFFFF' },
-        { id: '2', name: 'Marfim', code: 'M001', color: '#FFFFF0' },
-        { id: '3', name: 'Pérola', code: 'P001', color: '#F5F5F5' },
-        { id: '4', name: 'Rose', code: 'R001', color: '#FFE4E1' },
-        { id: '5', name: 'Azul Claro', code: 'A001', color: '#ADD8E6' },
+        { id: '2', name: 'Champagne (Ivory)', code: '311', color: '#F1F0FB' },
+        { id: '3', name: 'Dourado (Dijon)', code: '1353', color: '#D4AF37' },
+        { id: '4', name: 'Rosé (Rose)', code: '344', color: '#FFDEE2' },
+        { id: '5', name: 'Azul Bebê (Lt. Blue)', code: '212', color: '#D3E4FD' },
       ],
       combinations: [
         {

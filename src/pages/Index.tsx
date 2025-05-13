@@ -52,7 +52,7 @@ const Index: React.FC = () => {
     }, 
     {
       id: 'order',
-      title: 'Faça seu orçamento detalhado',
+      title: 'Faça seu Orçamento Detalhado',
       component: <OrderForm />,
       bg: 'bg-[#fef2e6]'
     }, 
@@ -95,13 +95,13 @@ const Index: React.FC = () => {
         )}
       </main>
       
-      <footer className="bg-gray-100 py-6">
+      <footer className="bg-[#eb6824] py-6 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex justify-between items-center">
-            <p className="text-gray-600 text-sm">
+            <p className="text-white text-sm">
               © {new Date().getFullYear()} La Badiane Bem Casados. Todos os direitos reservados.
             </p>
-            <Button variant="ghost" size="sm" className="text-gray-600" onClick={handleAdminToggle}>
+            <Button variant="ghost" size="sm" className="text-white hover:bg-[#d25618]" onClick={handleAdminToggle}>
               {adminMode ? <Unlock className="h-4 w-4 mr-2" /> : <Lock className="h-4 w-4 mr-2" />}
               {adminMode ? 'Sair do Modo Admin' : 'Área Admin'}
             </Button>

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,7 @@ import EventInfoForm from './forms/EventInfoForm';
 import OrderDetailsForm from './forms/OrderDetailsForm';
 import { useOrderForm } from '@/hooks/useOrderForm';
 import { useIsMobile } from '@/hooks/use-mobile';
+
 const OrderForm: React.FC = () => {
   const {
     formData,
@@ -31,9 +33,9 @@ const OrderForm: React.FC = () => {
   const isMobile = useIsMobile();
   return <Card className="w-full" id="orcamento">
       <CardContent className="pt-6 card-content">
-        <p className="text-center text-lg sm:text-lg mb-4">Agora que já sabe qual será o seu orçamento, preencha seus dados para recebermos tudo prontinho no nosso WhatsApp para lançarmos seu pedido!</p>
+        <p className="text-center text-sm sm:text-base mb-4">Agora que já sabe qual será o seu orçamento, preencha seus dados para recebermos tudo prontinho no nosso WhatsApp para lançarmos seu pedido!</p>
         <p className="text-center text-sm text-muted-foreground mb-6">
-          Seus dados estão seguros! Usamos essas informações apenas para a criação do contrato.
+          Seus dados estão seguros! Usamos essas informações apenas para o lançamento no sistema.
         </p>
         
         <form onSubmit={handleSubmit} className="space-y-6">
