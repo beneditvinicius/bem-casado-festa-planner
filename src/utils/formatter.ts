@@ -51,3 +51,16 @@ export const formatCEP = (value: string): string => {
     return `${numbers.slice(0, 5)}-${numbers.slice(5, 8)}`;
   }
 };
+
+export const formatMultiline = (text: string): JSX.Element => {
+  return (
+    <>
+      {text.split('\n').map((line, i) => (
+        <React.Fragment key={i}>
+          {line}
+          <br />
+        </React.Fragment>
+      ))}
+    </>
+  );
+};

@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Info } from "lucide-react";
 import { useProductsStore, Combination } from '@/data/products';
 
 const Visualizer: React.FC = () => {
@@ -29,6 +31,9 @@ const Visualizer: React.FC = () => {
     }
   }, [selectedRibbonId, selectedPackageId, combinations]);
 
+  const selectedRibbon = ribbonColors.find(r => r.id === selectedRibbonId);
+  const selectedPackage = packageColors.find(p => p.id === selectedPackageId);
+
   return (
     <Card className="w-full">
       <CardContent className="pt-6">
@@ -51,7 +56,10 @@ const Visualizer: React.FC = () => {
                           className="w-4 h-4 rounded-full mr-2"
                           style={{ backgroundColor: color.color, border: color.color === '#FFFFFF' || color.color === '#F8F4E3' ? '1px solid #E2E8F0' : 'none' }}
                         />
-                        {color.name} - {color.code}
+                        {color.name} {color.code}
+                        {color.isNew && (
+                          <Badge className="ml-2 bg-[#eb6824]">Novidade</Badge>
+                        )}
                       </div>
                     </SelectItem>
                   ))}
@@ -76,7 +84,10 @@ const Visualizer: React.FC = () => {
                           className="w-4 h-4 rounded-full mr-2"
                           style={{ backgroundColor: color.color, border: color.color === '#FFFFFF' || color.color === '#F8F4E3' ? '1px solid #E2E8F0' : 'none' }}
                         />
-                        {color.name} - {color.code}
+                        {color.name} {color.code}
+                        {color.isNew && (
+                          <Badge className="ml-2 bg-[#eb6824]">Novidade</Badge>
+                        )}
                       </div>
                     </SelectItem>
                   ))}
@@ -106,10 +117,13 @@ const Visualizer: React.FC = () => {
                       style={{ backgroundColor: ribbonColors.find(c => c.id === selectedRibbonId)?.color || '#000000' }}
                     ></div>
                   </div>
-                  <p className="mt-4">
-                    Esta combinação de cores não possui uma imagem disponível no momento.<br/>
-                    A visualização acima é uma representação simplificada.
-                  </p>
+                  <div className="flex items-start mt-4 justify-center">
+                    <Info className="h-5 w-5 text-amber-800 mr-2 flex-shrink-0 mt-0.5" />
+                    <p className="text-left text-amber-800">
+                      Esta combinação de cores não possui uma imagem disponível no momento.<br/>
+                      Acesse o painel administrativo para adicionar mais imagens de combinações.
+                    </p>
+                  </div>
                 </div>
               )}
             </div>

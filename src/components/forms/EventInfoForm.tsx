@@ -26,6 +26,23 @@ const EventInfoForm: React.FC<EventInfoFormProps> = ({
   handleInputChange,
   handleDateChange,
 }) => {
+  // Add a ref to control popover state
+  const popoverRef = React.useRef<HTMLButtonElement>(null);
+  
+  const handleDateSelect = (date: Date | undefined) => {
+    handleDateChange(date);
+    // Close popover after selection
+    setTimeout(() => {
+      if (popoverRef.current) {
+        const popoverInstance = document.querySelector('[data-state="open"]');
+        if (popoverInstance) {
+          // This triggers the close action in the Radix UI popover
+          document.body.click();
+        }
+      }
+    }, 100);
+  };
+  
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-medium">Dados do Evento</h3>
@@ -35,6 +52,7 @@ const EventInfoForm: React.FC<EventInfoFormProps> = ({
         <Popover>
           <PopoverTrigger asChild>
             <Button
+              ref={popoverRef}
               variant="outline"
               className={cn(
                 "w-full justify-start text-left h-12",
@@ -54,7 +72,7 @@ const EventInfoForm: React.FC<EventInfoFormProps> = ({
             <Calendar
               mode="single"
               selected={formData.eventDate}
-              onSelect={handleDateChange}
+              onSelect={handleDateSelect}
               initialFocus
               locale={ptBR}
               disabled={(date) => isBefore(date, new Date())}
@@ -65,7 +83,7 @@ const EventInfoForm: React.FC<EventInfoFormProps> = ({
       </div>
       
       <div>
-        <Label htmlFor="eventLocation" className="text-base">Local do Evento</Label>
+        <Label htmlFor="eventLocation" className="text-base">Local do Evento / Cidade</Label>
         <Input
           id="eventLocation"
           name="eventLocation"

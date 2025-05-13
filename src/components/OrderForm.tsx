@@ -15,10 +15,15 @@ const OrderForm: React.FC = () => {
     flavors,
     ribbonColors,
     packageColors,
+    flavorSelections,
     isLoadingCep,
     handleInputChange,
     handleSelectChange,
     handleDateChange,
+    handleAddFlavor,
+    handleRemoveFlavor,
+    handleFlavorChange,
+    handleFlavorQuantityChange,
     handleSubmit,
     handleReset,
     calculateTotal,
@@ -26,8 +31,15 @@ const OrderForm: React.FC = () => {
   } = useOrderForm();
 
   return (
-    <Card className="w-full">
+    <Card className="w-full" id="orcamento">
       <CardContent className="pt-6">
+        <p className="text-center text-lg mb-4">
+          Agora que já sabe qual será o seu orçamento, preencha seus dados para recebermos tudo prontinho no nosso WhatsApp e iniciarmos o seu contrato.
+        </p>
+        <p className="text-center text-sm text-muted-foreground mb-6">
+          Seus dados estão seguros! Usamos essas informações apenas para a criação do contrato.
+        </p>
+        
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Informações Pessoais */}
@@ -55,8 +67,13 @@ const OrderForm: React.FC = () => {
                 flavors={flavors}
                 ribbonColors={ribbonColors}
                 packageColors={packageColors}
+                flavorSelections={flavorSelections}
                 handleInputChange={handleInputChange}
                 handleSelectChange={handleSelectChange}
+                handleAddFlavor={handleAddFlavor}
+                handleRemoveFlavor={handleRemoveFlavor}
+                handleFlavorChange={handleFlavorChange}
+                handleFlavorQuantityChange={handleFlavorQuantityChange}
                 calculateTotal={calculateTotal}
               />
             </div>
@@ -73,7 +90,7 @@ const OrderForm: React.FC = () => {
             </Button>
             <Button 
               type="submit"
-              className="h-12 bg-bem hover:bg-bem-dark text-white"
+              className="h-12 bg-[#eb6824] hover:bg-[#d25618] text-white"
             >
               <MessageSquare className="mr-2 h-4 w-4" />
               Enviar Orçamento via WhatsApp

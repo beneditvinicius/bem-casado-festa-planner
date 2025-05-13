@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -5,7 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useToast } from "@/components/ui/use-toast";
+import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { MessageSquare, Upload, Info } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import { Flavor, RibbonColor, PackageColor, Combination, useProductsStore } from '@/data/products';
 
 const AdminPanel: React.FC = () => {
@@ -26,11 +30,12 @@ const AdminPanel: React.FC = () => {
   const removeCombination = useProductsStore((state) => state.removeCombination);
   const setWhatsappNumber = useProductsStore((state) => state.setWhatsappNumber);
   
-  const [newFlavor, setNewFlavor] = useState({ name: '', price: 0 });
-  const [newRibbon, setNewRibbon] = useState({ name: '', code: '', color: '#000000' });
-  const [newPackage, setNewPackage] = useState({ name: '', code: '', color: '#000000' });
+  const [newFlavor, setNewFlavor] = useState({ name: '', price: 0, isNew: false });
+  const [newRibbon, setNewRibbon] = useState({ name: '', code: '', color: '#000000', isNew: false });
+  const [newPackage, setNewPackage] = useState({ name: '', code: '', color: '#000000', isNew: false });
   const [newCombination, setNewCombination] = useState({ ribbonId: '', packageId: '', imageUrl: '' });
-  const [newWhatsappNumber, setNewWhatsappNumber] = useState(whatsappNumber);
+  const [newWhatsappNumber, setNewWhatsappNumber] = useState(whatsappNumber || '5566999580591');
+  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
 
   const handleAddFlavor = () => {
     if (newFlavor.name && newFlavor.price > 0) {
@@ -38,11 +43,18 @@ const AdminPanel: React.FC = () => {
         id: Date.now().toString(),
         name: newFlavor.name,
         price: newFlavor.price,
+        isNew: newFlavor.isNew
       });
-      setNewFlavor({ name: '', price: 0 });
+      setNewFlavor({ name: '', price: 0, isNew: false });
       toast({
         title: "Sucesso",
         description: "Sabor adicionado com sucesso.",
+      });
+    } else {
+      toast({
+        title: "Erro",
+        description: "Preencha todos os campos corretamente.",
+        variant: "destructive"
       });
     }
   };
@@ -54,8 +66,9 @@ const AdminPanel: React.FC = () => {
         name: newRibbon.name,
         code: newRibbon.code,
         color: newRibbon.color,
+        isNew: newRibbon.isNew
       });
-      setNewRibbon({ name: '', code: '', color: '#000000' });
+      setNewRibbon({ name: '', code: '', color: '#000000', isNew: false });
       toast({
         title: "Sucesso",
         description: "Cor de fita adicionada com sucesso.",
@@ -76,8 +89,9 @@ const AdminPanel: React.FC = () => {
         name: newPackage.name,
         code: newPackage.code,
         color: newPackage.color,
+        isNew: newPackage.isNew
       });
-      setNewPackage({ name: '', code: '', color: '#000000' });
+      setNewPackage({ name: '', code: '', color: '#000000', isNew: false });
       toast({
         title: "Sucesso",
         description: "Cor de embalagem adicionada com sucesso.",
@@ -116,15 +130,46 @@ const AdminPanel: React.FC = () => {
         title: "Sucesso",
         description: "Combinação adicionada com sucesso.",
       });
+    } else {
+      toast({
+        title: "Erro",
+        description: "Preencha todos os campos.",
+        variant: "destructive"
+      });
     }
   };
 
   const handleUpdateWhatsapp = () => {
+    if (!newWhatsappNumber) {
+      toast({
+        title: "Erro",
+        description: "O número de WhatsApp não pode estar vazio.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setWhatsappNumber(newWhatsappNumber);
     toast({
       title: "Sucesso",
       description: "Número de WhatsApp atualizado com sucesso.",
     });
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const filesArray = Array.from(e.target.files);
+      setUploadedImages(prev => [...prev, ...filesArray]);
+      
+      toast({
+        title: "Imagens carregadas",
+        description: `${filesArray.length} imagens adicionadas para upload.`,
+      });
+    }
+  };
+
+  const removeUploadedImage = (index: number) => {
+    setUploadedImages(prev => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -144,7 +189,7 @@ const AdminPanel: React.FC = () => {
           
           {/* Flavors Tab */}
           <TabsContent value="flavors" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
               <div>
                 <Label htmlFor="flavorName">Nome do Sabor</Label>
                 <Input 
@@ -160,9 +205,17 @@ const AdminPanel: React.FC = () => {
                   type="number" 
                   step="0.01" 
                   min="0"
-                  value={newFlavor.price} 
-                  onChange={(e) => setNewFlavor({ ...newFlavor, price: parseFloat(e.target.value) })} 
+                  value={newFlavor.price || ''} 
+                  onChange={(e) => setNewFlavor({ ...newFlavor, price: parseFloat(e.target.value) || 0 })} 
                 />
+              </div>
+              <div className="flex items-center">
+                <Switch 
+                  id="isNewFlavor" 
+                  checked={newFlavor.isNew}
+                  onCheckedChange={(checked) => setNewFlavor({ ...newFlavor, isNew: checked })}
+                />
+                <Label htmlFor="isNewFlavor" className="ml-2">Marcar como "Novidade"</Label>
               </div>
               <Button onClick={handleAddFlavor}>Adicionar Sabor</Button>
             </div>
@@ -172,6 +225,7 @@ const AdminPanel: React.FC = () => {
                 <TableRow>
                   <TableHead>Nome</TableHead>
                   <TableHead>Preço</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead className="w-[100px]">Ações</TableHead>
                 </TableRow>
               </TableHeader>
@@ -184,6 +238,9 @@ const AdminPanel: React.FC = () => {
                         style: 'currency', 
                         currency: 'BRL' 
                       }).format(flavor.price)}
+                    </TableCell>
+                    <TableCell>
+                      {flavor.isNew && <Badge className="bg-[#eb6824]">Novidade</Badge>}
                     </TableCell>
                     <TableCell>
                       <Button 
@@ -202,7 +259,7 @@ const AdminPanel: React.FC = () => {
           
           {/* Ribbons Tab */}
           <TabsContent value="ribbons" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
               <div>
                 <Label htmlFor="ribbonName">Nome da Cor</Label>
                 <Input 
@@ -233,6 +290,14 @@ const AdminPanel: React.FC = () => {
                   />
                 </div>
               </div>
+              <div className="flex items-center">
+                <Switch 
+                  id="isNewRibbon" 
+                  checked={newRibbon.isNew}
+                  onCheckedChange={(checked) => setNewRibbon({ ...newRibbon, isNew: checked })}
+                />
+                <Label htmlFor="isNewRibbon" className="ml-2">Marcar como "Novidade"</Label>
+              </div>
               <Button onClick={handleAddRibbon}>Adicionar Cor</Button>
             </div>
             
@@ -242,6 +307,7 @@ const AdminPanel: React.FC = () => {
                   <TableHead>Nome</TableHead>
                   <TableHead>Código</TableHead>
                   <TableHead>Cor</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead className="w-[100px]">Ações</TableHead>
                 </TableRow>
               </TableHeader>
@@ -260,6 +326,9 @@ const AdminPanel: React.FC = () => {
                       </div>
                     </TableCell>
                     <TableCell>
+                      {ribbon.isNew && <Badge className="bg-[#eb6824]">Novidade</Badge>}
+                    </TableCell>
+                    <TableCell>
                       <Button 
                         variant="destructive" 
                         size="sm"
@@ -276,7 +345,7 @@ const AdminPanel: React.FC = () => {
           
           {/* Packages Tab */}
           <TabsContent value="packages" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
               <div>
                 <Label htmlFor="packageName">Nome da Cor</Label>
                 <Input 
@@ -307,6 +376,14 @@ const AdminPanel: React.FC = () => {
                   />
                 </div>
               </div>
+              <div className="flex items-center">
+                <Switch 
+                  id="isNewPackage" 
+                  checked={newPackage.isNew}
+                  onCheckedChange={(checked) => setNewPackage({ ...newPackage, isNew: checked })}
+                />
+                <Label htmlFor="isNewPackage" className="ml-2">Marcar como "Novidade"</Label>
+              </div>
               <Button onClick={handleAddPackage}>Adicionar Cor</Button>
             </div>
             
@@ -316,6 +393,7 @@ const AdminPanel: React.FC = () => {
                   <TableHead>Nome</TableHead>
                   <TableHead>Código</TableHead>
                   <TableHead>Cor</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead className="w-[100px]">Ações</TableHead>
                 </TableRow>
               </TableHeader>
@@ -334,6 +412,9 @@ const AdminPanel: React.FC = () => {
                       </div>
                     </TableCell>
                     <TableCell>
+                      {pkg.isNew && <Badge className="bg-[#eb6824]">Novidade</Badge>}
+                    </TableCell>
+                    <TableCell>
                       <Button 
                         variant="destructive" 
                         size="sm"
@@ -350,47 +431,123 @@ const AdminPanel: React.FC = () => {
           
           {/* Combinations Tab */}
           <TabsContent value="combinations" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-              <div>
-                <Label htmlFor="comboRibbon">Fita</Label>
-                <select
-                  id="comboRibbon"
-                  className="w-full p-2 border rounded"
-                  value={newCombination.ribbonId}
-                  onChange={(e) => setNewCombination({ ...newCombination, ribbonId: e.target.value })}
-                >
-                  <option value="">Selecione uma fita</option>
-                  {ribbonColors.map((ribbon) => (
-                    <option key={ribbon.id} value={ribbon.id}>{ribbon.name}</option>
-                  ))}
-                </select>
+            <div className="bg-amber-50 p-4 rounded-md border border-amber-200 mb-4">
+              <div className="flex items-start mb-2">
+                <Info className="h-5 w-5 text-amber-800 mr-2 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="font-medium text-amber-800">Upload de Imagens em Massa</h3>
+                  <p className="text-sm text-amber-800">
+                    Para melhor organização, nomeie suas imagens seguindo o padrão: 
+                    <span className="font-medium"> fita_[nome]_embalagem_[nome].jpg</span> 
+                    (ex: fita_dourado_embalagem_rose.jpg)
+                  </p>
+                </div>
               </div>
-              <div>
-                <Label htmlFor="comboPackage">Embalagem</Label>
-                <select
-                  id="comboPackage"
-                  className="w-full p-2 border rounded"
-                  value={newCombination.packageId}
-                  onChange={(e) => setNewCombination({ ...newCombination, packageId: e.target.value })}
-                >
-                  <option value="">Selecione uma embalagem</option>
-                  {packageColors.map((pkg) => (
-                    <option key={pkg.id} value={pkg.id}>{pkg.name}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <Label htmlFor="imageUrl">URL da Imagem</Label>
-                <Input 
-                  id="imageUrl" 
-                  value={newCombination.imageUrl} 
-                  onChange={(e) => setNewCombination({ ...newCombination, imageUrl: e.target.value })} 
+            </div>
+
+            <div className="grid grid-cols-1 gap-4">
+              <div className="border-dashed border-2 rounded-md p-6 flex flex-col items-center justify-center">
+                <Upload className="h-10 w-10 text-gray-400 mb-2" />
+                <p className="text-center text-sm text-gray-500 mb-4">
+                  Arraste e solte suas imagens aqui, ou clique para selecionar
+                </p>
+                <input
+                  type="file"
+                  id="image-upload"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={handleImageUpload}
                 />
+                <label htmlFor="image-upload">
+                  <Button variant="default" className="cursor-pointer">
+                    Selecionar Imagens
+                  </Button>
+                </label>
               </div>
-              <Button onClick={handleAddCombination}>Adicionar Combinação</Button>
+
+              {uploadedImages.length > 0 && (
+                <div className="mt-4">
+                  <h4 className="font-medium mb-2">Imagens para upload ({uploadedImages.length})</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {uploadedImages.map((image, index) => (
+                      <div key={index} className="relative group">
+                        <div className="aspect-square bg-gray-100 rounded-md overflow-hidden">
+                          <img
+                            src={URL.createObjectURL(image)}
+                            alt={`Upload ${index + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
+                          <Button
+                            variant="destructive"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => removeUploadedImage(index)}
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </Button>
+                        </div>
+                        <p className="text-xs mt-1 truncate">{image.name}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-4 flex justify-end">
+                    <Button className="bg-[#eb6824] hover:bg-[#d25618]">
+                      Carregar {uploadedImages.length} imagens
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-8">
+              <h4 className="font-medium mb-4">Adicionar Combinação Manual</h4>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                <div>
+                  <Label htmlFor="comboRibbon">Fita</Label>
+                  <select
+                    id="comboRibbon"
+                    className="w-full p-2 border rounded"
+                    value={newCombination.ribbonId}
+                    onChange={(e) => setNewCombination({ ...newCombination, ribbonId: e.target.value })}
+                  >
+                    <option value="">Selecione uma fita</option>
+                    {ribbonColors.map((ribbon) => (
+                      <option key={ribbon.id} value={ribbon.id}>{ribbon.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <Label htmlFor="comboPackage">Embalagem</Label>
+                  <select
+                    id="comboPackage"
+                    className="w-full p-2 border rounded"
+                    value={newCombination.packageId}
+                    onChange={(e) => setNewCombination({ ...newCombination, packageId: e.target.value })}
+                  >
+                    <option value="">Selecione uma embalagem</option>
+                    {packageColors.map((pkg) => (
+                      <option key={pkg.id} value={pkg.id}>{pkg.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <Label htmlFor="imageUrl">URL da Imagem</Label>
+                  <Input 
+                    id="imageUrl" 
+                    value={newCombination.imageUrl} 
+                    onChange={(e) => setNewCombination({ ...newCombination, imageUrl: e.target.value })} 
+                  />
+                </div>
+                <Button onClick={handleAddCombination}>Adicionar Combinação</Button>
+              </div>
             </div>
             
-            <Table>
+            <Table className="mt-4">
               <TableHeader>
                 <TableRow>
                   <TableHead>Fita</TableHead>
@@ -441,14 +598,22 @@ const AdminPanel: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
               <div>
                 <Label htmlFor="whatsappNumber">Número de WhatsApp (com código do país)</Label>
-                <Input 
-                  id="whatsappNumber" 
-                  value={newWhatsappNumber} 
-                  onChange={(e) => setNewWhatsappNumber(e.target.value)}
-                  placeholder="Ex: 5511999999999"
-                />
+                <div className="flex items-center">
+                  <MessageSquare className="mr-2 text-[#eb6824]" />
+                  <Input 
+                    id="whatsappNumber" 
+                    value={newWhatsappNumber} 
+                    onChange={(e) => setNewWhatsappNumber(e.target.value)}
+                    placeholder="Ex: 5511999999999"
+                  />
+                </div>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Atualmente configurado: {newWhatsappNumber || "Não configurado"}
+                </p>
               </div>
-              <Button onClick={handleUpdateWhatsapp}>Atualizar Número</Button>
+              <Button onClick={handleUpdateWhatsapp} className="bg-[#eb6824] hover:bg-[#d25618]">
+                Atualizar Número
+              </Button>
             </div>
           </TabsContent>
         </Tabs>

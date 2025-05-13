@@ -21,21 +21,27 @@ const Header: React.FC = () => {
         <nav className="flex space-x-6">
           <button 
             onClick={() => scrollToSection('calculator')}
-            className="text-gray-600 hover:text-bem transition-colors"
+            className="text-gray-600 hover:text-[#eb6824] transition-colors"
           >
             Calculadora
           </button>
           <button 
             onClick={() => scrollToSection('order')}
-            className="text-gray-600 hover:text-bem transition-colors"
+            className="text-gray-600 hover:text-[#eb6824] transition-colors"
           >
             Orçamento
           </button>
           <button 
             onClick={() => scrollToSection('visualizer')}
-            className="text-gray-600 hover:text-bem transition-colors"
+            className="text-gray-600 hover:text-[#eb6824] transition-colors"
           >
             Visualizador
+          </button>
+          <button 
+            onClick={() => scrollToSection('faq')}
+            className="text-gray-600 hover:text-[#eb6824] transition-colors"
+          >
+            Dúvidas
           </button>
         </nav>
       </div>

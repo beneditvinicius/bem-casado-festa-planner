@@ -4,6 +4,7 @@ import Header from '@/components/Header';
 import Calculator from '@/components/Calculator';
 import OrderForm from '@/components/OrderForm';
 import Visualizer from '@/components/Visualizer';
+import Faq from '@/components/Faq';
 import AdminPanel from '@/components/AdminPanel';
 import { Button } from "@/components/ui/button";
 import { Lock, Unlock } from "lucide-react";
@@ -15,7 +16,7 @@ const Index: React.FC = () => {
   const [password, setPassword] = useState('');
   const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
   
-  const ADMIN_PASSWORD = "admin123"; // Em um app real, isso seria armazenado de forma segura
+  const ADMIN_PASSWORD = "libertines12";
 
   const handleAdminToggle = () => {
     if (adminMode) {
@@ -47,19 +48,26 @@ const Index: React.FC = () => {
   const sections = [
     {
       id: 'calculator',
-      title: 'Calcule seu Orçamento de Bem-Casados',
+      title: 'Calculadora de Bem-Casados',
       component: <Calculator />,
     },
     {
       id: 'order',
       title: 'Solicite seu Orçamento Detalhado',
       component: <OrderForm />,
+      bg: 'bg-[#fef2e6]'
     },
     {
       id: 'visualizer',
       title: 'Visualize seu Bem-Casado',
       component: <Visualizer />,
     },
+    {
+      id: 'faq',
+      title: 'Dúvidas Frequentes',
+      component: <Faq />,
+      bg: 'bg-white'
+    }
   ];
 
   return (
@@ -69,7 +77,12 @@ const Index: React.FC = () => {
       <main className="pb-16">
         {sections.map((section, index) => (
           <React.Fragment key={section.id}>
-            <section id={section.id} className="section-container">
+            <section id={section.id} className={`section-container ${section.bg || 'bg-white'}`}>
+              {section.id === 'calculator' && (
+                <p className="text-center text-xl max-w-3xl mx-auto mb-6">
+                  Apresentamos a maravilhosa calculadora de bem-casados! Com essa ferramenta, você pode calcular o valor do seu pedido, fazer seu orçamento detalhado que vai direto para nosso WhatsApp e pode simular a cor do seu bem-casado para ter certeza de que sua lembrança ficará do jeitinho que sonhou!
+                </p>
+              )}
               <h2 className="section-title">{section.title}</h2>
               {section.component}
             </section>
