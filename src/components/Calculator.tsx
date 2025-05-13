@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { HelpCircle, Plus, Minus, PlusCircle, Trash2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { formatCurrency, formatQuantity } from '@/utils/formatter';
+import { formatCurrency, formatQuantity } from '@/utils/formatter.tsx';
 import { Flavor, useProductsStore } from '@/data/products';
 
 interface FlavorSelection {

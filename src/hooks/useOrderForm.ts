@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { isBefore } from "date-fns";
-import { formatCPF, formatPhone, formatCEP } from '@/utils/formatter';
+import { formatCPF, formatPhone, formatCEP } from '@/utils/formatter.tsx';
 import { useProductsStore, Flavor, RibbonColor, PackageColor } from '@/data/products';
 import { useToast } from "@/hooks/use-toast";
 
