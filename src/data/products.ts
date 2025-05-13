@@ -1,3 +1,4 @@
+
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -59,43 +60,67 @@ export const useProductsStore = create<ProductsStore>()(
   persist(
     (set) => ({
       flavors: [
-        { id: '1', name: 'Tradicional', price: 4.5 },
-        { id: '2', name: 'Doce de Leite', price: 4.8, isNew: true },
-        { id: '3', name: 'Limão', price: 4.8 },
-        { id: '4', name: 'Nozes', price: 5.2 },
-        { id: '5', name: 'Coco', price: 4.8 },
-        { id: '6', name: 'Pistache', price: 5.5, isNew: true },
+        { id: '1', name: 'Tradicional', price: 3.95 },
+        { id: '2', name: 'Brigadeiro Branco', price: 3.95 },
+        { id: '3', name: 'Limão Siciliano', price: 4.50 },
+        { id: '4', name: 'Frutas Vermelhas', price: 4.78 },
+        { id: '5', name: 'Doce de Leite com Coco', price: 4.78 },
+        { id: '6', name: '4 Leites', price: 4.90 },
+        { id: '7', name: 'Abacaxi com Coco', price: 4.90 },
+        { id: '8', name: 'Ninho com Nutella', price: 5.00 },
+        { id: '9', name: 'Pistache', price: 6.00 },
+        { id: '10', name: 'Bem Casado de Brownie', price: 5.50 },
+        { id: '11', name: 'Bem Casado de Pão de mel', price: 6.00 },
       ],
       ribbonColors: [
-        { id: '1', name: 'Dourado', code: 'D001', color: '#D4AF37' },
-        { id: '2', name: 'Prata', code: 'P001', color: '#C0C0C0' },
-        { id: '3', name: 'Rose Gold', code: 'R001', color: '#B76E79', isNew: true },
-        { id: '4', name: 'Vermelho', code: 'V001', color: '#FF0000' },
-        { id: '5', name: 'Azul Royal', code: 'A001', color: '#4169E1' },
-        { id: '6', name: 'Verde Esmeralda', code: 'V002', color: '#50C878' },
+        { id: '1', name: 'Champagne (Ivory)', code: '311', color: '#F1F0FB' },
+        { id: '2', name: 'Bege (Taupe)', code: '236', color: '#F1F0FB' },
+        { id: '3', name: 'Dourado (Dijon)', code: '1353', color: '#D4AF37' },
+        { id: '4', name: 'Ouro (Sable)', code: '228', color: '#FEF7CD' },
+        { id: '5', name: 'Amarelo Canário (Lt. Lemon)', code: '242', color: '#FEF7CD' },
+        { id: '6', name: 'Laranja (Orange)', code: '066', color: '#F97316' },
+        { id: '7', name: 'Vinho (Burgundy)', code: '389', color: '#ea384c' },
+        { id: '8', name: 'Marsala', code: '1355', color: '#ea384c' },
+        { id: '9', name: 'Fúcsia (Wine)', code: '1240', color: '#D946EF' },
+        { id: '10', name: 'Rosé (Rose)', code: '344', color: '#FFDEE2' },
+        { id: '11', name: 'Coral (Lt. Coral)', code: '1393', color: '#FDE1D3' },
+        { id: '12', name: 'Pink (Fuchsia)', code: '303', color: '#D946EF' },
+        { id: '13', name: 'Rosa Bebê (Lt. Pink)', code: '310', color: '#FFDEE2' },
+        { id: '14', name: 'Lilás Lavanda (Lavander Lilac)', code: '356', color: '#E5DEFF' },
+        { id: '15', name: 'Azul Marinho (Navy)', code: '215', color: '#1EAEDB' },
+        { id: '16', name: 'Azul Royal (Royal)', code: '214', color: '#1EAEDB' },
+        { id: '17', name: 'Jade (Turquoise)', code: '1102', color: '#33C3F0' },
+        { id: '18', name: 'Azul Celeste (Copen Blue)', code: '246', color: '#33C3F0' },
+        { id: '19', name: 'Azul Bebê (Lt. Blue)', code: '212', color: '#D3E4FD' },
+        { id: '20', name: 'Verde Militar (Forest Green)', code: '249', color: '#F2FCE2' },
+        { id: '21', name: 'Verde Menta (Mint)', code: '232', color: '#F2FCE2' },
+        { id: '22', name: 'Prata (Silver)', code: '084', color: '#C0C0C0' },
+        { id: '23', name: 'Marrom (Brown)', code: '391', color: '#8A4B38' },
+        { id: '24', name: 'Terra (Rust)', code: '1383', color: '#F97316' },
+        { id: '25', name: 'Preto (Black)', code: '219', color: '#000000' },
       ],
       packageColors: [
         { id: '1', name: 'Branco', code: 'B001', color: '#FFFFFF' },
         { id: '2', name: 'Marfim', code: 'M001', color: '#FFFFF0' },
         { id: '3', name: 'Pérola', code: 'P001', color: '#F5F5F5' },
-        { id: '4', name: 'Rose', code: 'R001', color: '#FFE4E1', isNew: true },
+        { id: '4', name: 'Rose', code: 'R001', color: '#FFE4E1' },
         { id: '5', name: 'Azul Claro', code: 'A001', color: '#ADD8E6' },
       ],
       combinations: [
         {
-          ribbonId: '1', // Dourado
+          ribbonId: '1', // Champagne (Ivory)
+          packageId: '1', // Branco
+          imageUrl: 'https://via.placeholder.com/300/F1F0FB/FFFFFF?text=Champagne+Branco',
+        },
+        {
+          ribbonId: '3', // Dourado (Dijon)
           packageId: '1', // Branco
           imageUrl: 'https://via.placeholder.com/300/D4AF37/FFFFFF?text=Dourado+Branco',
         },
         {
-          ribbonId: '2', // Prata
-          packageId: '1', // Branco
-          imageUrl: 'https://via.placeholder.com/300/C0C0C0/FFFFFF?text=Prata+Branco',
-        },
-        {
-          ribbonId: '3', // Rose Gold
+          ribbonId: '10', // Rosé (Rose)
           packageId: '4', // Rose
-          imageUrl: 'https://via.placeholder.com/300/B76E79/FFE4E1?text=Rose+Gold+Rose',
+          imageUrl: 'https://via.placeholder.com/300/FFDEE2/FFE4E1?text=Rose+Rose',
         },
       ],
       whatsappNumber: '5566999580591',
