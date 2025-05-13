@@ -47,15 +47,34 @@
   }
 
   .section-container {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 py-16;
+    @apply max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16;
   }
   
   .section-title {
-    @apply text-3xl md:text-4xl font-bold mb-10 text-gray-800 text-center;
+    @apply text-xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-10 text-gray-800 text-center;
   }
   
   .section-divider {
-    @apply w-full h-0.5 bg-gray-100 my-16;
+    @apply w-full h-0.5 bg-gray-100 my-12 sm:my-16;
+  }
+  
+  /* Mobile typography adjustments */
+  @media (max-width: 640px) {
+    h2, .h2 {
+      font-size: 20px;
+    }
+    
+    p, label, .body-text {
+      font-size: 14px;
+    }
+    
+    button, .btn-text {
+      font-size: 16px;
+    }
+    
+    .card-content {
+      padding: 1rem;
+    }
   }
 }
 
@@ -92,4 +111,19 @@ input:focus-visible,
 select:focus-visible, 
 [role="button"]:focus-visible {
   @apply outline-2 outline-offset-2 outline-bem;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 640px) {
+  .mobile-full-width {
+    width: 100%;
+  }
+  
+  .mobile-stack {
+    flex-direction: column;
+  }
+  
+  .mobile-gap-2 {
+    gap: 0.5rem;
+  }
 }
