@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { useProductsStore } from '@/data/products';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -7,6 +7,7 @@ import ColorSelector from '@/components/visualizer/ColorSelector';
 import VisualizationArea from '@/components/visualizer/VisualizationArea';
 import DebugInfo from '@/components/visualizer/DebugInfo';
 import Disclaimer from '@/components/visualizer/Disclaimer';
+import { useImageExistence } from '@/hooks/useImageExistence';
 
 const Visualizer: React.FC = () => {
   const ribbonColors = useProductsStore(state => state.ribbonColors);
@@ -25,6 +26,26 @@ const Visualizer: React.FC = () => {
   const fallbackCombinationImage = combinations.find(
     c => c.ribbonId === selectedRibbonId && c.packageId === selectedPackageId
   )?.imageUrl || '';
+
+  // Define image paths
+  const ribbonImagePath = selectedRibbon?.code ? `/lovable-uploads/fita_${selectedRibbon.code.toLowerCase()}.png` : '';
+  const packageImagePath = selectedPackage?.code ? `/lovable-uploads/embalagem_${selectedPackage.code.toLowerCase()}.png` : '';
+  
+  // Use custom hooks for image existence checking
+  const { imageExists: ribbonImageExists, checkImage: checkRibbonImage } = useImageExistence();
+  const { imageExists: packageImageExists, checkImage: checkPackageImage } = useImageExistence();
+  
+  useEffect(() => {
+    // Check if ribbon image exists
+    if (selectedRibbon?.code) {
+      checkRibbonImage(ribbonImagePath);
+    }
+    
+    // Check if package image exists
+    if (selectedPackage?.code) {
+      checkPackageImage(packageImagePath);
+    }
+  }, [selectedRibbonId, selectedPackageId, ribbonImagePath, packageImagePath]);
   
   return (
     <Card className="w-full">
@@ -64,10 +85,10 @@ const Visualizer: React.FC = () => {
               ribbonCode={selectedRibbon?.code}
               packageId={selectedPackageId}
               packageCode={selectedPackage?.code}
-              ribbonImagePath={selectedRibbon?.code ? `/lovable-uploads/fita_${selectedRibbon.code.toLowerCase()}.png` : ''}
-              ribbonImageExists={false}
-              packageImagePath={selectedPackage?.code ? `/lovable-uploads/embalagem_${selectedPackage.code.toLowerCase()}.png` : ''}
-              packageImageExists={false}
+              ribbonImagePath={ribbonImagePath}
+              ribbonImageExists={ribbonImageExists}
+              packageImagePath={packageImagePath}
+              packageImageExists={packageImageExists}
               fallbackCombinationImage={fallbackCombinationImage}
             />
           </div>

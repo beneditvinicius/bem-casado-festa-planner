@@ -7,11 +7,13 @@ interface FallbackImageViewProps {
 
 const FallbackImageView: React.FC<FallbackImageViewProps> = ({ imageUrl }) => {
   return (
-    <img 
-      src={imageUrl} 
-      alt="Visualização da combinação" 
-      className="w-full h-full object-contain" 
-    />
+    <div className="flex items-center justify-center w-full h-full bg-white">
+      <img 
+        src={imageUrl} 
+        alt="Visualização da combinação" 
+        className="max-w-full max-h-full object-contain" 
+      />
+    </div>
   );
 };
 

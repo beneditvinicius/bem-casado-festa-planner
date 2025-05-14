@@ -1,3 +1,4 @@
+
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -128,19 +129,34 @@ export const useProductsStore = create<ProductsStore>()(
       ],
       combinations: [
         {
+          ribbonId: '6', // Laranja (Orange)
+          packageId: '25', // Branco
+          imageUrl: '/lovable-uploads/0e9b394e-8160-4bca-849e-48cbe7bd5e18.png',
+        },
+        {
           ribbonId: '1', // Champagne (Ivory)
-          packageId: '1', // Branco
-          imageUrl: 'https://via.placeholder.com/300/F1F0FB/FFFFFF?text=Champagne+Branco',
+          packageId: '25', // Branco
+          imageUrl: '/lovable-uploads/3bf7df98-0a65-4db4-8861-56d7a1669089.png',
         },
         {
-          ribbonId: '3', // Dourado (Dijon)
-          packageId: '1', // Branco
-          imageUrl: 'https://via.placeholder.com/300/D4AF37/FFFFFF?text=Dourado+Branco',
+          ribbonId: '2', // Bege (Taupe)
+          packageId: '25', // Branco
+          imageUrl: '/lovable-uploads/11f3627e-7d17-432e-b38a-973b16385184.png',
         },
         {
-          ribbonId: '10', // Rosé (Rose)
-          packageId: '4', // Rose
-          imageUrl: 'https://via.placeholder.com/300/FFDEE2/FFE4E1?text=Rose+Rose',
+          ribbonId: '6', // Laranja (Orange)
+          packageId: '6', // Laranja
+          imageUrl: '/lovable-uploads/ce06abcb-69f9-486a-9af9-263012cd5fa4.png',
+        },
+        {
+          ribbonId: '1', // Champagne (Ivory)
+          packageId: '1', // Champagne
+          imageUrl: '/lovable-uploads/7a259beb-1026-4158-9e75-f80d94c9079f.png',
+        },
+        {
+          ribbonId: '2', // Bege (Taupe)
+          packageId: '2', // Bege
+          imageUrl: '/lovable-uploads/961f8175-9953-422e-8261-65b0f6dbbe1a.png',
         },
       ],
       whatsappNumber: '5566999580591',

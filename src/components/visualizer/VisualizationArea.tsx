@@ -5,6 +5,7 @@ import SimpleRepresentation from './SimpleRepresentation';
 import CombinedImagesView from './CombinedImagesView';
 import FallbackImageView from './FallbackImageView';
 import { useImageExistence } from '@/hooks/useImageExistence';
+import { toast } from "@/hooks/use-toast";
 
 interface VisualizationAreaProps {
   ribbonCode?: string;
@@ -37,6 +38,9 @@ const VisualizationArea: React.FC<VisualizationAreaProps> = ({
   const ribbonImagePath = ribbonCode ? getRibbonImagePath(ribbonCode) : '';
   const packageImagePath = packageCode ? getPackageImagePath(packageCode) : '';
   
+  // State to track when combination changes
+  const [lastCombination, setLastCombination] = useState<string>('');
+  
   useEffect(() => {
     // Check if ribbon image exists
     if (ribbonCode) {
@@ -47,14 +51,33 @@ const VisualizationArea: React.FC<VisualizationAreaProps> = ({
     if (packageCode) {
       checkPackageImage(packageImagePath);
     }
-  }, [ribbonCode, packageCode, ribbonImagePath, packageImagePath]);
+    
+    // Generate combination key
+    const combinationKey = `${ribbonCode || ''}-${packageCode || ''}`;
+    
+    // Show toast for new combination
+    if (combinationKey !== lastCombination && lastCombination !== '' && ribbonName && packageName) {
+      toast({
+        title: "Combinação atualizada",
+        description: `${ribbonName} + ${packageName}`,
+        duration: 2000,
+      });
+    }
+    
+    // Update last combination
+    setLastCombination(combinationKey);
+  }, [ribbonCode, packageCode, ribbonImagePath, packageImagePath, ribbonName, packageName]);
   
-  const hasValidImages = ribbonImageExists && packageImageExists;
   const hasFallbackImage = Boolean(fallbackCombinationImage);
   
   // Render appropriate visualization based on available images
   const renderVisualization = () => {
-    if (hasValidImages) {
+    if (hasFallbackImage) {
+      return <FallbackImageView imageUrl={fallbackCombinationImage!} />;
+    }
+    
+    // If we have both images, use them
+    if (ribbonImageExists && packageImageExists) {
       return (
         <CombinedImagesView 
           packageImagePath={packageImagePath}
@@ -65,10 +88,7 @@ const VisualizationArea: React.FC<VisualizationAreaProps> = ({
       );
     }
     
-    if (hasFallbackImage) {
-      return <FallbackImageView imageUrl={fallbackCombinationImage!} />;
-    }
-    
+    // Fallback to simple representation
     return (
       <SimpleRepresentation 
         packageColor={packageColor} 
