@@ -14,6 +14,7 @@ interface VisualizationAreaProps {
   packageCode?: string;
   packageName?: string;
   packageColor?: string;
+  fallbackCombinationImage?: string;
 }
 
 const VisualizationArea: React.FC<VisualizationAreaProps> = ({
@@ -22,7 +23,8 @@ const VisualizationArea: React.FC<VisualizationAreaProps> = ({
   ribbonColor,
   packageCode,
   packageName,
-  packageColor
+  packageColor,
+  fallbackCombinationImage
 }) => {
   // Buscando do store a URL direta de cada imagem
   const ribbonColors = useProductsStore(state => state.ribbonColors);
@@ -74,6 +76,20 @@ const VisualizationArea: React.FC<VisualizationAreaProps> = ({
   
   // Render appropriate visualization based on available images
   const renderVisualization = () => {
+    // Check if we have a direct fallback image first
+    if (fallbackCombinationImage) {
+      return (
+        <div className="relative w-full h-full">
+          <img 
+            src={fallbackCombinationImage} 
+            alt="Combinação" 
+            className="w-full h-full object-contain"
+          />
+        </div>
+      );
+    }
+    
+    // If both images exist, show combined view
     if (ribbonExists && packageExists) {
       return (
         <CombinedImagesView 
