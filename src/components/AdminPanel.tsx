@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -62,8 +61,8 @@ const AdminPanel: React.FC = () => {
   const setWhatsappNumber = useProductsStore((state) => state.setWhatsappNumber);
   
   const [newFlavor, setNewFlavor] = useState({ name: '', price: 0, isNew: false });
-  const [newRibbon, setNewRibbon] = useState({ name: '', code: '', color: '#000000', isNew: false });
-  const [newPackage, setNewPackage] = useState({ name: '', code: '', color: '#000000', isNew: false });
+  const [newRibbon, setNewRibbon] = useState({ name: '', code: '', color: '#000000', isNew: false, imageUrl: '' });
+  const [newPackage, setNewPackage] = useState({ name: '', code: '', color: '#000000', isNew: false, imageUrl: '' });
   const [newCombination, setNewCombination] = useState({ ribbonId: '', packageId: '', imageUrl: '' });
   const [newWhatsappNumber, setNewWhatsappNumber] = useState(whatsappNumber || '5566999580591');
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
@@ -106,9 +105,10 @@ const AdminPanel: React.FC = () => {
         name: newRibbon.name,
         code: newRibbon.code,
         color: newRibbon.color,
-        isNew: newRibbon.isNew
+        isNew: newRibbon.isNew,
+        imageUrl: newRibbon.imageUrl
       });
-      setNewRibbon({ name: '', code: '', color: '#000000', isNew: false });
+      setNewRibbon({ name: '', code: '', color: '#000000', isNew: false, imageUrl: '' });
       toast({
         title: "Sucesso",
         description: "Cor de fita adicionada com sucesso.",
@@ -129,9 +129,10 @@ const AdminPanel: React.FC = () => {
         name: newPackage.name,
         code: newPackage.code,
         color: newPackage.color,
-        isNew: newPackage.isNew
+        isNew: newPackage.isNew,
+        imageUrl: newPackage.imageUrl
       });
-      setNewPackage({ name: '', code: '', color: '#000000', isNew: false });
+      setNewPackage({ name: '', code: '', color: '#000000', isNew: false, imageUrl: '' });
       toast({
         title: "Sucesso",
         description: "Cor de embalagem adicionada com sucesso.",
@@ -336,7 +337,6 @@ const AdminPanel: React.FC = () => {
             <div className="mt-6">
               {/* Mobile tab content */}
               {currentTab === 'flavors' && (
-                
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 gap-4 items-end">
                     <div>
@@ -415,7 +415,6 @@ const AdminPanel: React.FC = () => {
               )}
               
               {currentTab === 'ribbons' && (
-                
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 gap-4 items-end">
                     <div>
@@ -447,6 +446,21 @@ const AdminPanel: React.FC = () => {
                           style={{ backgroundColor: newRibbon.color }}
                         />
                       </div>
+                    </div>
+                    <div>
+                      <Label htmlFor="ribbonImageFile">Imagem da Fita</Label>
+                      <Input 
+                        id="ribbonImageFile" 
+                        type="file" 
+                        accept="image/*"
+                        onChange={e => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const url = URL.createObjectURL(file);
+                            setNewRibbon({ ...newRibbon, imageUrl: url });
+                          }
+                        }}
+                      />
                     </div>
                     <div className="flex items-center">
                       <Switch 
@@ -506,7 +520,6 @@ const AdminPanel: React.FC = () => {
               )}
               
               {currentTab === 'packages' && (
-                
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 gap-4 items-end">
                     <div>
@@ -538,6 +551,21 @@ const AdminPanel: React.FC = () => {
                           style={{ backgroundColor: newPackage.color }}
                         />
                       </div>
+                    </div>
+                    <div>
+                      <Label htmlFor="packageImageFile">Imagem da Embalagem</Label>
+                      <Input 
+                        id="packageImageFile" 
+                        type="file" 
+                        accept="image/*"
+                        onChange={e => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const url = URL.createObjectURL(file);
+                            setNewPackage({ ...newPackage, imageUrl: url });
+                          }
+                        }}
+                      />
                     </div>
                     <div className="flex items-center">
                       <Switch 
@@ -597,7 +625,6 @@ const AdminPanel: React.FC = () => {
               )}
               
               {currentTab === 'combinations' && (
-                
                 <div className="space-y-4">
                   <div className="bg-amber-50 p-4 rounded-md border border-amber-200 mb-4">
                     <div className="flex items-start mb-2">
@@ -767,7 +794,6 @@ const AdminPanel: React.FC = () => {
               )}
               
               {currentTab === 'settings' && (
-                
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 gap-4 items-end">
                     <div>
@@ -843,7 +869,7 @@ const AdminPanel: React.FC = () => {
                     <TableHead>Nome</TableHead>
                     <TableHead>Preço</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead className="w-[180px]">Ações</TableHead>
+                    <TableHead>Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -914,6 +940,21 @@ const AdminPanel: React.FC = () => {
                     />
                   </div>
                 </div>
+                <div>
+                  <Label htmlFor="ribbonImageFile">Imagem da Fita</Label>
+                  <Input 
+                    id="ribbonImageFile" 
+                    type="file" 
+                    accept="image/*"
+                    onChange={e => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const url = URL.createObjectURL(file);
+                        setNewRibbon({ ...newRibbon, imageUrl: url });
+                      }
+                    }}
+                  />
+                </div>
                 <div className="flex items-center">
                   <Switch 
                     id="isNewRibbon" 
@@ -934,7 +975,7 @@ const AdminPanel: React.FC = () => {
                     <TableHead>Código</TableHead>
                     <TableHead>Cor</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead className="w-[180px]">Ações</TableHead>
+                    <TableHead>Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -1009,6 +1050,21 @@ const AdminPanel: React.FC = () => {
                     />
                   </div>
                 </div>
+                <div>
+                  <Label htmlFor="packageImageFile">Imagem da Embalagem</Label>
+                  <Input 
+                    id="packageImageFile" 
+                    type="file" 
+                    accept="image/*"
+                    onChange={e => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const url = URL.createObjectURL(file);
+                        setNewPackage({ ...newPackage, imageUrl: url });
+                      }
+                    }}
+                  />
+                </div>
                 <div className="flex items-center">
                   <Switch 
                     id="isNewPackage" 
@@ -1029,7 +1085,7 @@ const AdminPanel: React.FC = () => {
                     <TableHead>Código</TableHead>
                     <TableHead>Cor</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead className="w-[180px]">Ações</TableHead>
+                    <TableHead>Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -1111,7 +1167,7 @@ const AdminPanel: React.FC = () => {
                 {uploadedImages.length > 0 && (
                   <div className="mt-4">
                     <h4 className="font-medium mb-2">Imagens para upload ({uploadedImages.length})</h4>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 gap-4">
                       {uploadedImages.map((image, index) => (
                         <div key={index} className="relative group">
                           <div className="aspect-square bg-gray-100 rounded-md overflow-hidden">
@@ -1148,7 +1204,7 @@ const AdminPanel: React.FC = () => {
               
               <div className="mt-8">
                 <h4 className="font-medium mb-4">Adicionar Combinação Manual</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 items-end">
+                <div className="grid grid-cols-1 gap-4 items-end">
                   <div>
                     <Label htmlFor="comboRibbon">Fita</Label>
                     <Select 
@@ -1189,58 +1245,54 @@ const AdminPanel: React.FC = () => {
                       onChange={(e) => setNewCombination({ ...newCombination, imageUrl: e.target.value })} 
                     />
                   </div>
-                  <div>
-                    <Button onClick={handleAddCombination} className="w-full">Adicionar Combinação</Button>
-                  </div>
+                  <Button onClick={handleAddCombination}>Adicionar Combinação</Button>
                 </div>
               </div>
               
-              <div className="mt-4">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Fita</TableHead>
-                      <TableHead>Embalagem</TableHead>
-                      <TableHead>Imagem</TableHead>
-                      <TableHead>Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {combinations.map((combo) => {
-                      const ribbon = ribbonColors.find(r => r.id === combo.ribbonId);
-                      const pkg = packageColors.find(p => p.id === combo.packageId);
-                      
-                      return (
-                        <TableRow key={`${combo.ribbonId}-${combo.packageId}`}>
-                          <TableCell>{ribbon?.name || combo.ribbonId}</TableCell>
-                          <TableCell>{pkg?.name || combo.packageId}</TableCell>
-                          <TableCell>
-                            <div className="w-16 h-16 rounded overflow-hidden bg-muted">
-                              <img 
-                                src={combo.imageUrl} 
-                                alt="Preview" 
-                                className="w-full h-full object-cover"
-                                onError={(e) => {
-                                  (e.target as HTMLImageElement).src = "https://placehold.co/100?text=Erro";
-                                }}
-                              />
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Button 
-                              variant="destructive" 
-                              size="sm"
-                              onClick={() => removeCombination(combo.ribbonId, combo.packageId)}
-                            >
-                              Remover
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </div>
+              <Table className="mt-4">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Fita</TableHead>
+                    <TableHead>Embalagem</TableHead>
+                    <TableHead>Imagem</TableHead>
+                    <TableHead>Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {combinations.map((combo) => {
+                    const ribbon = ribbonColors.find(r => r.id === combo.ribbonId);
+                    const pkg = packageColors.find(p => p.id === combo.packageId);
+                    
+                    return (
+                      <TableRow key={`${combo.ribbonId}-${combo.packageId}`}>
+                        <TableCell>{ribbon?.name || combo.ribbonId}</TableCell>
+                        <TableCell>{pkg?.name || combo.packageId}</TableCell>
+                        <TableCell>
+                          <div className="w-16 h-16 rounded overflow-hidden bg-muted">
+                            <img 
+                              src={combo.imageUrl} 
+                              alt="Preview" 
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = "https://placehold.co/100?text=Erro";
+                              }}
+                            />
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Button 
+                            variant="destructive" 
+                            size="sm"
+                            onClick={() => removeCombination(combo.ribbonId, combo.packageId)}
+                          >
+                            Remover
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
             </TabsContent>
             
             {/* Settings Tab */}

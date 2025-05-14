@@ -15,6 +15,7 @@ export interface RibbonColor {
   code: string;
   color: string;
   isNew?: boolean;
+  imageUrl?: string;     // URL da imagem da fita
 }
 
 export interface PackageColor {
@@ -23,6 +24,7 @@ export interface PackageColor {
   code: string;
   color: string;
   isNew?: boolean;
+  imageUrl?: string;     // URL da imagem da embalagem
 }
 
 export interface Combination {

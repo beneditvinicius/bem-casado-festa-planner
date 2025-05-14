@@ -6,6 +6,7 @@ export const ColorFormSchema = z.object({
   code: z.string().min(1, "Código é obrigatório"),
   color: z.string().min(1, "Cor HEX é obrigatória"),
   isNew: z.boolean().optional(),
+  imageUrl: z.string().optional(),
 });
 
 export type ColorFormValues = z.infer<typeof ColorFormSchema>;

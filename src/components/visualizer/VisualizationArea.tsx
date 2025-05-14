@@ -3,9 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import SimpleRepresentation from './SimpleRepresentation';
 import CombinedImagesView from './CombinedImagesView';
-import FallbackImageView from './FallbackImageView';
 import { useImageExistence } from '@/hooks/useImageExistence';
 import { toast } from "@/components/ui/use-toast";
+import { useProductsStore } from '@/data/products';
 
 interface VisualizationAreaProps {
   ribbonCode?: string;
@@ -14,7 +14,6 @@ interface VisualizationAreaProps {
   packageCode?: string;
   packageName?: string;
   packageColor?: string;
-  fallbackCombinationImage?: string;
 }
 
 const VisualizationArea: React.FC<VisualizationAreaProps> = ({
@@ -23,33 +22,38 @@ const VisualizationArea: React.FC<VisualizationAreaProps> = ({
   ribbonColor,
   packageCode,
   packageName,
-  packageColor,
-  fallbackCombinationImage
+  packageColor
 }) => {
-  // Get image paths based on color codes
-  const getRibbonImagePath = (code: string) => `/lovable-uploads/fita_${code.toLowerCase()}.png`;
-  const getPackageImagePath = (code: string) => `/lovable-uploads/embalagem_${code.toLowerCase()}.png`;
+  // Buscando do store a URL direta de cada imagem
+  const ribbonColors = useProductsStore(state => state.ribbonColors);
+  const packageColors = useProductsStore(state => state.packageColors);
   
-  // Use custom hooks for image existence checking
-  const { imageExists: ribbonImageExists, checkImage: checkRibbonImage } = useImageExistence();
-  const { imageExists: packageImageExists, checkImage: checkPackageImage } = useImageExistence();
+  const ribbon = ribbonCode && ribbonColors.find(r => r.code === ribbonCode);
+  const pack = packageCode && packageColors.find(p => p.code === packageCode);
   
-  // Paths for the images
-  const ribbonImagePath = ribbonCode ? getRibbonImagePath(ribbonCode) : '';
-  const packageImagePath = packageCode ? getPackageImagePath(packageCode) : '';
+  // Fallback para URLs tradicionais caso não tenha imageUrl no store
+  const ribbonImagePath = ribbonCode ? `/lovable-uploads/fita_${ribbonCode.toLowerCase()}.png` : '';
+  const packageImagePath = packageCode ? `/lovable-uploads/embalagem_${packageCode.toLowerCase()}.png` : '';
+  
+  const ribbonUrl = ribbon?.imageUrl || ribbonImagePath;
+  const packageUrl = pack?.imageUrl || packageImagePath;
+  
+  // Verifica existência dos dois arquivos
+  const { imageExists: ribbonExists, checkImage: checkRibbon } = useImageExistence();
+  const { imageExists: packageExists, checkImage: checkPackage } = useImageExistence();
   
   // State to track when combination changes
   const [lastCombination, setLastCombination] = useState<string>('');
   
   useEffect(() => {
     // Check if ribbon image exists
-    if (ribbonCode) {
-      checkRibbonImage(ribbonImagePath);
+    if (ribbonUrl) {
+      checkRibbon(ribbonUrl);
     }
     
     // Check if package image exists
-    if (packageCode) {
-      checkPackageImage(packageImagePath);
+    if (packageUrl) {
+      checkPackage(packageUrl);
     }
     
     // Generate combination key
@@ -66,22 +70,15 @@ const VisualizationArea: React.FC<VisualizationAreaProps> = ({
     
     // Update last combination
     setLastCombination(combinationKey);
-  }, [ribbonCode, packageCode, ribbonImagePath, packageImagePath, ribbonName, packageName, checkRibbonImage, checkPackageImage, lastCombination]);
-  
-  const hasFallbackImage = Boolean(fallbackCombinationImage);
+  }, [ribbonCode, packageCode, ribbonUrl, packageUrl, ribbonName, packageName, checkRibbon, checkPackage, lastCombination]);
   
   // Render appropriate visualization based on available images
   const renderVisualization = () => {
-    if (hasFallbackImage) {
-      return <FallbackImageView imageUrl={fallbackCombinationImage!} />;
-    }
-    
-    // If we have both images, use them
-    if (ribbonImageExists && packageImageExists) {
+    if (ribbonExists && packageExists) {
       return (
         <CombinedImagesView 
-          packageImagePath={packageImagePath}
-          ribbonImagePath={ribbonImagePath}
+          packageImageUrl={packageUrl}
+          ribbonImageUrl={ribbonUrl}
           packageName={packageName}
           ribbonName={ribbonName}
         />
