@@ -5,7 +5,7 @@ import SimpleRepresentation from './SimpleRepresentation';
 import CombinedImagesView from './CombinedImagesView';
 import FallbackImageView from './FallbackImageView';
 import { useImageExistence } from '@/hooks/useImageExistence';
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/components/ui/use-toast";
 
 interface VisualizationAreaProps {
   ribbonCode?: string;
@@ -66,7 +66,7 @@ const VisualizationArea: React.FC<VisualizationAreaProps> = ({
     
     // Update last combination
     setLastCombination(combinationKey);
-  }, [ribbonCode, packageCode, ribbonImagePath, packageImagePath, ribbonName, packageName]);
+  }, [ribbonCode, packageCode, ribbonImagePath, packageImagePath, ribbonName, packageName, checkRibbonImage, checkPackageImage, lastCombination]);
   
   const hasFallbackImage = Boolean(fallbackCombinationImage);
   

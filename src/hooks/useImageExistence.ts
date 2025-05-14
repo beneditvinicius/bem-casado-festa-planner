@@ -1,5 +1,5 @@
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 interface UseImageExistenceResult {
   imageExists: boolean;
@@ -16,7 +16,10 @@ export const useImageExistence = (): UseImageExistenceResult => {
     }
     
     const img = new Image();
-    img.onload = () => setImageExists(true);
+    img.onload = () => {
+      setImageExists(true);
+      console.log(`Imagem encontrada: ${imagePath}`);
+    };
     img.onerror = () => {
       setImageExists(false);
       console.log(`Imagem não encontrada: ${imagePath}`);
