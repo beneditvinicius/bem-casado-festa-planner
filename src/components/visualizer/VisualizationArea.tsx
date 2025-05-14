@@ -1,8 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-import { Info } from "lucide-react";
-import { imageExists } from '@/lib/utils';
+import SimpleRepresentation from './SimpleRepresentation';
+import CombinedImagesView from './CombinedImagesView';
+import FallbackImageView from './FallbackImageView';
 
 interface VisualizationAreaProps {
   ribbonCode?: string;
@@ -71,53 +72,23 @@ const VisualizationArea: React.FC<VisualizationAreaProps> = ({
   return (
     <AspectRatio ratio={16 / 10} className="bg-muted rounded-md overflow-hidden">
       {hasValidImages && (
-        <div className="relative w-full h-full">
-          <img 
-            src={packageImagePath} 
-            alt={`Embalagem ${packageName}`} 
-            className="w-full h-full object-contain absolute top-0 left-0 z-0"
-          />
-          <img 
-            src={ribbonImagePath} 
-            alt={`Fita ${ribbonName}`} 
-            className="w-full h-full object-contain absolute top-0 left-0 z-10"
-          />
-        </div>
-      )}
-      
-      {!hasValidImages && hasFallbackImage && (
-        <img 
-          src={fallbackCombinationImage} 
-          alt="Visualização da combinação" 
-          className="w-full h-full object-contain" 
+        <CombinedImagesView 
+          packageImagePath={packageImagePath}
+          ribbonImagePath={ribbonImagePath}
+          packageName={packageName}
+          ribbonName={ribbonName}
         />
       )}
       
+      {!hasValidImages && hasFallbackImage && (
+        <FallbackImageView imageUrl={fallbackCombinationImage} />
+      )}
+      
       {!hasValidImages && !hasFallbackImage && (
-        <div className="flex flex-col items-center justify-center h-full p-4 text-center">
-          <div className="w-48 sm:w-56 h-28 sm:h-32 mx-auto relative bg-white rounded shadow-md border">
-            {/* Representação visual simples quando não há imagem */}
-            <div 
-              className="absolute inset-0 m-4 border" 
-              style={{
-                backgroundColor: packageColor || '#FFFFFF'
-              }}
-            ></div>
-            <div 
-              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-1.5" 
-              style={{
-                backgroundColor: ribbonColor || '#000000'
-              }}
-            ></div>
-          </div>
-          <div className="flex items-start mt-4 justify-center">
-            <Info className="h-5 w-5 text-amber-800 mr-2 flex-shrink-0 mt-0.5" />
-            <p className="text-left text-sm text-amber-800">
-              Esta combinação de cores não possui uma imagem disponível no momento.<br />
-              Acesse o painel administrativo para adicionar mais imagens de combinações.
-            </p>
-          </div>
-        </div>
+        <SimpleRepresentation 
+          packageColor={packageColor} 
+          ribbonColor={ribbonColor} 
+        />
       )}
     </AspectRatio>
   );
