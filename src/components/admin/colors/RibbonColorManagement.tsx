@@ -9,9 +9,10 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Image } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { ColorFormSchema, ColorFormValues } from './types';
+import ColorImageUploader from './ColorImageUploader';
 
 export const RibbonColorManagement: React.FC = () => {
   const { 
@@ -23,6 +24,8 @@ export const RibbonColorManagement: React.FC = () => {
   
   const [isAddingRibbon, setIsAddingRibbon] = useState(false);
   const [editingRibbon, setEditingRibbon] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [imageUrl, setImageUrl] = useState<string>('');
   
   const { toast } = useToast();
   
@@ -33,12 +36,19 @@ export const RibbonColorManagement: React.FC = () => {
       code: "",
       color: "#FFFFFF",
       isNew: false,
+      imageUrl: "",
     }
   });
   
   const handleAddRibbon = (data: ColorFormValues) => {
+    // Use previewImage se disponível, caso contrário, use o imageUrl do formulário
+    const finalImageUrl = previewImage || imageUrl;
+    
     if (editingRibbon) {
-      updateRibbonColor(editingRibbon, data);
+      updateRibbonColor(editingRibbon, {
+        ...data,
+        imageUrl: finalImageUrl
+      });
       toast({
         title: "Cor de fita atualizada",
         description: `A cor ${data.name} foi atualizada com sucesso.`,
@@ -50,7 +60,8 @@ export const RibbonColorManagement: React.FC = () => {
         name: data.name, 
         code: data.code, 
         color: data.color, 
-        isNew: data.isNew || false 
+        isNew: data.isNew || false,
+        imageUrl: finalImageUrl
       });
       toast({
         title: "Cor de fita adicionada",
@@ -59,6 +70,8 @@ export const RibbonColorManagement: React.FC = () => {
     }
     setIsAddingRibbon(false);
     setEditingRibbon(null);
+    setPreviewImage(null);
+    setImageUrl('');
     ribbonForm.reset();
   };
   
@@ -70,7 +83,10 @@ export const RibbonColorManagement: React.FC = () => {
         code: ribbon.code,
         color: ribbon.color,
         isNew: ribbon.isNew,
+        imageUrl: ribbon.imageUrl || '',
       });
+      setImageUrl(ribbon.imageUrl || '');
+      setPreviewImage(ribbon.imageUrl || null);
       setEditingRibbon(id);
       setIsAddingRibbon(true);
     }
@@ -92,17 +108,20 @@ export const RibbonColorManagement: React.FC = () => {
           <DialogTrigger asChild>
             <Button onClick={() => {
               setEditingRibbon(null);
+              setPreviewImage(null);
+              setImageUrl('');
               ribbonForm.reset({
                 name: "",
                 code: "",
                 color: "#FFFFFF",
                 isNew: false,
+                imageUrl: "",
               });
             }}>
               <Plus className="mr-2 h-4 w-4" /> Adicionar Cor de Fita
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle>{editingRibbon ? "Editar Cor de Fita" : "Adicionar Nova Cor de Fita"}</DialogTitle>
             </DialogHeader>
@@ -174,6 +193,14 @@ export const RibbonColorManagement: React.FC = () => {
                   )}
                 />
                 
+                {/* Upload de imagem */}
+                <ColorImageUploader
+                  previewImage={previewImage}
+                  imageUrl={imageUrl}
+                  setPreviewImage={setPreviewImage}
+                  setImageUrl={setImageUrl}
+                />
+                
                 <DialogFooter>
                   <Button type="submit">
                     {editingRibbon ? "Atualizar" : "Adicionar"} Cor
@@ -196,15 +223,31 @@ export const RibbonColorManagement: React.FC = () => {
             </button>
             <div className="flex items-center gap-3">
               <div 
-                className="w-8 h-8 rounded-full" 
+                className={`w-10 h-10 rounded-full flex items-center justify-center ${color.imageUrl ? 'bg-gray-100' : ''}`}
                 style={{ 
-                  backgroundColor: color.color,
-                  border: color.color === '#FFFFFF' ? '1px solid #E2E8F0' : 'none'
+                  backgroundColor: !color.imageUrl ? color.color : undefined,
+                  border: (color.color === '#FFFFFF' || color.imageUrl) ? '1px solid #E2E8F0' : 'none'
                 }} 
-              />
+              >
+                {color.imageUrl && (
+                  <div className="w-full h-full overflow-hidden rounded-full">
+                    <img 
+                      src={color.imageUrl} 
+                      alt={color.name} 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+              </div>
               <div>
                 <p className="font-medium">{color.name}</p>
                 <p className="text-sm text-gray-500">Código: {color.code}</p>
+                {color.imageUrl && (
+                  <p className="text-xs text-emerald-600 flex items-center gap-1">
+                    <Image size={12} />
+                    Imagem definida
+                  </p>
+                )}
               </div>
             </div>
             <Button 
