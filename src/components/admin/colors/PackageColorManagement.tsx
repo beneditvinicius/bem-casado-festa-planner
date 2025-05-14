@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useProductsStore } from '@/data/products';
 import { Button } from "@/components/ui/button";
 import { DialogTrigger } from "@/components/ui/dialog";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { Plus } from "lucide-react";
 import { ColorFormValues } from './types';
 import PackageColorList from './components/PackageColorList';
@@ -25,7 +25,14 @@ export const PackageColorManagement: React.FC = () => {
   
   const handleAddPackage = (data: ColorFormValues) => {
     if (editingPackage) {
-      updatePackageColor(editingPackage, data);
+      // Make sure we're passing all required properties when updating
+      updatePackageColor(editingPackage, {
+        name: data.name,
+        code: data.code,
+        color: data.color,
+        isNew: data.isNew || false,
+        imageUrl: data.imageUrl || undefined
+      });
       toast({
         title: "Cor de embalagem atualizada",
         description: `A cor ${data.name} foi atualizada com sucesso.`,
