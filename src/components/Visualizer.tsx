@@ -21,21 +21,10 @@ const Visualizer: React.FC = () => {
   const selectedRibbon = ribbonColors.find(r => r.id === selectedRibbonId);
   const selectedPackage = packageColors.find(p => p.id === selectedPackageId);
   
-  // Get image paths based on color codes
-  const getRibbonImagePath = (code: string) => `/lovable-uploads/fita_${code.toLowerCase()}.png`;
-  const getPackageImagePath = (code: string) => `/lovable-uploads/embalagem_${code.toLowerCase()}.png`;
-  
-  // Check if the images exist
-  const [ribbonImageExists, setRibbonImageExists] = useState<boolean>(false);
-  const [packageImageExists, setPackageImageExists] = useState<boolean>(false);
-  
   // Try to get fallback combination image if separate images don't exist
   const fallbackCombinationImage = combinations.find(
     c => c.ribbonId === selectedRibbonId && c.packageId === selectedPackageId
   )?.imageUrl || '';
-  
-  const ribbonImagePath = selectedRibbon?.code ? getRibbonImagePath(selectedRibbon.code) : '';
-  const packageImagePath = selectedPackage?.code ? getPackageImagePath(selectedPackage.code) : '';
   
   return (
     <Card className="w-full">
@@ -75,10 +64,10 @@ const Visualizer: React.FC = () => {
               ribbonCode={selectedRibbon?.code}
               packageId={selectedPackageId}
               packageCode={selectedPackage?.code}
-              ribbonImagePath={ribbonImagePath}
-              ribbonImageExists={ribbonImageExists}
-              packageImagePath={packageImagePath}
-              packageImageExists={packageImageExists}
+              ribbonImagePath={selectedRibbon?.code ? `/lovable-uploads/fita_${selectedRibbon.code.toLowerCase()}.png` : ''}
+              ribbonImageExists={false}
+              packageImagePath={selectedPackage?.code ? `/lovable-uploads/embalagem_${selectedPackage.code.toLowerCase()}.png` : ''}
+              packageImageExists={false}
               fallbackCombinationImage={fallbackCombinationImage}
             />
           </div>

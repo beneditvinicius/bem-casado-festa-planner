@@ -4,6 +4,7 @@ import { AspectRatio } from '@/components/ui/aspect-ratio';
 import SimpleRepresentation from './SimpleRepresentation';
 import CombinedImagesView from './CombinedImagesView';
 import FallbackImageView from './FallbackImageView';
+import { useImageExistence } from '@/hooks/useImageExistence';
 
 interface VisualizationAreaProps {
   ribbonCode?: string;
@@ -28,9 +29,9 @@ const VisualizationArea: React.FC<VisualizationAreaProps> = ({
   const getRibbonImagePath = (code: string) => `/lovable-uploads/fita_${code.toLowerCase()}.png`;
   const getPackageImagePath = (code: string) => `/lovable-uploads/embalagem_${code.toLowerCase()}.png`;
   
-  // Check if the images exist
-  const [ribbonImageExists, setRibbonImageExists] = useState<boolean>(false);
-  const [packageImageExists, setPackageImageExists] = useState<boolean>(false);
+  // Use custom hooks for image existence checking
+  const { imageExists: ribbonImageExists, checkImage: checkRibbonImage } = useImageExistence();
+  const { imageExists: packageImageExists, checkImage: checkPackageImage } = useImageExistence();
   
   // Paths for the images
   const ribbonImagePath = ribbonCode ? getRibbonImagePath(ribbonCode) : '';
@@ -39,57 +40,46 @@ const VisualizationArea: React.FC<VisualizationAreaProps> = ({
   useEffect(() => {
     // Check if ribbon image exists
     if (ribbonCode) {
-      const ribbonPath = getRibbonImagePath(ribbonCode);
-      const img = new Image();
-      img.onload = () => setRibbonImageExists(true);
-      img.onerror = () => {
-        setRibbonImageExists(false);
-        console.log(`Ribbon image not found: ${ribbonPath}`);
-      };
-      img.src = ribbonPath;
-    } else {
-      setRibbonImageExists(false);
+      checkRibbonImage(ribbonImagePath);
     }
     
     // Check if package image exists
     if (packageCode) {
-      const packagePath = getPackageImagePath(packageCode);
-      const img = new Image();
-      img.onload = () => setPackageImageExists(true);
-      img.onerror = () => {
-        setPackageImageExists(false);
-        console.log(`Package image not found: ${packagePath}`);
-      };
-      img.src = packagePath;
-    } else {
-      setPackageImageExists(false);
+      checkPackageImage(packageImagePath);
     }
-  }, [ribbonCode, packageCode]);
+  }, [ribbonCode, packageCode, ribbonImagePath, packageImagePath]);
   
   const hasValidImages = ribbonImageExists && packageImageExists;
   const hasFallbackImage = Boolean(fallbackCombinationImage);
   
-  return (
-    <AspectRatio ratio={16 / 10} className="bg-muted rounded-md overflow-hidden">
-      {hasValidImages && (
+  // Render appropriate visualization based on available images
+  const renderVisualization = () => {
+    if (hasValidImages) {
+      return (
         <CombinedImagesView 
           packageImagePath={packageImagePath}
           ribbonImagePath={ribbonImagePath}
           packageName={packageName}
           ribbonName={ribbonName}
         />
-      )}
-      
-      {!hasValidImages && hasFallbackImage && (
-        <FallbackImageView imageUrl={fallbackCombinationImage} />
-      )}
-      
-      {!hasValidImages && !hasFallbackImage && (
-        <SimpleRepresentation 
-          packageColor={packageColor} 
-          ribbonColor={ribbonColor} 
-        />
-      )}
+      );
+    }
+    
+    if (hasFallbackImage) {
+      return <FallbackImageView imageUrl={fallbackCombinationImage!} />;
+    }
+    
+    return (
+      <SimpleRepresentation 
+        packageColor={packageColor} 
+        ribbonColor={ribbonColor} 
+      />
+    );
+  };
+
+  return (
+    <AspectRatio ratio={16 / 10} className="bg-muted rounded-md overflow-hidden">
+      {renderVisualization()}
     </AspectRatio>
   );
 };
