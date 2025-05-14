@@ -6,10 +6,12 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Info } from "lucide-react";
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-import { useProductsStore, Combination } from '@/data/products';
+import { useProductsStore } from '@/data/products';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useToast } from "@/hooks/use-toast";
 
 const Visualizer: React.FC = () => {
+  const { toast } = useToast();
   const ribbonColors = useProductsStore(state => state.ribbonColors);
   const packageColors = useProductsStore(state => state.packageColors);
   const combinations = useProductsStore(state => state.combinations);
@@ -34,21 +36,25 @@ const Visualizer: React.FC = () => {
     // Check if ribbon image exists
     if (selectedRibbon?.code) {
       const ribbonPath = getRibbonImagePath(selectedRibbon.code);
-      fetch(ribbonPath)
-        .then(response => {
-          setRibbonImageExists(response.ok);
-        })
-        .catch(() => setRibbonImageExists(false));
+      const img = new Image();
+      img.onload = () => setRibbonImageExists(true);
+      img.onerror = () => {
+        setRibbonImageExists(false);
+        console.log(`Ribbon image not found: ${ribbonPath}`);
+      };
+      img.src = ribbonPath;
     }
     
     // Check if package image exists
     if (selectedPackage?.code) {
       const packagePath = getPackageImagePath(selectedPackage.code);
-      fetch(packagePath)
-        .then(response => {
-          setPackageImageExists(response.ok);
-        })
-        .catch(() => setPackageImageExists(false));
+      const img = new Image();
+      img.onload = () => setPackageImageExists(true);
+      img.onerror = () => {
+        setPackageImageExists(false);
+        console.log(`Package image not found: ${packagePath}`);
+      };
+      img.src = packagePath;
     }
   }, [selectedRibbonId, selectedPackageId, selectedRibbon?.code, selectedPackage?.code]);
   
@@ -63,6 +69,30 @@ const Visualizer: React.FC = () => {
   const hasValidImages = ribbonImageExists && packageImageExists;
   const hasFallbackImage = Boolean(fallbackCombinationImage);
   
+  const handleRibbonChange = (value: string) => {
+    setSelectedRibbonId(value);
+    const ribbon = ribbonColors.find(r => r.id === value);
+    if (ribbon) {
+      toast({
+        title: `Fita selecionada: ${ribbon.name}`,
+        description: ribbon.code ? `Código: ${ribbon.code}` : undefined,
+        duration: 2000,
+      });
+    }
+  };
+  
+  const handlePackageChange = (value: string) => {
+    setSelectedPackageId(value);
+    const pkg = packageColors.find(p => p.id === value);
+    if (pkg) {
+      toast({
+        title: `Embalagem selecionada: ${pkg.name}`,
+        description: pkg.code ? `Código: ${pkg.code}` : undefined,
+        duration: 2000,
+      });
+    }
+  };
+  
   return (
     <Card className="w-full">
       <CardContent className="pt-6 card-content">
@@ -70,7 +100,7 @@ const Visualizer: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             <div>
               <Label htmlFor="ribbon" className="text-base sm:text-lg">Escolha a cor da fita</Label>
-              <Select value={selectedRibbonId} onValueChange={setSelectedRibbonId}>
+              <Select value={selectedRibbonId} onValueChange={handleRibbonChange}>
                 <SelectTrigger id="ribbon" className="h-10 sm:h-12 mt-2">
                   <SelectValue placeholder="Selecione a cor da fita" />
                 </SelectTrigger>
@@ -96,7 +126,7 @@ const Visualizer: React.FC = () => {
             
             <div>
               <Label htmlFor="package" className="text-base sm:text-lg">Escolha a cor da embalagem</Label>
-              <Select value={selectedPackageId} onValueChange={setSelectedPackageId}>
+              <Select value={selectedPackageId} onValueChange={handlePackageChange}>
                 <SelectTrigger id="package" className="h-10 sm:h-12 mt-2">
                   <SelectValue placeholder="Selecione a cor da embalagem" />
                 </SelectTrigger>
@@ -173,6 +203,18 @@ const Visualizer: React.FC = () => {
                 </div>
               )}
             </AspectRatio>
+            
+            {/* Debug info for development */}
+            <div className="mt-3 bg-gray-100 p-3 rounded-md text-xs text-gray-700">
+              <p>Debug info:</p>
+              <ul className="list-disc pl-5">
+                <li>Ribbon ID: {selectedRibbonId} / Code: {selectedRibbon?.code}</li>
+                <li>Package ID: {selectedPackageId} / Code: {selectedPackage?.code}</li>
+                <li>Ribbon image: {ribbonImagePath} ({ribbonImageExists ? 'Found' : 'Not found'})</li>
+                <li>Package image: {packageImagePath} ({packageImageExists ? 'Found' : 'Not found'})</li>
+                <li>Fallback image: {fallbackCombinationImage ? fallbackCombinationImage : 'None available'}</li>
+              </ul>
+            </div>
           </div>
           
           <div className="bg-amber-50 p-3 sm:p-4 rounded-md border border-amber-200">
