@@ -8,7 +8,8 @@ import { Info } from "lucide-react";
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { useProductsStore } from '@/data/products';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
+import { imageExists } from '@/lib/utils';
 
 const Visualizer: React.FC = () => {
   const { toast } = useToast();
@@ -25,8 +26,8 @@ const Visualizer: React.FC = () => {
   const selectedPackage = packageColors.find(p => p.id === selectedPackageId);
   
   // Get image paths based on color codes
-  const getRibbonImagePath = (code: string) => `/fita_${code.toLowerCase()}.png`;
-  const getPackageImagePath = (code: string) => `/embalagem_${code.toLowerCase()}.png`;
+  const getRibbonImagePath = (code: string) => `/lovable-uploads/fita_${code.toLowerCase()}.png`;
+  const getPackageImagePath = (code: string) => `/lovable-uploads/embalagem_${code.toLowerCase()}.png`;
   
   // Check if the images exist
   const [ribbonImageExists, setRibbonImageExists] = useState<boolean>(false);
