@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Info } from "lucide-react";
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { useProductsStore, Combination } from '@/data/products';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -17,37 +18,50 @@ const Visualizer: React.FC = () => {
   const [selectedRibbonId, setSelectedRibbonId] = useState<string>(ribbonColors[0]?.id || '');
   const [selectedPackageId, setSelectedPackageId] = useState<string>(packageColors[0]?.id || '');
   
-  // Check if we can use separate overlay images
+  // Get the selected ribbon and package
   const selectedRibbon = ribbonColors.find(r => r.id === selectedRibbonId);
   const selectedPackage = packageColors.find(p => p.id === selectedPackageId);
   
-  // Try to get overlay images based on color codes
-  const getOverlayImages = () => {
-    const ribbonCode = selectedRibbon?.code || '';
-    const packageCode = selectedPackage?.code || '';
-    
-    const ribbonUrl = ribbonCode ? `/ribbon_${ribbonCode}.png` : '';
-    const packageUrl = packageCode ? `/package_${packageCode}.png` : '';
-    
-    // Check if we found both images for overlay
-    if (ribbonUrl && packageUrl) {
-      return { ribbonUrl, packageUrl, canUseOverlay: true };
+  // Get image paths based on color codes
+  const getRibbonImagePath = (code: string) => `/fita_${code.toLowerCase()}.png`;
+  const getPackageImagePath = (code: string) => `/embalagem_${code.toLowerCase()}.png`;
+  
+  // Check if the images exist
+  const [ribbonImageExists, setRibbonImageExists] = useState<boolean>(false);
+  const [packageImageExists, setPackageImageExists] = useState<boolean>(false);
+  
+  useEffect(() => {
+    // Check if ribbon image exists
+    if (selectedRibbon?.code) {
+      const ribbonPath = getRibbonImagePath(selectedRibbon.code);
+      fetch(ribbonPath)
+        .then(response => {
+          setRibbonImageExists(response.ok);
+        })
+        .catch(() => setRibbonImageExists(false));
     }
     
-    // If we don't have overlay images, fall back to existing combinations
-    const combo = combinations.find(c => 
-      c.ribbonId === selectedRibbonId && c.packageId === selectedPackageId
-    );
-    
-    return { 
-      ribbonUrl: '', 
-      packageUrl: '', 
-      canUseOverlay: false, 
-      fallbackImage: combo?.imageUrl || '' 
-    };
-  };
+    // Check if package image exists
+    if (selectedPackage?.code) {
+      const packagePath = getPackageImagePath(selectedPackage.code);
+      fetch(packagePath)
+        .then(response => {
+          setPackageImageExists(response.ok);
+        })
+        .catch(() => setPackageImageExists(false));
+    }
+  }, [selectedRibbonId, selectedPackageId, selectedRibbon?.code, selectedPackage?.code]);
   
-  const { ribbonUrl, packageUrl, canUseOverlay, fallbackImage } = getOverlayImages();
+  // Try to get fallback combination image if separate images don't exist
+  const fallbackCombinationImage = combinations.find(
+    c => c.ribbonId === selectedRibbonId && c.packageId === selectedPackageId
+  )?.imageUrl || '';
+  
+  const ribbonImagePath = selectedRibbon?.code ? getRibbonImagePath(selectedRibbon.code) : '';
+  const packageImagePath = selectedPackage?.code ? getPackageImagePath(selectedPackage.code) : '';
+  
+  const hasValidImages = ribbonImageExists && packageImageExists;
+  const hasFallbackImage = Boolean(fallbackCombinationImage);
   
   return (
     <Card className="w-full">
@@ -71,7 +85,7 @@ const Visualizer: React.FC = () => {
                             border: color.color === '#FFFFFF' || color.color === '#F8F4E3' ? '1px solid #E2E8F0' : 'none'
                           }} 
                         />
-                        {color.name} {color.code}
+                        {color.name} {color.code && `(${color.code})`}
                         {color.isNew && <Badge className="ml-2 bg-[#eb6824]">Novidade</Badge>}
                       </div>
                     </SelectItem>
@@ -97,7 +111,7 @@ const Visualizer: React.FC = () => {
                             border: color.color === '#FFFFFF' || color.color === '#F8F4E3' ? '1px solid #E2E8F0' : 'none'
                           }} 
                         />
-                        {color.name} {color.code}
+                        {color.name} {color.code && `(${color.code})`}
                         {color.isNew && <Badge className="ml-2 bg-[#eb6824]">Novidade</Badge>}
                       </div>
                     </SelectItem>
@@ -108,40 +122,44 @@ const Visualizer: React.FC = () => {
           </div>
           
           <div className="mt-4 sm:mt-8">
-            <div className="aspect-video rounded-md overflow-hidden bg-muted flex items-center justify-center">
-              {canUseOverlay ? (
-                <div className="w-full h-full relative">
+            <AspectRatio ratio={16 / 10} className="bg-muted rounded-md overflow-hidden">
+              {hasValidImages && (
+                <div className="relative w-full h-full">
                   <img 
-                    src={packageUrl} 
+                    src={packageImagePath} 
                     alt={`Embalagem ${selectedPackage?.name}`} 
-                    className="w-full h-full object-cover block"
+                    className="w-full h-full object-contain absolute top-0 left-0 z-0"
                   />
                   <img 
-                    src={ribbonUrl} 
+                    src={ribbonImagePath} 
                     alt={`Fita ${selectedRibbon?.name}`} 
-                    className="absolute top-0 left-0 w-full h-full object-cover"
+                    className="w-full h-full object-contain absolute top-0 left-0 z-10"
                   />
                 </div>
-              ) : fallbackImage ? (
+              )}
+              
+              {!hasValidImages && hasFallbackImage && (
                 <img 
-                  src={fallbackImage} 
+                  src={fallbackCombinationImage} 
                   alt="Visualização da combinação" 
-                  className="w-full h-full object-cover" 
+                  className="w-full h-full object-contain" 
                 />
-              ) : (
-                <div className="text-muted-foreground text-center p-4">
+              )}
+              
+              {!hasValidImages && !hasFallbackImage && (
+                <div className="flex flex-col items-center justify-center h-full p-4 text-center">
                   <div className="w-48 sm:w-56 h-28 sm:h-32 mx-auto relative bg-white rounded shadow-md border">
                     {/* Representação visual simples quando não há imagem */}
                     <div 
                       className="absolute inset-0 m-4 border" 
                       style={{
-                        backgroundColor: packageColors.find(c => c.id === selectedPackageId)?.color || '#FFFFFF'
+                        backgroundColor: selectedPackage?.color || '#FFFFFF'
                       }}
                     ></div>
                     <div 
                       className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-1.5" 
                       style={{
-                        backgroundColor: ribbonColors.find(c => c.id === selectedRibbonId)?.color || '#000000'
+                        backgroundColor: selectedRibbon?.color || '#000000'
                       }}
                     ></div>
                   </div>
@@ -154,7 +172,7 @@ const Visualizer: React.FC = () => {
                   </div>
                 </div>
               )}
-            </div>
+            </AspectRatio>
           </div>
           
           <div className="bg-amber-50 p-3 sm:p-4 rounded-md border border-amber-200">
