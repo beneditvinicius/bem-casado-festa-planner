@@ -1,11 +1,10 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-import SimpleRepresentation from './SimpleRepresentation';
-import CombinedImagesView from './CombinedImagesView';
-import { useImageExistence } from '@/hooks/useImageExistence';
-import { toast } from "@/components/ui/use-toast";
 import { useProductsStore } from '@/data/products';
+import { ImageExistenceProvider } from './ImageExistenceProvider';
+import VisualizationRenderer from './VisualizationRenderer';
+import CombinationToastNotifier from './CombinationToastNotifier';
 
 interface VisualizationAreaProps {
   ribbonCode?: string;
@@ -39,80 +38,26 @@ const VisualizationArea: React.FC<VisualizationAreaProps> = ({
   
   const ribbonUrl = ribbon?.imageUrl || ribbonImagePath;
   const packageUrl = pack?.imageUrl || packageImagePath;
-  
-  // Verifica existência dos dois arquivos
-  const { imageExists: ribbonExists, checkImage: checkRibbon } = useImageExistence();
-  const { imageExists: packageExists, checkImage: checkPackage } = useImageExistence();
-  
-  // State to track when combination changes
-  const [lastCombination, setLastCombination] = useState<string>('');
-  
-  useEffect(() => {
-    // Check if ribbon image exists
-    if (ribbonUrl) {
-      checkRibbon(ribbonUrl);
-    }
-    
-    // Check if package image exists
-    if (packageUrl) {
-      checkPackage(packageUrl);
-    }
-    
-    // Generate combination key
-    const combinationKey = `${ribbonCode || ''}-${packageCode || ''}`;
-    
-    // Show toast for new combination
-    if (combinationKey !== lastCombination && lastCombination !== '' && ribbonName && packageName) {
-      toast({
-        title: "Combinação atualizada",
-        description: `${ribbonName} + ${packageName}`,
-        duration: 2000,
-      });
-    }
-    
-    // Update last combination
-    setLastCombination(combinationKey);
-  }, [ribbonCode, packageCode, ribbonUrl, packageUrl, ribbonName, packageName, checkRibbon, checkPackage, lastCombination]);
-  
-  // Render appropriate visualization based on available images
-  const renderVisualization = () => {
-    // Check if we have a direct fallback image first
-    if (fallbackCombinationImage) {
-      return (
-        <div className="relative w-full h-full">
-          <img 
-            src={fallbackCombinationImage} 
-            alt="Combinação" 
-            className="w-full h-full object-contain"
-          />
-        </div>
-      );
-    }
-    
-    // If both images exist, show combined view
-    if (ribbonExists && packageExists) {
-      return (
-        <CombinedImagesView 
-          packageImageUrl={packageUrl}
-          ribbonImageUrl={ribbonUrl}
-          packageName={packageName}
-          ribbonName={ribbonName}
-        />
-      );
-    }
-    
-    // Fallback to simple representation
-    return (
-      <SimpleRepresentation 
-        packageColor={packageColor} 
-        ribbonColor={ribbonColor} 
-      />
-    );
-  };
 
   return (
     <AspectRatio ratio={16 / 10} className="bg-muted rounded-md overflow-hidden">
-      {renderVisualization()}
+      <ImageExistenceProvider ribbonUrl={ribbonUrl} packageUrl={packageUrl}>
+        <VisualizationRenderer
+          packageUrl={packageUrl}
+          ribbonUrl={ribbonUrl}
+          packageName={packageName}
+          ribbonName={ribbonName}
+          packageColor={packageColor}
+          ribbonColor={ribbonColor}
+          fallbackCombinationImage={fallbackCombinationImage}
+        />
+        <CombinationToastNotifier
+          ribbonCode={ribbonCode}
+          packageCode={packageCode}
+          ribbonName={ribbonName}
+          packageName={packageName}
+        />
+      </ImageExistenceProvider>
     </AspectRatio>
   );
 };
