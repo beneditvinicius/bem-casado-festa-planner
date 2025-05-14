@@ -71,7 +71,14 @@ const ColorManagement: React.FC = () => {
       });
     } else {
       const newId = (ribbonColors.length + 1).toString();
-      addRibbonColor({ id: newId, ...data });
+      // Fix: Ensure all required properties are passed with their non-optional values
+      addRibbonColor({ 
+        id: newId, 
+        name: data.name, 
+        code: data.code, 
+        color: data.color, 
+        isNew: data.isNew || false 
+      });
       toast({
         title: "Cor de fita adicionada",
         description: `A cor ${data.name} foi adicionada com sucesso.`,
@@ -91,7 +98,14 @@ const ColorManagement: React.FC = () => {
       });
     } else {
       const newId = (packageColors.length + 1).toString();
-      addPackageColor({ id: newId, ...data });
+      // Fix: Ensure all required properties are passed with their non-optional values
+      addPackageColor({ 
+        id: newId, 
+        name: data.name, 
+        code: data.code, 
+        color: data.color, 
+        isNew: data.isNew || false 
+      });
       toast({
         title: "Cor de embalagem adicionada",
         description: `A cor ${data.name} foi adicionada com sucesso.`,

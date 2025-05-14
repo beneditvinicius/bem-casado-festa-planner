@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trash2, Plus, Upload, Image } from "lucide-react";
+import { Trash2, Plus, Upload, Image, X } from "lucide-react"; // Added X icon import here
 import { useToast } from "@/components/ui/use-toast";
 import VisualizationArea from '../visualizer/VisualizationArea';
 
