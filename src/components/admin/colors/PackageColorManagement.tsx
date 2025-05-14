@@ -6,6 +6,7 @@ import { DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
 import { Plus } from "lucide-react";
 import { ColorFormValues } from './types';
+import { PackageColor } from '@/data/types';
 import PackageColorList from './components/PackageColorList';
 import PackageColorFormDialog from './components/PackageColorFormDialog';
 
@@ -38,11 +39,22 @@ export const PackageColorManagement: React.FC = () => {
         description: `A cor ${data.name} foi atualizada com sucesso.`,
       });
     } else {
-      const newId = (packageColors.length + 1).toString();
-      addPackageColor({ 
-        id: newId, 
-        ...data
-      });
+      // When adding a new color, ensure we explicitly provide all required fields
+      const newPackageColor: PackageColor = {
+        id: (packageColors.length + 1).toString(),
+        name: data.name,
+        code: data.code,
+        color: data.color,
+        isNew: data.isNew || false
+      };
+      
+      // Add imageUrl only if it's provided
+      if (data.imageUrl) {
+        newPackageColor.imageUrl = data.imageUrl;
+      }
+      
+      addPackageColor(newPackageColor);
+      
       toast({
         title: "Cor de embalagem adicionada",
         description: `A cor ${data.name} foi adicionada com sucesso.`,
