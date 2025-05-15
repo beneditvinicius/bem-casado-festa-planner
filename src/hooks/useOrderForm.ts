@@ -6,7 +6,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useCepSearch } from './orderForm/useCepSearch';
 import { useFlavorManagement } from './orderForm/useFlavorManagement';
 import { useFormValidation } from './orderForm/useFormValidation';
-import { createWhatsAppMessage } from './orderForm/useWhatsAppMessageCreator';
+import { useFormHandlers } from './orderForm/useFormHandlers';
+import { useFormSubmission } from './orderForm/useFormSubmission';
 import { FormData, UseOrderFormReturn } from './orderForm/types';
 
 export { type FlavorSelection } from './orderForm/types';
@@ -43,98 +44,23 @@ export function useOrderForm(): UseOrderFormReturn {
 
   const { errors, validateForm } = useFormValidation(formData, flavorSelections);
   const { isLoadingCep, searchCep } = useCepSearch(formData, setFormData);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    
-    if (name === 'cpf') {
-      setFormData({ ...formData, [name]: formatCPF(value) });
-    } else if (name === 'phone') {
-      setFormData({ ...formData, [name]: formatPhone(value) });
-    } else if (name === 'cep') {
-      setFormData({ ...formData, [name]: formatCEP(value) });
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
-  };
-
-  const handleSelectChange = (name: string, value: string) => {
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleDateChange = (date: Date | undefined) => {
-    setFormData({ ...formData, eventDate: date });
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (validateForm()) {
-      // Extra validation check for minimum quantity
-      const totalQuantity = flavorSelections.reduce((sum, item) => sum + (item.quantity || 0), 0);
-      if (totalQuantity < 20) {
-        toast({
-          title: "Pedido mínimo",
-          description: "O pedido mínimo é de 20 unidades.",
-          variant: "destructive"
-        });
-        return;
-      }
-      
-      const whatsappUrl = createWhatsAppMessage(
-        formData, 
-        flavorSelections, 
-        flavors, 
-        ribbonColors, 
-        packageColors, 
-        whatsappNumber
-      );
-      
-      // Show success message
-      toast({
-        title: "Orçamento gerado com sucesso!",
-        description: "Você será redirecionado para o WhatsApp.",
-      });
-      
-      // Open WhatsApp in a new tab
-      window.open(whatsappUrl, '_blank');
-    } else {
-      // Show error message if validation fails
-      toast({
-        title: "Erro no formulário",
-        description: "Por favor, verifique os campos destacados.",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleReset = () => {
-    setFormData({
-      name: '',
-      cpf: '',
-      phone: '',
-      cep: '',
-      street: '',
-      number: '',
-      complement: '',
-      neighborhood: '',
-      city: '',
-      state: 'MT',
-      eventDate: undefined,
-      eventLocation: '',
-      ribbonId: ribbonColors[0]?.id || '',
-      packageId: packageColors[0]?.id || '',
-      observations: ''
+  
+  const { handleInputChange, handleSelectChange, handleDateChange, handleReset } = 
+    useFormHandlers({
+      formData,
+      setFormData,
+      handleRemoveFlavor
     });
     
-    // Reset flavor selections
-    handleRemoveFlavor('all-except-first');
-    
-    toast({
-      title: "Formulário reiniciado",
-      description: "Os dados foram limpos."
-    });
-  };
+  const { handleSubmit } = useFormSubmission({
+    formData,
+    flavorSelections,
+    flavors,
+    ribbonColors,
+    packageColors,
+    whatsappNumber,
+    validateForm
+  });
 
   return {
     formData,
