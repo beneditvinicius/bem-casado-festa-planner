@@ -1,65 +1,46 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { Trash2, Image } from "lucide-react";
-import { PackageColor } from '@/data/types';
+import { Pencil, Trash } from "lucide-react";
+import { PackageColor } from '@/data/products';
 
 interface PackageColorItemProps {
   color: PackageColor;
-  onEdit: (id: string) => void;
-  onRemove: (id: string) => void;
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
-const PackageColorItem: React.FC<PackageColorItemProps> = ({
-  color,
-  onEdit,
-  onRemove
-}) => {
+const PackageColorItem: React.FC<PackageColorItemProps> = ({ color, onEdit, onDelete }) => {
   return (
-    <div className="border rounded-lg p-4 relative">
-      <button 
-        className="absolute top-2 right-2 text-gray-500 hover:text-red-500"
-        onClick={() => onRemove(color.id)}
-      >
-        <Trash2 size={16} />
-      </button>
-      <div className="flex items-center gap-3">
+    <div className="flex items-center justify-between p-3 rounded-2xl border mb-2">
+      <div className="flex items-center space-x-3">
         <div 
-          className={`w-10 h-10 rounded-full flex items-center justify-center ${color.imageUrl ? 'bg-gray-100' : ''}`}
-          style={{ 
-            backgroundColor: !color.imageUrl ? color.color : undefined,
-            border: (color.color === '#FFFFFF' || color.imageUrl) ? '1px solid #E2E8F0' : 'none' 
-          }} 
-        >
-          {color.imageUrl && (
-            <div className="w-full h-full overflow-hidden rounded-full">
-              <img 
-                src={color.imageUrl} 
-                alt={color.name} 
-                className="w-full h-full object-cover"
-              />
-            </div>
-          )}
-        </div>
-        <div>
-          <p className="font-medium">{color.name}</p>
-          <p className="text-sm text-gray-500">Código: {color.code}</p>
-          {color.imageUrl && (
-            <p className="text-xs text-emerald-600 flex items-center gap-1">
-              <Image size={12} />
-              Imagem definida
-            </p>
-          )}
-        </div>
+          className="w-6 h-6 rounded-full" 
+          style={{ backgroundColor: color.hexColor }}
+        />
+        <span className="font-medium">{color.name}</span>
       </div>
-      <Button 
-        variant="outline" 
-        size="sm" 
-        className="mt-2 w-full"
-        onClick={() => onEdit(color.id)}
-      >
-        Editar
-      </Button>
+      
+      <div className="flex space-x-2">
+        <Button 
+          size="sm" 
+          variant="ghost" 
+          onClick={onEdit}
+          className="rounded-full"
+        >
+          <Pencil className="h-4 w-4" />
+          <span className="sr-only">Editar</span>
+        </Button>
+        <Button 
+          size="sm" 
+          variant="ghost" 
+          className="text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full" 
+          onClick={onDelete}
+        >
+          <Trash className="h-4 w-4" />
+          <span className="sr-only">Excluir</span>
+        </Button>
+      </div>
     </div>
   );
 };

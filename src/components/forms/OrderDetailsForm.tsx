@@ -51,9 +51,10 @@ const OrderDetailsForm: React.FC<OrderDetailsFormProps> = ({
   
   // Calculate total quantity
   const totalQuantity = flavorSelections.reduce((sum, item) => sum + (item.quantity || 0), 0);
+  const showMinimumWarning = totalQuantity > 0 && totalQuantity < 20;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 text-center">
       <h3 className="text-lg font-medium">Detalhes do Pedido</h3>
       
       {flavorSelections.map((selection, index) => (
@@ -74,7 +75,7 @@ const OrderDetailsForm: React.FC<OrderDetailsFormProps> = ({
         type="button"
         variant="outline" 
         onClick={handleAddFlavor}
-        className="w-full flex items-center justify-center gap-2 h-10"
+        className="w-full flex items-center justify-center gap-2 h-10 rounded-full"
       >
         <PlusCircle className="h-4 w-4" />
         Adicionar outro sabor
@@ -88,7 +89,7 @@ const OrderDetailsForm: React.FC<OrderDetailsFormProps> = ({
         handleSelectChange={handleSelectChange}
       />
 
-      <div>
+      <div className="text-center">
         <Label htmlFor="observations" className="text-base">Observações (opcional)</Label>
         <Textarea
           id="observations"
@@ -96,7 +97,7 @@ const OrderDetailsForm: React.FC<OrderDetailsFormProps> = ({
           value={formData.observations || ""}
           onChange={handleInputChange}
           placeholder="Alguma observação sobre seu pedido?"
-          className="min-h-[100px]"
+          className="min-h-[100px] rounded-2xl text-center"
         />
       </div>
 

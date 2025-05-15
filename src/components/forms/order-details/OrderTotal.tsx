@@ -16,13 +16,13 @@ export const OrderTotal: React.FC<OrderTotalProps> = ({
 
   return (
     <div className="pt-4">
-      <div className="bg-[#fef2e6] p-4 rounded-md mb-4">
+      <div className="bg-[#fef2e6] p-4 rounded-2xl mb-4 text-center">
         {showMinimumWarning && (
           <div className="text-red-500 text-sm font-medium mb-2 text-center">
             O pedido mínimo é de 20 unidades.
           </div>
         )}
-        <div className="flex justify-between items-center">
+        <div className="flex justify-center items-center gap-2">
           <span className="text-base">Valor Total (estimado):</span>
           <span className="text-[#eb6824] text-xl font-bold">
             {showMinimumWarning ? "Aguardando qtd. mínima" : calculateTotal()}

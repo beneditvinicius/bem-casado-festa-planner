@@ -1,33 +1,31 @@
 
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import RibbonColorManagement from './colors/RibbonColorManagement';
 import PackageColorManagement from './colors/PackageColorManagement';
 
 const ColorManagement: React.FC = () => {
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>Gerenciamento de Cores</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Tabs defaultValue="ribbons">
-          <TabsList className="mb-4">
-            <TabsTrigger value="ribbons">Cores de Fitas</TabsTrigger>
-            <TabsTrigger value="packages">Cores de Embalagens</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="ribbons">
+    <div className="w-full p-1">
+      <Tabs defaultValue="ribbons" className="w-full">
+        <TabsList className="flex justify-center mb-6 w-full">
+          <TabsTrigger value="ribbons" className="rounded-full px-6">Fitas</TabsTrigger>
+          <TabsTrigger value="packages" className="rounded-full px-6">Embalagens</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="ribbons" className="flex justify-center">
+          <div className="max-w-3xl w-full">
             <RibbonColorManagement />
-          </TabsContent>
-          
-          <TabsContent value="packages">
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="packages" className="flex justify-center">
+          <div className="max-w-3xl w-full">
             <PackageColorManagement />
-          </TabsContent>
-        </Tabs>
-      </CardContent>
-    </Card>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 };
 

@@ -14,6 +14,7 @@ export const useCalculator = (flavors: Flavor[]) => {
   }]);
   
   const [total, setTotal] = useState<number>(0);
+  const [showMinimumWarning, setShowMinimumWarning] = useState<boolean>(false);
   
   useEffect(() => {
     calculateTotal();
@@ -28,18 +29,16 @@ export const useCalculator = (flavors: Flavor[]) => {
       }
     });
     
-    // Check if total quantity is less than 20
+    // Check if total quantity is less than 20 but don't show toast
     const totalQuantity = getTotalQuantity();
-    if (totalQuantity > 0 && totalQuantity < 20) {
-      toast({
-        title: "Quantidade mínima",
-        description: "O pedido mínimo é de 20 unidades."
-      });
-      // Don't update the total if minimum not met
-      return;
-    }
+    setShowMinimumWarning(totalQuantity > 0 && totalQuantity < 20);
     
-    setTotal(sum);
+    // Only set total if we have quantities
+    if (totalQuantity > 0) {
+      setTotal(sum);
+    } else {
+      setTotal(0);
+    }
   };
   
   const handleFlavorChange = (id: string, flavorId: string) => {
@@ -56,15 +55,6 @@ export const useCalculator = (flavors: Flavor[]) => {
       ...item,
       quantity
     } : item));
-    
-    // Check minimum after updating
-    const totalAfterUpdate = getTotalQuantity(id, quantity);
-    if (totalAfterUpdate > 0 && totalAfterUpdate < 20) {
-      toast({
-        title: "Quantidade mínima",
-        description: "O pedido mínimo é de 20 unidades."
-      });
-    }
   };
   
   const incrementQuantity = (id: string) => {
@@ -121,6 +111,7 @@ export const useCalculator = (flavors: Flavor[]) => {
       quantity: null
     }]);
     setTotal(0);
+    setShowMinimumWarning(false);
     toast({
       title: "Calculadora reiniciada",
       description: "Os valores foram redefinidos."
@@ -135,10 +126,20 @@ export const useCalculator = (flavors: Flavor[]) => {
       return sum + (item.quantity || 0);
     }, 0);
   };
+  
+  const validateMinimumQuantity = () => {
+    const totalQuantity = getTotalQuantity();
+    const isValid = totalQuantity >= 20;
+    
+    setShowMinimumWarning(!isValid && totalQuantity > 0);
+    
+    return isValid;
+  };
 
   return {
     flavorSelections,
     total,
+    showMinimumWarning,
     handleFlavorChange,
     handleQuantityChange,
     incrementQuantity,
@@ -146,6 +147,7 @@ export const useCalculator = (flavors: Flavor[]) => {
     addFlavorSelection,
     removeFlavorSelection,
     handleReset,
-    getTotalQuantity
+    getTotalQuantity,
+    validateMinimumQuantity
   };
 };

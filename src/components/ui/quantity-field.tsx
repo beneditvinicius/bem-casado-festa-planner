@@ -75,7 +75,7 @@ export function QuantityField({
           type="button"
           variant="outline"
           size="icon"
-          className="rounded-r-none"
+          className="rounded-l-full rounded-r-none"
           onClick={decrement}
         >
           <Minus className="h-4 w-4" />
@@ -93,7 +93,7 @@ export function QuantityField({
         className={cn(
           hasButtons
             ? "rounded-none text-center border-x-0"
-            : "min-w-0 w-full",
+            : "min-w-0 w-full rounded-full text-center",
           error && "border-destructive",
         )}
         aria-invalid={!!error}
@@ -103,7 +103,7 @@ export function QuantityField({
           type="button"
           variant="outline"
           size="icon"
-          className="rounded-l-none"
+          className="rounded-l-none rounded-r-full"
           onClick={increment}
         >
           <Plus className="h-4 w-4" />

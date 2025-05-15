@@ -1,140 +1,143 @@
 
-import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import React, { useState } from 'react';
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ColorFormSchema, ColorFormValues } from '../types';
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { RibbonColor } from '@/data/products';
 import ColorImageUploader from '../ColorImageUploader';
-import { RibbonColor } from '@/data/types';
+import { ModalDialog } from '@/components/ui/modal-dialog';
+
+type FormData = {
+  name: string;
+  hexColor: string;
+  imageUrl: string | null;
+};
 
 interface RibbonColorFormDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onSubmit: (data: ColorFormValues) => void;
-  editingRibbon: string | null;
-  previewImage: string | null;
-  setPreviewImage: (image: string | null) => void;
-  imageUrl: string;
-  setImageUrl: (url: string) => void;
-  initialValues?: RibbonColor;
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (data: RibbonColor) => void;
+  initialData?: RibbonColor;
+  mode: 'add' | 'edit';
 }
 
 const RibbonColorFormDialog: React.FC<RibbonColorFormDialogProps> = ({
-  open,
-  onOpenChange,
-  onSubmit,
-  editingRibbon,
-  previewImage,
-  setPreviewImage,
-  imageUrl,
-  setImageUrl,
-  initialValues
+  isOpen,
+  onClose,
+  onSave,
+  initialData,
+  mode
 }) => {
-  const ribbonForm = useForm<ColorFormValues>({
-    resolver: zodResolver(ColorFormSchema),
-    defaultValues: initialValues || {
-      name: "",
-      code: "",
-      color: "#FFFFFF",
-      isNew: false,
-      imageUrl: "",
-    }
+  const [formData, setFormData] = useState<FormData>({
+    name: initialData?.name || '',
+    hexColor: initialData?.hexColor || '#ffffff',
+    imageUrl: initialData?.imageUrl || null,
   });
-
+  
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+  
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+  
+  const handleImageChange = (url: string | null) => {
+    setFormData((prev) => ({ ...prev, imageUrl: url }));
+  };
+  
+  const handleSubmit = () => {
+    if (!formData.name.trim()) {
+      toast({
+        title: "Erro no formulário",
+        description: "Por favor, informe um nome para a cor.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setIsLoading(true);
+    
+    try {
+      onSave({
+        id: initialData?.id || Date.now().toString(),
+        name: formData.name,
+        hexColor: formData.hexColor,
+        imageUrl: formData.imageUrl
+      });
+      
+      toast({
+        title: `Cor ${mode === 'add' ? 'adicionada' : 'atualizada'} com sucesso!`,
+      });
+      
+      onClose();
+    } catch (error) {
+      toast({
+        title: "Erro ao salvar",
+        description: "Não foi possível salvar as alterações.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>{editingRibbon ? "Editar Cor de Fita" : "Adicionar Nova Cor de Fita"}</DialogTitle>
-        </DialogHeader>
-        <Form {...ribbonForm}>
-          <form onSubmit={ribbonForm.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={ribbonForm.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nome da Cor</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ex: Vermelho" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+    <ModalDialog
+      title={mode === 'add' ? 'Adicionar Cor da Fita' : 'Editar Cor da Fita'}
+      isOpen={isOpen}
+      onClose={onClose}
+      onConfirm={handleSubmit}
+      isLoading={isLoading}
+      confirmText={mode === 'add' ? 'Adicionar' : 'Salvar'}
+    >
+      <div className="space-y-4">
+        <div className="space-y-2 text-center">
+          <Label htmlFor="name" className="text-center">Nome da cor</Label>
+          <Input
+            id="name"
+            name="name"
+            placeholder="Ex: Rosa"
+            value={formData.name}
+            onChange={handleInputChange}
+            className="rounded-full text-center"
+            required
+          />
+        </div>
+
+        <div className="space-y-2 text-center">
+          <Label htmlFor="hexColor" className="text-center">Cor Hexadecimal</Label>
+          <div className="flex items-center justify-center gap-2">
+            <Input
+              id="hexColor"
+              name="hexColor"
+              type="color"
+              value={formData.hexColor}
+              onChange={handleInputChange}
+              className="w-12 h-10 p-1 rounded-full"
             />
-            
-            <FormField
-              control={ribbonForm.control}
-              name="code"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Código da Cor</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ex: R001" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+            <Input
+              value={formData.hexColor}
+              onChange={handleInputChange}
+              name="hexColor"
+              className="flex-1 rounded-full text-center"
             />
-            
-            <FormField
-              control={ribbonForm.control}
-              name="color"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Cor (HEX)</FormLabel>
-                  <div className="flex items-center gap-2">
-                    <div 
-                      className="w-10 h-10 rounded border"
-                      style={{ backgroundColor: field.value }}
-                    />
-                    <FormControl>
-                      <Input type="color" {...field} />
-                    </FormControl>
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={ribbonForm.control}
-              name="isNew"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center gap-2 space-y-0">
-                  <FormControl>
-                    <input
-                      type="checkbox"
-                      checked={field.value}
-                      onChange={field.onChange}
-                      className="h-4 w-4"
-                    />
-                  </FormControl>
-                  <FormLabel className="font-normal">Marcar como novidade</FormLabel>
-                </FormItem>
-              )}
-            />
-            
-            {/* Upload de imagem */}
-            <ColorImageUploader
-              previewImage={previewImage}
-              imageUrl={imageUrl}
-              setPreviewImage={setPreviewImage}
-              setImageUrl={setImageUrl}
-            />
-            
-            <DialogFooter>
-              <Button type="submit">
-                {editingRibbon ? "Atualizar" : "Adicionar"} Cor
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+          </div>
+        </div>
+
+        <div className="space-y-2 text-center">
+          <Label className="text-center">Imagem da fita (opcional)</Label>
+          <ColorImageUploader
+            imageUrl={formData.imageUrl}
+            onChange={handleImageChange}
+            colorType="ribbon"
+          />
+          <p className="text-xs text-muted-foreground text-center">
+            Upload de imagem da fita (PNG com transparência recomendado)
+          </p>
+        </div>
+      </div>
+    </ModalDialog>
   );
 };
 

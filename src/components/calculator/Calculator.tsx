@@ -16,6 +16,7 @@ const Calculator: React.FC = () => {
   const {
     flavorSelections,
     total,
+    showMinimumWarning,
     handleFlavorChange,
     handleQuantityChange,
     incrementQuantity,
@@ -23,10 +24,16 @@ const Calculator: React.FC = () => {
     addFlavorSelection,
     removeFlavorSelection,
     handleReset,
-    getTotalQuantity
+    getTotalQuantity,
+    validateMinimumQuantity
   } = useCalculator(flavors);
   
   const handleGoToFaq = () => {
+    // First validate minimum quantity
+    if (!validateMinimumQuantity() && getTotalQuantity() > 0) {
+      return;
+    }
+    
     const faqElement = document.getElementById('faq');
     if (faqElement) {
       faqElement.scrollIntoView({ behavior: 'smooth' });
@@ -37,7 +44,7 @@ const Calculator: React.FC = () => {
   const showTotal = totalQuantity === 0 || totalQuantity >= 20;
   
   return (
-    <div className="w-full max-w-3xl mx-auto">
+    <div className="w-full max-w-3xl mx-auto flex flex-col items-center">
       <p className="text-center mb-6">
         Use esta calculadora para estimar o preço dos seus bem-casados de acordo com a quantidade e sabores desejados.
       </p>
@@ -58,7 +65,7 @@ const Calculator: React.FC = () => {
       
       <Button 
         variant="outline" 
-        className="w-full mb-6 flex items-center gap-2"
+        className="w-full mb-6 flex items-center gap-2 rounded-full"
         onClick={addFlavorSelection}
       >
         <PlusCircle className="h-4 w-4" />
@@ -68,13 +75,14 @@ const Calculator: React.FC = () => {
       <CalculatorTotals
         total={showTotal ? total : 0}
         totalQuantity={totalQuantity}
-        showMinimumWarning={totalQuantity > 0 && totalQuantity < 20}
+        showMinimumWarning={showMinimumWarning}
       />
       
       <CalculatorFooter 
         isMobile={isMobile} 
         onReset={handleReset}
         onGoToFaq={handleGoToFaq}
+        validateMinimum={validateMinimumQuantity}
       />
     </div>
   );
