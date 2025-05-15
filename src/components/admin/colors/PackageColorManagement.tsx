@@ -2,13 +2,12 @@
 import React, { useState } from 'react';
 import { useProductsStore } from '@/data/products';
 import { Button } from "@/components/ui/button";
-import { DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
 import { Plus } from "lucide-react";
 import { ColorFormValues } from './types';
-import { PackageColor } from '@/data/types';
 import PackageColorList from './components/PackageColorList';
 import PackageColorFormDialog from './components/PackageColorFormDialog';
+import { PackageColor } from '@/data/types';
 
 export const PackageColorManagement: React.FC = () => {
   const { 
@@ -22,18 +21,10 @@ export const PackageColorManagement: React.FC = () => {
   const [editingPackage, setEditingPackage] = useState<string | null>(null);
   const { toast } = useToast();
   
-  const [editingColorData, setEditingColorData] = useState<ColorFormValues | null>(null);
-  
-  const handleAddPackage = (data: ColorFormValues) => {
+  const handleAddPackage = (data: Partial<PackageColor>) => {
     if (editingPackage) {
       // Make sure we're passing all required properties when updating
-      updatePackageColor(editingPackage, {
-        name: data.name,
-        code: data.code,
-        color: data.color,
-        isNew: data.isNew || false,
-        imageUrl: data.imageUrl || undefined
-      });
+      updatePackageColor(editingPackage, data);
       toast({
         title: "Cor de embalagem atualizada",
         description: `A cor ${data.name} foi atualizada com sucesso.`,
@@ -42,16 +33,12 @@ export const PackageColorManagement: React.FC = () => {
       // When adding a new color, ensure we explicitly provide all required fields
       const newPackageColor: PackageColor = {
         id: (packageColors.length + 1).toString(),
-        name: data.name,
-        code: data.code,
-        color: data.color,
-        isNew: data.isNew || false
+        name: data.name || '',
+        code: data.code || '',
+        color: data.color || '#FFFFFF',
+        isNew: data.isNew || false,
+        imageUrl: data.imageUrl
       };
-      
-      // Add imageUrl only if it's provided
-      if (data.imageUrl) {
-        newPackageColor.imageUrl = data.imageUrl;
-      }
       
       addPackageColor(newPackageColor);
       
@@ -62,22 +49,11 @@ export const PackageColorManagement: React.FC = () => {
     }
     setIsAddingPackage(false);
     setEditingPackage(null);
-    setEditingColorData(null);
   };
   
   const handleEditPackage = (id: string) => {
-    const pkg = packageColors.find(p => p.id === id);
-    if (pkg) {
-      setEditingColorData({
-        name: pkg.name,
-        code: pkg.code,
-        color: pkg.color,
-        isNew: pkg.isNew || false,
-        imageUrl: pkg.imageUrl || '',
-      });
-      setEditingPackage(id);
-      setIsAddingPackage(true);
-    }
+    setEditingPackage(id);
+    setIsAddingPackage(true);
   };
   
   const handleRemovePackage = (id: string) => {
@@ -92,22 +68,27 @@ export const PackageColorManagement: React.FC = () => {
     setIsAddingPackage(open);
     if (!open) {
       setEditingPackage(null);
-      setEditingColorData(null);
     }
   };
+
+  // Find the initial values for the form if editing a package
+  const initialValues = editingPackage 
+    ? packageColors.find(p => p.id === editingPackage) 
+    : undefined;
   
   return (
     <div className="space-y-4">
       <div className="flex justify-between">
-        <h3 className="text-lg font-medium">Cores de Embalagens Disponíveis</h3>
-        <DialogTrigger asChild>
-          <Button onClick={() => {
+        <h3 className="text-lg font-medium text-center">Cores de Embalagens Disponíveis</h3>
+        <Button 
+          onClick={() => {
             setEditingPackage(null);
-            setEditingColorData(null);
-          }}>
-            <Plus className="mr-2 h-4 w-4" /> Adicionar Cor de Embalagem
-          </Button>
-        </DialogTrigger>
+            setIsAddingPackage(true);
+          }}
+          className="rounded-full"
+        >
+          <Plus className="mr-2 h-4 w-4" /> Adicionar Cor de Embalagem
+        </Button>
       </div>
       
       <PackageColorList 
@@ -117,11 +98,10 @@ export const PackageColorManagement: React.FC = () => {
       />
       
       <PackageColorFormDialog 
-        isOpen={isAddingPackage}
+        open={isAddingPackage}
         onOpenChange={handleOpenChange}
         onSubmit={handleAddPackage}
-        editingColor={editingColorData}
-        isEditing={!!editingPackage}
+        initialValues={initialValues}
       />
     </div>
   );

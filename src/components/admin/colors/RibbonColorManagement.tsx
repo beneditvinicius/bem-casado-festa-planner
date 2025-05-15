@@ -7,6 +7,7 @@ import { Plus } from "lucide-react";
 import { ColorFormValues } from './types';
 import RibbonColorList from './components/RibbonColorList';
 import RibbonColorFormDialog from './components/RibbonColorFormDialog';
+import { RibbonColor } from '@/data/types';
 
 export const RibbonColorManagement: React.FC = () => {
   const { 
@@ -18,20 +19,11 @@ export const RibbonColorManagement: React.FC = () => {
   
   const [isAddingRibbon, setIsAddingRibbon] = useState(false);
   const [editingRibbon, setEditingRibbon] = useState<string | null>(null);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [imageUrl, setImageUrl] = useState<string>('');
-  
   const { toast } = useToast();
   
-  const handleAddRibbon = (data: ColorFormValues) => {
-    // Use previewImage se disponível, caso contrário, use o imageUrl do formulário
-    const finalImageUrl = previewImage || imageUrl;
-    
+  const handleAddRibbon = (data: Partial<RibbonColor>) => {
     if (editingRibbon) {
-      updateRibbonColor(editingRibbon, {
-        ...data,
-        imageUrl: finalImageUrl
-      });
+      updateRibbonColor(editingRibbon, data);
       toast({
         title: "Cor de fita atualizada",
         description: `A cor ${data.name} foi atualizada com sucesso.`,
@@ -40,11 +32,11 @@ export const RibbonColorManagement: React.FC = () => {
       const newId = (ribbonColors.length + 1).toString();
       addRibbonColor({ 
         id: newId, 
-        name: data.name, 
-        code: data.code, 
-        color: data.color, 
+        name: data.name || '',
+        code: data.code || '',
+        color: data.color || '#FFFFFF', 
         isNew: data.isNew || false,
-        imageUrl: finalImageUrl
+        imageUrl: data.imageUrl || undefined
       });
       toast({
         title: "Cor de fita adicionada",
@@ -53,18 +45,11 @@ export const RibbonColorManagement: React.FC = () => {
     }
     setIsAddingRibbon(false);
     setEditingRibbon(null);
-    setPreviewImage(null);
-    setImageUrl('');
   };
   
-  const editRibbon = (id: string) => {
-    const ribbon = ribbonColors.find(r => r.id === id);
-    if (ribbon) {
-      setImageUrl(ribbon.imageUrl || '');
-      setPreviewImage(ribbon.imageUrl || null);
-      setEditingRibbon(id);
-      setIsAddingRibbon(true);
-    }
+  const handleEditRibbon = (id: string) => {
+    setEditingRibbon(id);
+    setIsAddingRibbon(true);
   };
   
   const handleRemoveRibbon = (id: string) => {
@@ -77,8 +62,6 @@ export const RibbonColorManagement: React.FC = () => {
   
   const handleOpenAddDialog = () => {
     setEditingRibbon(null);
-    setPreviewImage(null);
-    setImageUrl('');
     setIsAddingRibbon(true);
   };
   
@@ -90,15 +73,15 @@ export const RibbonColorManagement: React.FC = () => {
   return (
     <div className="space-y-4">
       <div className="flex justify-between">
-        <h3 className="text-lg font-medium">Cores de Fitas Disponíveis</h3>
-        <Button onClick={handleOpenAddDialog}>
+        <h3 className="text-lg font-medium text-center">Cores de Fitas Disponíveis</h3>
+        <Button onClick={handleOpenAddDialog} className="rounded-full">
           <Plus className="mr-2 h-4 w-4" /> Adicionar Cor de Fita
         </Button>
       </div>
       
       <RibbonColorList 
         colors={ribbonColors} 
-        onEditColor={editRibbon} 
+        onEditColor={handleEditRibbon} 
         onRemoveColor={handleRemoveRibbon}
       />
       
@@ -106,11 +89,6 @@ export const RibbonColorManagement: React.FC = () => {
         open={isAddingRibbon} 
         onOpenChange={setIsAddingRibbon}
         onSubmit={handleAddRibbon}
-        editingRibbon={editingRibbon}
-        previewImage={previewImage}
-        setPreviewImage={setPreviewImage}
-        imageUrl={imageUrl}
-        setImageUrl={setImageUrl}
         initialValues={initialValues}
       />
     </div>

@@ -20,8 +20,8 @@ const RibbonColorList: React.FC<RibbonColorListProps> = ({
         <RibbonColorItem 
           key={color.id} 
           color={color} 
-          onEdit={onEditColor} 
-          onRemove={onRemoveColor} 
+          onEdit={() => onEditColor(color.id)} 
+          onRemove={() => onRemoveColor(color.id)} 
         />
       ))}
     </div>

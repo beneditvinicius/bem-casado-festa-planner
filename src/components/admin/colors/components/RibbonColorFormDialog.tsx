@@ -1,41 +1,65 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { RibbonColor } from '@/data/products';
+import { RibbonColor } from '@/data/types';
 import ColorImageUploader from '../ColorImageUploader';
 import { ModalDialog } from '@/components/ui/modal-dialog';
 
 type FormData = {
   name: string;
-  hexColor: string;
+  color: string;
   imageUrl: string | null;
+  code: string;
+  isNew: boolean;
 };
 
 interface RibbonColorFormDialogProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSave: (data: RibbonColor) => void;
-  initialData?: RibbonColor;
-  mode: 'add' | 'edit';
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSubmit: (data: Partial<RibbonColor>) => void;
+  initialValues?: RibbonColor;
 }
 
 const RibbonColorFormDialog: React.FC<RibbonColorFormDialogProps> = ({
-  isOpen,
-  onClose,
-  onSave,
-  initialData,
-  mode
+  open,
+  onOpenChange,
+  onSubmit,
+  initialValues
 }) => {
   const [formData, setFormData] = useState<FormData>({
-    name: initialData?.name || '',
-    hexColor: initialData?.hexColor || '#ffffff',
-    imageUrl: initialData?.imageUrl || null,
+    name: '',
+    color: '#ffffff',
+    imageUrl: null,
+    code: '',
+    isNew: false
   });
   
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  
+  // Reset form data when initialValues changes or dialog opens
+  useEffect(() => {
+    if (initialValues) {
+      setFormData({
+        name: initialValues.name || '',
+        color: initialValues.color || '#ffffff',
+        imageUrl: initialValues.imageUrl || null,
+        code: initialValues.code || '',
+        isNew: initialValues.isNew || false
+      });
+    } else {
+      // Reset form for new color
+      setFormData({
+        name: '',
+        color: '#ffffff',
+        imageUrl: null,
+        code: '',
+        isNew: false
+      });
+    }
+  }, [initialValues, open]);
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -59,18 +83,21 @@ const RibbonColorFormDialog: React.FC<RibbonColorFormDialogProps> = ({
     setIsLoading(true);
     
     try {
-      onSave({
-        id: initialData?.id || Date.now().toString(),
+      const colorData: Partial<RibbonColor> = {
         name: formData.name,
-        hexColor: formData.hexColor,
-        imageUrl: formData.imageUrl
-      });
+        color: formData.color,
+        code: formData.code,
+        imageUrl: formData.imageUrl,
+        isNew: formData.isNew
+      };
+      
+      onSubmit(colorData);
       
       toast({
-        title: `Cor ${mode === 'add' ? 'adicionada' : 'atualizada'} com sucesso!`,
+        title: `Cor ${initialValues ? 'atualizada' : 'adicionada'} com sucesso!`,
       });
       
-      onClose();
+      onOpenChange(false);
     } catch (error) {
       toast({
         title: "Erro ao salvar",
@@ -84,12 +111,12 @@ const RibbonColorFormDialog: React.FC<RibbonColorFormDialogProps> = ({
   
   return (
     <ModalDialog
-      title={mode === 'add' ? 'Adicionar Cor da Fita' : 'Editar Cor da Fita'}
-      isOpen={isOpen}
-      onClose={onClose}
+      title={initialValues ? 'Editar Cor da Fita' : 'Adicionar Cor da Fita'}
+      isOpen={open}
+      onClose={() => onOpenChange(false)}
       onConfirm={handleSubmit}
       isLoading={isLoading}
-      confirmText={mode === 'add' ? 'Adicionar' : 'Salvar'}
+      confirmText={initialValues ? 'Salvar' : 'Adicionar'}
     >
       <div className="space-y-4">
         <div className="space-y-2 text-center">
@@ -106,20 +133,32 @@ const RibbonColorFormDialog: React.FC<RibbonColorFormDialogProps> = ({
         </div>
 
         <div className="space-y-2 text-center">
-          <Label htmlFor="hexColor" className="text-center">Cor Hexadecimal</Label>
+          <Label htmlFor="code" className="text-center">Código da cor</Label>
+          <Input
+            id="code"
+            name="code"
+            placeholder="Ex: 311"
+            value={formData.code}
+            onChange={handleInputChange}
+            className="rounded-full text-center"
+          />
+        </div>
+
+        <div className="space-y-2 text-center">
+          <Label htmlFor="color" className="text-center">Cor Hexadecimal</Label>
           <div className="flex items-center justify-center gap-2">
             <Input
-              id="hexColor"
-              name="hexColor"
+              id="color"
+              name="color"
               type="color"
-              value={formData.hexColor}
+              value={formData.color}
               onChange={handleInputChange}
               className="w-12 h-10 p-1 rounded-full"
             />
             <Input
-              value={formData.hexColor}
+              value={formData.color}
               onChange={handleInputChange}
-              name="hexColor"
+              name="color"
               className="flex-1 rounded-full text-center"
             />
           </div>
