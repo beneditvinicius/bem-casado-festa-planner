@@ -2,7 +2,7 @@
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ColorManagement from './ColorManagement';
-import CombinationsManagement from './CombinationsManagement';
+// import CombinationsManagement from './CombinationsManagement';
 
 const AdminSection: React.FC = () => {
   return (
@@ -12,16 +12,13 @@ const AdminSection: React.FC = () => {
       <Tabs defaultValue="colors">
         <TabsList className="mb-6">
           <TabsTrigger value="colors">Gerenciar Cores</TabsTrigger>
-          <TabsTrigger value="combinations">Gerenciar Combinações</TabsTrigger>
+          {/* aba de combinações removida */}
         </TabsList>
         
         <TabsContent value="colors">
           <ColorManagement />
         </TabsContent>
-        
-        <TabsContent value="combinations">
-          <CombinationsManagement />
-        </TabsContent>
+        {/* conteúdo de combinações removido */}
       </Tabs>
     </div>
   );

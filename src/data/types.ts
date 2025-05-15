@@ -1,4 +1,5 @@
 
+
 export interface Flavor {
   id: string;
   name: string;
@@ -26,8 +27,5 @@ export interface PackageColor {
   imageUrl?: string;
 }
 
-export interface Combination {
-  ribbonId: string;
-  packageId: string;
-  imageUrl: string;
-}
+// export interface Combination { /* removido */ }
+

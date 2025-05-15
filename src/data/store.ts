@@ -5,10 +5,10 @@ import { persist } from 'zustand/middleware';
 import { FlavorSlice, createFlavorSlice } from './slices/flavorSlice';
 import { RibbonSlice, createRibbonSlice } from './slices/ribbonSlice';
 import { PackageSlice, createPackageSlice } from './slices/packageSlice';
-import { CombinationSlice, createCombinationSlice } from './slices/combinationSlice';
+// import { CombinationSlice, createCombinationSlice } from './slices/combinationSlice';
 import { ConfigSlice, createConfigSlice } from './slices/configSlice';
 
-export type RootState = FlavorSlice & RibbonSlice & PackageSlice & CombinationSlice & ConfigSlice;
+export type RootState = FlavorSlice & RibbonSlice & PackageSlice & ConfigSlice;
 
 export const useProductsStore = create<RootState>()(
   persist(
@@ -16,7 +16,7 @@ export const useProductsStore = create<RootState>()(
       ...createFlavorSlice(...a),
       ...createRibbonSlice(...a),
       ...createPackageSlice(...a),
-      ...createCombinationSlice(...a),
+      // ...createCombinationSlice(...a),  // removido
       ...createConfigSlice(...a),
     }),
     {

@@ -12,7 +12,7 @@ import { useImageExistence } from '@/hooks/useImageExistence';
 const Visualizer: React.FC = () => {
   const ribbonColors = useProductsStore(state => state.ribbonColors);
   const packageColors = useProductsStore(state => state.packageColors);
-  const combinations = useProductsStore(state => state.combinations);
+  // const combinations = useProductsStore(state => state.combinations);
   const isMobile = useIsMobile();
   
   const [selectedRibbonId, setSelectedRibbonId] = useState<string>(ribbonColors[0]?.id || '');
@@ -23,10 +23,8 @@ const Visualizer: React.FC = () => {
   const selectedPackage = packageColors.find(p => p.id === selectedPackageId);
   
   // Try to get fallback combination image if separate images don't exist
-  const fallbackCombinationImage = combinations.find(
-    c => c.ribbonId === selectedRibbonId && c.packageId === selectedPackageId
-  )?.imageUrl || '';
-
+  const fallbackCombinationImage = ''; // Since combinations are removed
+  
   // Define image paths
   const ribbonImagePath = selectedRibbon?.code ? `/lovable-uploads/fita_${selectedRibbon.code.toLowerCase()}.png` : '';
   const packageImagePath = selectedPackage?.code ? `/lovable-uploads/embalagem_${selectedPackage.code.toLowerCase()}.png` : '';

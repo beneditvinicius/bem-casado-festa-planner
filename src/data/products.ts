@@ -1,6 +1,6 @@
 
 import { useProductsStore } from './store';
-import { Flavor, RibbonColor, PackageColor, Combination } from './types';
+import { Flavor, RibbonColor, PackageColor } from './types';
 
 export { useProductsStore };
 
@@ -8,8 +8,7 @@ export { useProductsStore };
 export type { 
   Flavor, 
   RibbonColor, 
-  PackageColor, 
-  Combination 
+  PackageColor 
 } from './types';
 
 // Define the store interface
@@ -31,11 +30,6 @@ export interface ProductsStore {
   addPackageColor: (p: PackageColor) => void;
   updatePackageColor: (id: string, data: Partial<PackageColor>) => void;
   removePackageColor: (id: string) => void;
-  
-  // Combination operations
-  combinations: Combination[];
-  addCombination: (c: Combination) => void;
-  removeCombination: (ribbonId: string, packageId: string) => void;
   
   // Config operations
   whatsappNumber: string;
