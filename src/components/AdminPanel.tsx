@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -82,7 +83,8 @@ const AdminPanel: React.FC = () => {
         id: Date.now().toString(),
         name: newFlavor.name,
         price: newFlavor.price,
-        isNew: newFlavor.isNew
+        isNew: newFlavor.isNew,
+        categoryId: 'default' // Add the required categoryId
       });
       setNewFlavor({ name: '', price: 0, isNew: false });
       toast({

@@ -29,10 +29,15 @@ export const useProductsStore = create<ProductsState>()(
   )
 );
 
-export const useConfigStore = create<ConfigState>()(
+// Fix the type issue by extending ProductsState with correct ConfigState
+// This ensures configStore has all the required properties of RootState
+export const useConfigStore = create<ProductsState>()(
   devtools(
     persist(
       (...a) => ({
+        ...createFlavorSlice(...a),
+        ...createRibbonSlice(...a),
+        ...createPackageSlice(...a),
         ...createConfigSlice(...a),
       }),
       {
