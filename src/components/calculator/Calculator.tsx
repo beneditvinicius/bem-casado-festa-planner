@@ -4,12 +4,14 @@ import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import { useCalculator } from '@/hooks/useCalculator';
 import { useProductsStore } from '@/data/products';
+import { useIsMobile } from '@/hooks/use-mobile';
 import FlavorSelector from './FlavorSelector';
 import CalculatorTotals from './CalculatorTotals';
 import CalculatorFooter from './CalculatorFooter';
 
 const Calculator: React.FC = () => {
   const flavors = useProductsStore((state) => state.flavors);
+  const isMobile = useIsMobile();
   
   const {
     flavorSelections,
@@ -23,6 +25,13 @@ const Calculator: React.FC = () => {
     handleReset,
     getTotalQuantity
   } = useCalculator(flavors);
+  
+  const handleGoToFaq = () => {
+    const faqElement = document.getElementById('faq');
+    if (faqElement) {
+      faqElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
   
   return (
     <div className="w-full max-w-3xl mx-auto">
@@ -40,7 +49,7 @@ const Calculator: React.FC = () => {
           onIncrement={incrementQuantity}
           onDecrement={decrementQuantity}
           onRemove={removeFlavorSelection}
-          canRemove={flavorSelections.length > 1}
+          showRemoveButton={flavorSelections.length > 1}
         />
       ))}
       
@@ -54,11 +63,15 @@ const Calculator: React.FC = () => {
       </Button>
       
       <CalculatorTotals
-        totalPrice={new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total)}
+        total={total}
         totalQuantity={getTotalQuantity()}
       />
       
-      <CalculatorFooter onReset={handleReset} />
+      <CalculatorFooter 
+        isMobile={isMobile} 
+        onReset={handleReset}
+        onGoToFaq={handleGoToFaq}
+      />
     </div>
   );
 };
