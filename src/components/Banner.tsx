@@ -6,7 +6,7 @@ const Banner: React.FC = () => {
   const { bannerUrl, bannerText } = useConfigStore();
   
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-12 relative rounded-3xl overflow-hidden">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 mt-8 mb-12 relative rounded-3xl overflow-hidden">
       {bannerUrl ? (
         <div className="relative w-full h-48 sm:h-64 md:h-80">
           <img 

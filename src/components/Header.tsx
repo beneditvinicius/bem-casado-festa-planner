@@ -20,31 +20,31 @@ const Header: React.FC = () => {
         <img 
           src="/lovable-uploads/f59e834a-effd-4659-a7d2-ac466e9aa740.png" 
           alt="La Badiane Bem Casados" 
-          className="h-[40px] sm:h-[50px] mb-4 sm:mb-5" 
+          className="h-[60px] sm:h-[70px] mb-4 sm:mb-5" 
         />
         
         <nav className="flex flex-wrap justify-center gap-2 sm:gap-3">
           <button 
             onClick={() => scrollToSection('calculator')} 
-            className="text-center text-gray-600 hover:text-[#eb6824] bg-gray-100 hover:bg-[#FED7C3] px-4 py-2 rounded-full transition-colors"
+            className="text-center text-gray-600 hover:text-[#eb6824] bg-[#FED7C3] hover:bg-[#f8c3a7] px-4 py-2 rounded-full transition-colors"
           >
             Calculadora
           </button>
           <button 
             onClick={() => scrollToSection('orcamento')} 
-            className="text-center text-gray-600 hover:text-[#eb6824] bg-gray-100 hover:bg-[#FED7C3] px-4 py-2 rounded-full transition-colors"
+            className="text-center text-gray-600 hover:text-[#eb6824] bg-[#FED7C3] hover:bg-[#f8c3a7] px-4 py-2 rounded-full transition-colors"
           >
             Orçamento
           </button>
           <button 
             onClick={() => scrollToSection('visualizer')} 
-            className="text-center text-gray-600 hover:text-[#eb6824] bg-gray-100 hover:bg-[#FED7C3] px-4 py-2 rounded-full transition-colors"
+            className="text-center text-gray-600 hover:text-[#eb6824] bg-[#FED7C3] hover:bg-[#f8c3a7] px-4 py-2 rounded-full transition-colors"
           >
             Visualizador
           </button>
           <button 
             onClick={() => scrollToSection('faq')} 
-            className="text-center text-gray-600 hover:text-[#eb6824] bg-gray-100 hover:bg-[#FED7C3] px-4 py-2 rounded-full transition-colors"
+            className="text-center text-gray-600 hover:text-[#eb6824] bg-[#FED7C3] hover:bg-[#f8c3a7] px-4 py-2 rounded-full transition-colors"
           >
             Dúvidas
           </button>

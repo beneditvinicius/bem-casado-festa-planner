@@ -49,9 +49,26 @@ export function QuantityField({
     if (newValue === "" || isNaN(parsedValue)) {
       onChange(null);
     } else {
-      // Enforce minimum value of 20 if the value is greater than 0
-      const finalValue = parsedValue > 0 && parsedValue < 20 ? 20 : parsedValue;
-      onChange(finalValue);
+      onChange(parsedValue);
+    }
+  };
+
+  const handleBlur = () => {
+    if (value !== null && value > 0 && value < 20) {
+      triggerBuzzAnimation();
+      onChange(null);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      if (value !== null && value > 0 && value < 20) {
+        triggerBuzzAnimation();
+        onChange(null);
+      }
+    }
+    if (onKeyDown) {
+      onKeyDown(e);
     }
   };
 
@@ -62,12 +79,16 @@ export function QuantityField({
   };
 
   const decrement = () => {
-    // If the current value is less than or equal to min, or if it's 20 (our min), trigger buzz
-    if (value === null || value <= min || (value <= 20 && value > 0)) {
+    if (value === null || value <= min) {
       triggerBuzzAnimation();
       return;
     }
     const newValue = value - step;
+    if (newValue < 20 && newValue > 0) {
+      triggerBuzzAnimation();
+      onChange(null);
+      return;
+    }
     onChange(newValue < min ? min : newValue);
   };
 
@@ -75,19 +96,6 @@ export function QuantityField({
     setBuzzing(true);
     setTimeout(() => setBuzzing(false), 500); // Duration of the animation
   };
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (onKeyDown) {
-      onKeyDown(e);
-    }
-  };
-
-  // To enforce the minimum value as user types
-  useEffect(() => {
-    if (value !== null && value > 0 && value < 20) {
-      onChange(20);
-    }
-  }, [value, onChange]);
 
   return (
     <div className={cn("flex flex-col", className)}>
@@ -117,13 +125,16 @@ export function QuantityField({
             max={max}
             value={inputValue}
             onChange={handleChange}
-            onKeyDown={handleKeyDown}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyPress}
             className={cn(
               "rounded-none text-center border-x-0",
               error && "border-destructive",
               showMinimumMessage && value === null && "text-transparent", // Hide input text when showing placeholder
             )}
             aria-invalid={!!error}
+            // Remove browser's default spinner arrows
+            style={{ appearance: 'textfield' }}
           />
         </div>
         {hasButtons && (
@@ -141,5 +152,3 @@ export function QuantityField({
     </div>
   );
 }
-
-// Add keyframes for buzz animation to index.css

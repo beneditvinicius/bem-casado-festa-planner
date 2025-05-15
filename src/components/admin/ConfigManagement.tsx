@@ -6,14 +6,17 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useConfigStore } from '@/data/products';
-import { Phone, Save } from "lucide-react";
+import { Phone, Save, Image } from "lucide-react";
+import BannerImageUploader from './BannerImageUploader';
 
 const ConfigManagement: React.FC = () => {
-  const { whatsappNumber, setWhatsappNumber } = useConfigStore();
+  const { whatsappNumber, bannerUrl, bannerText, setWhatsappNumber, setBannerUrl, setBannerText } = useConfigStore();
   const [tempWhatsappNumber, setTempWhatsappNumber] = useState(whatsappNumber);
+  const [tempBannerUrl, setTempBannerUrl] = useState(bannerUrl || '');
+  const [tempBannerText, setTempBannerText] = useState(bannerText || '');
   const { toast } = useToast();
 
-  const handleSave = () => {
+  const handleSaveWhatsapp = () => {
     if (!tempWhatsappNumber) {
       toast({
         title: "Número inválido",
@@ -27,6 +30,15 @@ const ConfigManagement: React.FC = () => {
     toast({
       title: "Configurações atualizadas",
       description: "O número de WhatsApp foi salvo com sucesso.",
+    });
+  };
+
+  const handleSaveBanner = () => {
+    setBannerUrl(tempBannerUrl);
+    setBannerText(tempBannerText);
+    toast({
+      title: "Banner atualizado",
+      description: "As configurações do banner foram salvas com sucesso.",
     });
   };
 
@@ -58,10 +70,70 @@ const ConfigManagement: React.FC = () => {
           
           <div className="flex justify-center mt-6">
             <Button 
-              onClick={handleSave}
+              onClick={handleSaveWhatsapp}
               className="rounded-full bg-[#eb6824] hover:bg-[#d25618]"
             >
-              <Save className="mr-2 h-4 w-4" /> Salvar Configurações
+              <Phone className="mr-2 h-4 w-4" /> Salvar Número de WhatsApp
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="mb-6 rounded-3xl">
+        <CardContent className="pt-6">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="banner-text" className="text-center block">Texto do Banner</Label>
+              <Input
+                id="banner-text"
+                value={tempBannerText}
+                onChange={(e) => setTempBannerText(e.target.value)}
+                placeholder="Digite o texto para exibir no banner"
+              />
+            </div>
+            
+            <div className="space-y-2 pb-4">
+              <Label className="text-center block">Imagem do Banner</Label>
+              <BannerImageUploader 
+                imageUrl={tempBannerUrl}
+                onChange={setTempBannerUrl}
+              />
+            </div>
+
+            <div className="mb-4 rounded-xl overflow-hidden border">
+              <h4 className="text-base font-medium py-2 bg-gray-50 text-center">Prévia do Banner</h4>
+              <div className="w-full h-36 relative">
+                {tempBannerUrl ? (
+                  <img 
+                    src={tempBannerUrl} 
+                    alt="Prévia do Banner" 
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-[#fef2e6] flex items-center justify-center">
+                    <p className="text-[#eb6824] font-semibold px-4 py-2 text-center">
+                      {tempBannerText || "La Badiane Bem-Casados"}
+                    </p>
+                  </div>
+                )}
+                
+                {tempBannerUrl && tempBannerText && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                    <h2 className="text-xl text-white font-semibold px-4 py-2 text-center">
+                      {tempBannerText}
+                    </h2>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex justify-center mt-4">
+            <Button 
+              onClick={handleSaveBanner}
+              className="rounded-full bg-[#eb6824] hover:bg-[#d25618]"
+            >
+              <Image className="mr-2 h-4 w-4" /> Salvar Configurações do Banner
             </Button>
           </div>
         </CardContent>

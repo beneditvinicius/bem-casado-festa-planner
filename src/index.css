@@ -71,6 +71,17 @@
   input, select, textarea {
     @apply rounded-2xl text-center;
   }
+
+  /* Hide number input arrows */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
   
   /* Card styles */
   .card, .card-like {
