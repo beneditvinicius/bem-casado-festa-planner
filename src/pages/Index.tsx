@@ -72,9 +72,7 @@ const Index: React.FC = () => {
             <section id={section.id} className={`section-container ${section.bg || 'bg-white'}`}>
               <div className="bg-white rounded-2xl shadow-md p-6 mb-8">
                 <h2 className="text-xl sm:text-2xl font-semibold mb-4">{section.title}</h2>
-                {section.description && <p className="text-base sm:text-lg text-gray-700 mb-6">
-                    {section.description}
-                  </p>}
+                {section.description}
                 {section.component}
               </div>
             </section>
