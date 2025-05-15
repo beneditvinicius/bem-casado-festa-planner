@@ -70,6 +70,17 @@ export function useOrderForm(): UseOrderFormReturn {
     e.preventDefault();
     
     if (validateForm()) {
+      // Extra validation check for minimum quantity
+      const totalQuantity = flavorSelections.reduce((sum, item) => sum + (item.quantity || 0), 0);
+      if (totalQuantity < 20) {
+        toast({
+          title: "Pedido mínimo",
+          description: "O pedido mínimo é de 20 unidades.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
       const whatsappUrl = createWhatsAppMessage(
         formData, 
         flavorSelections, 
@@ -87,6 +98,13 @@ export function useOrderForm(): UseOrderFormReturn {
       
       // Open WhatsApp in a new tab
       window.open(whatsappUrl, '_blank');
+    } else {
+      // Show error message if validation fails
+      toast({
+        title: "Erro no formulário",
+        description: "Por favor, verifique os campos destacados.",
+        variant: "destructive"
+      });
     }
   };
 

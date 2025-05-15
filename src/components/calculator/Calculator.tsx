@@ -33,6 +33,9 @@ const Calculator: React.FC = () => {
     }
   };
   
+  const totalQuantity = getTotalQuantity();
+  const showTotal = totalQuantity === 0 || totalQuantity >= 20;
+  
   return (
     <div className="w-full max-w-3xl mx-auto">
       <p className="text-center mb-6">
@@ -63,8 +66,9 @@ const Calculator: React.FC = () => {
       </Button>
       
       <CalculatorTotals
-        total={total}
-        totalQuantity={getTotalQuantity()}
+        total={showTotal ? total : 0}
+        totalQuantity={totalQuantity}
+        showMinimumWarning={totalQuantity > 0 && totalQuantity < 20}
       />
       
       <CalculatorFooter 

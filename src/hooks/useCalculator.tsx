@@ -27,6 +27,18 @@ export const useCalculator = (flavors: Flavor[]) => {
         sum += flavor.price * selection.quantity;
       }
     });
+    
+    // Check if total quantity is less than 20
+    const totalQuantity = getTotalQuantity();
+    if (totalQuantity > 0 && totalQuantity < 20) {
+      toast({
+        title: "Quantidade mínima",
+        description: "O pedido mínimo é de 20 unidades."
+      });
+      // Don't update the total if minimum not met
+      return;
+    }
+    
     setTotal(sum);
   };
   
@@ -40,18 +52,19 @@ export const useCalculator = (flavors: Flavor[]) => {
   const handleQuantityChange = (id: string, value: string) => {
     const quantity = value === '' ? null : parseInt(value);
     
-    if (quantity !== null && quantity > 0 && quantity < 20) {
-      toast({
-        title: "Quantidade mínima",
-        description: "O pedido mínimo é de 20 unidades."
-      });
-      // Still update the quantity, but inform user about minimum
-    }
-    
     setFlavorSelections(prev => prev.map(item => item.id === id ? {
       ...item,
       quantity
     } : item));
+    
+    // Check minimum after updating
+    const totalAfterUpdate = getTotalQuantity(id, quantity);
+    if (totalAfterUpdate > 0 && totalAfterUpdate < 20) {
+      toast({
+        title: "Quantidade mínima",
+        description: "O pedido mínimo é de 20 unidades."
+      });
+    }
   };
   
   const incrementQuantity = (id: string) => {
@@ -67,17 +80,16 @@ export const useCalculator = (flavors: Flavor[]) => {
       
       const newQuantity = (item.quantity || 0) - 1;
       
-      if (newQuantity < 20 && newQuantity > 0) {
-        toast({
-          title: "Quantidade mínima",
-          description: "O pedido mínimo é de 20 unidades."
-        });
-        // We'll still update the value but inform the user
+      if (newQuantity <= 0) {
+        return {
+          ...item,
+          quantity: null
+        };
       }
       
       return {
         ...item,
-        quantity: newQuantity <= 0 ? null : newQuantity
+        quantity: newQuantity
       };
     }));
   };
@@ -108,14 +120,20 @@ export const useCalculator = (flavors: Flavor[]) => {
       flavorId: flavors[0]?.id || '',
       quantity: null
     }]);
+    setTotal(0);
     toast({
       title: "Calculadora reiniciada",
       description: "Os valores foram redefinidos."
     });
   };
   
-  const getTotalQuantity = () => {
-    return flavorSelections.reduce((sum, item) => sum + (item.quantity || 0), 0);
+  const getTotalQuantity = (updatedId?: string, updatedQuantity?: number | null) => {
+    return flavorSelections.reduce((sum, item) => {
+      if (updatedId && item.id === updatedId) {
+        return sum + (updatedQuantity || 0);
+      }
+      return sum + (item.quantity || 0);
+    }, 0);
   };
 
   return {

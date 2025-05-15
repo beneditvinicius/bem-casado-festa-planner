@@ -57,6 +57,10 @@ const OrderDetailsForm: React.FC<OrderDetailsFormProps> = ({
     }
   };
 
+  // Calculate total quantity
+  const totalQuantity = flavorSelections.reduce((sum, item) => sum + (item.quantity || 0), 0);
+  const showMinimumWarning = totalQuantity > 0 && totalQuantity < 20;
+
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-medium">Detalhes do Pedido</h3>
@@ -196,13 +200,19 @@ const OrderDetailsForm: React.FC<OrderDetailsFormProps> = ({
 
       <div className="pt-4">
         <div className="bg-[#fef2e6] p-4 rounded-md mb-4">
+          {showMinimumWarning && (
+            <div className="text-red-500 text-sm font-medium mb-2 text-center">
+              O pedido mínimo é de 20 unidades.
+            </div>
+          )}
           <div className="flex justify-between items-center">
             <span className="text-base">Valor Total (estimado):</span>
             <span className="text-[#eb6824] text-xl font-bold">
-              {calculateTotal()}
+              {showMinimumWarning ? "Aguardando qtd. mínima" : calculateTotal()}
             </span>
           </div>
         </div>
+        {errors.quantity && <p className="text-red-500 text-sm mt-1 text-center">{errors.quantity}</p>}
       </div>
     </div>
   );
