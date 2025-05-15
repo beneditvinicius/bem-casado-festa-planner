@@ -77,9 +77,10 @@ export const FlavorSelection: React.FC<FlavorSelectionProps> = ({
             id={`quantity-${selection.id}`}
             value={selection.quantity || null}
             onChange={handleQuantityChange}
-            hasButtons={false}
+            hasButtons={true}
             className="h-12"
             error={errors[`quantity-${selection.id}`]}
+            showMinimumMessage={true}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === 'Tab') {
                 e.preventDefault();
@@ -87,7 +88,6 @@ export const FlavorSelection: React.FC<FlavorSelectionProps> = ({
             }}
           />
           {errors[`quantity-${selection.id}`] && <p className="text-red-500 text-sm mt-1">{errors[`quantity-${selection.id}`]}</p>}
-          <p className="text-sm text-muted-foreground mt-1">O pedido mínimo é de 20 unidades.</p>
         </div>
       </div>
     </div>

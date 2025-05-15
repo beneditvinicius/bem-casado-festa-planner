@@ -68,7 +68,8 @@ const FlavorSelector: React.FC<FlavorSelectorProps> = ({
               value={selection.quantity}
               onChange={handleQuantityChange}
               min={0}
-              hasButtons={!hideButtons}
+              hasButtons={true}
+              showMinimumMessage={true}
             />
           </div>
         </div>

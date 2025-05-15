@@ -16,6 +16,7 @@ interface QuantityFieldProps {
   className?: string;
   error?: string;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  showMinimumMessage?: boolean;
 }
 
 export function QuantityField({
@@ -29,10 +30,12 @@ export function QuantityField({
   className,
   error,
   onKeyDown,
+  showMinimumMessage = false,
 }: QuantityFieldProps) {
   const [inputValue, setInputValue] = useState<string>(
     value !== null ? value.toString() : ""
   );
+  const [buzzing, setBuzzing] = useState(false);
 
   useEffect(() => {
     setInputValue(value !== null ? value.toString() : "");
@@ -46,7 +49,9 @@ export function QuantityField({
     if (newValue === "" || isNaN(parsedValue)) {
       onChange(null);
     } else {
-      onChange(parsedValue);
+      // Enforce minimum value of 20 if the value is greater than 0
+      const finalValue = parsedValue > 0 && parsedValue < 20 ? 20 : parsedValue;
+      onChange(finalValue);
     }
   };
 
@@ -57,9 +62,18 @@ export function QuantityField({
   };
 
   const decrement = () => {
-    if (value === null || value <= min) return;
+    // If the current value is less than or equal to min, or if it's 20 (our min), trigger buzz
+    if (value === null || value <= min || (value <= 20 && value > 0)) {
+      triggerBuzzAnimation();
+      return;
+    }
     const newValue = value - step;
     onChange(newValue < min ? min : newValue);
+  };
+
+  const triggerBuzzAnimation = () => {
+    setBuzzing(true);
+    setTimeout(() => setBuzzing(false), 500); // Duration of the animation
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -68,47 +82,64 @@ export function QuantityField({
     }
   };
 
+  // To enforce the minimum value as user types
+  useEffect(() => {
+    if (value !== null && value > 0 && value < 20) {
+      onChange(20);
+    }
+  }, [value, onChange]);
+
   return (
-    <div className={cn("flex flex-row", className)}>
-      {hasButtons && (
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          className="rounded-l-full rounded-r-none"
-          onClick={decrement}
-        >
-          <Minus className="h-4 w-4" />
-        </Button>
-      )}
-      <Input
-        id={id}
-        type="number"
-        inputMode="numeric"
-        min={min}
-        max={max}
-        value={inputValue}
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        className={cn(
-          hasButtons
-            ? "rounded-none text-center border-x-0"
-            : "min-w-0 w-full rounded-full text-center",
-          error && "border-destructive",
+    <div className={cn("flex flex-col", className)}>
+      <div className={cn("flex flex-row", buzzing ? "animate-buzz" : "")}>
+        {hasButtons && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="rounded-full bg-[#eb6824] text-white hover:bg-[#d25618] w-10 h-10 flex items-center justify-center"
+            onClick={decrement}
+          >
+            <Minus className="h-5 w-5" />
+          </Button>
         )}
-        aria-invalid={!!error}
-      />
-      {hasButtons && (
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          className="rounded-l-none rounded-r-full"
-          onClick={increment}
-        >
-          <Plus className="h-4 w-4" />
-        </Button>
-      )}
+        <div className="flex-grow relative">
+          {showMinimumMessage && value === null && (
+            <div className="absolute inset-0 flex items-center justify-center text-gray-400 pointer-events-none text-sm">
+              Mínimo: 20 unidades
+            </div>
+          )}
+          <Input
+            id={id}
+            type="number"
+            inputMode="numeric"
+            min={min}
+            max={max}
+            value={inputValue}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            className={cn(
+              "rounded-none text-center border-x-0",
+              error && "border-destructive",
+              showMinimumMessage && value === null && "text-transparent", // Hide input text when showing placeholder
+            )}
+            aria-invalid={!!error}
+          />
+        </div>
+        {hasButtons && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="rounded-full bg-[#eb6824] text-white hover:bg-[#d25618] w-10 h-10 flex items-center justify-center"
+            onClick={increment}
+          >
+            <Plus className="h-5 w-5" />
+          </Button>
+        )}
+      </div>
     </div>
   );
 }
+
+// Add keyframes for buzz animation to index.css
