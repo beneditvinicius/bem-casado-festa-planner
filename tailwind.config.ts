@@ -60,9 +60,15 @@ export default {
 				},
 			},
 			borderRadius: {
+				DEFAULT: '1rem',
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
+				sm: 'calc(var(--radius) - 4px)',
+				'2xl': '1.5rem'
+			},
+			boxShadow: {
+				sm: '0 1px 3px rgba(0, 0, 0, 0.1)',
+				md: '0 4px 6px rgba(0, 0, 0, 0.1)',
 			},
 			keyframes: {
 				'accordion-down': {

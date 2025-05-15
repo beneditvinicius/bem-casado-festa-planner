@@ -48,23 +48,27 @@ const Index: React.FC = () => {
     {
       id: 'calculator',
       title: 'Calculadora de Bem-Casados',
-      component: <Calculator />
+      component: <Calculator />,
+      description: 'Descubra quantos bem-casados você precisa para seu evento!'
     }, 
     {
       id: 'order',
       title: 'Faça seu Orçamento Detalhado',
       component: <OrderForm />,
+      description: 'Seus dados estão seguros! Usamos essas informações apenas para o lançamento no sistema.',
       bg: 'bg-[#fef2e6]'
     }, 
     {
       id: 'visualizer',
       title: 'Visualize seu Bem-Casado',
-      component: <Visualizer />
+      component: <Visualizer />,
+      description: 'Veja como ficará a combinação de cores que você escolher.'
     }, 
     {
       id: 'faq',
       title: 'Dúvidas Frequentes',
       component: <Faq />,
+      description: 'Encontre respostas para as perguntas mais comuns.',
       bg: 'bg-white'
     }
   ];
@@ -76,9 +80,19 @@ const Index: React.FC = () => {
       <main className="pb-16">
         {sections.map((section, index) => (
           <React.Fragment key={section.id}>
-            <section id={section.id} className={`section-container ${section.bg || 'bg-white'}`}>
-              <h2 className="section-title">{section.title}</h2>
-              {section.component}
+            <section 
+              id={section.id} 
+              className={`section-container ${section.bg || 'bg-white'}`}
+            >
+              <div className="bg-white rounded-2xl shadow-md p-6 mb-8">
+                <h2 className="text-xl sm:text-2xl font-semibold mb-4">{section.title}</h2>
+                {section.description && (
+                  <p className="text-base sm:text-lg text-gray-700 mb-6">
+                    {section.description}
+                  </p>
+                )}
+                {section.component}
+              </div>
             </section>
             {index < sections.length - 1 && <div className="section-divider" />}
           </React.Fragment>
@@ -88,8 +102,10 @@ const Index: React.FC = () => {
           <>
             <div className="section-divider" />
             <section id="admin" className="section-container">
-              <h2 className="section-title">Administração</h2>
-              <AdminPanel />
+              <div className="bg-white rounded-2xl shadow-md p-6 mb-8">
+                <h2 className="text-xl sm:text-2xl font-semibold mb-4">Administração</h2>
+                <AdminPanel />
+              </div>
             </section>
           </>
         )}
