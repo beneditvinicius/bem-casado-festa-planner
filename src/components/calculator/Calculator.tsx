@@ -19,8 +19,6 @@ const Calculator: React.FC = () => {
     showMinimumWarning,
     handleFlavorChange,
     handleQuantityChange,
-    incrementQuantity,
-    decrementQuantity,
     addFlavorSelection,
     removeFlavorSelection,
     handleReset,
@@ -56,10 +54,9 @@ const Calculator: React.FC = () => {
           selection={selection}
           onFlavorChange={handleFlavorChange}
           onQuantityChange={handleQuantityChange}
-          onIncrement={incrementQuantity}
-          onDecrement={decrementQuantity}
           onRemove={removeFlavorSelection}
           canRemove={flavorSelections.length > 1}
+          hideButtons={true}
         />
       ))}
       

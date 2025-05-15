@@ -1,19 +1,11 @@
 
 import { StateCreator } from 'zustand';
-import { RootState } from '../store';
+import { ConfigState } from '../types';
 
-export interface ConfigSlice {
-  whatsappNumber: string;
-  setWhatsappNumber: (number: string) => void;
-}
-
-export const createConfigSlice: StateCreator<
-  RootState,
-  [],
-  [],
-  ConfigSlice
-> = (set) => ({
-  whatsappNumber: '5566999580591',
+export const configSlice: StateCreator<ConfigState> = (set) => ({
+  bannerUrl: null,
+  bannerText: null,
   
-  setWhatsappNumber: (number) => set({ whatsappNumber: number }),
+  setBannerUrl: (url: string) => set({ bannerUrl: url }),
+  setBannerText: (text: string) => set({ bannerText: text }),
 });

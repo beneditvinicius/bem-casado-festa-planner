@@ -1,37 +1,64 @@
 
-import { useProductsStore } from './store';
-import { Flavor, RibbonColor, PackageColor } from './types';
+import { create } from 'zustand';
+import { devtools, persist } from 'zustand/middleware';
+import { flavorSlice } from './slices/flavorSlice';
+import { ribbonSlice } from './slices/ribbonSlice';
+import { packageSlice } from './slices/packageSlice';
+import { configSlice } from './slices/configSlice';
+import { Flavor, RibbonColor, PackageColor, ConfigState } from './types';
 
-export { useProductsStore };
-
-// Re-export types
-export type { 
-  Flavor, 
-  RibbonColor, 
-  PackageColor 
-} from './types';
-
-// Define the store interface
-export interface ProductsStore {
-  // Flavor operations
+// Define o estado da loja
+interface ProductsState {
+  // Sabores
   flavors: Flavor[];
-  addFlavor: (f: Flavor) => void;
-  updateFlavor: (id: string, data: Partial<Flavor>) => void;
+  addFlavor: (flavor: Flavor) => void;
   removeFlavor: (id: string) => void;
+  updateFlavor: (id: string, updates: Partial<Flavor>) => void;
   
-  // Ribbon operations
+  // Cores de fita
   ribbonColors: RibbonColor[];
-  addRibbonColor: (r: RibbonColor) => void;
-  updateRibbonColor: (id: string, data: Partial<RibbonColor>) => void;
+  addRibbonColor: (color: RibbonColor) => void;
   removeRibbonColor: (id: string) => void;
+  updateRibbonColor: (id: string, updates: Partial<RibbonColor>) => void;
   
-  // Package operations
+  // Cores de embalagem
   packageColors: PackageColor[];
-  addPackageColor: (p: PackageColor) => void;
-  updatePackageColor: (id: string, data: Partial<PackageColor>) => void;
+  addPackageColor: (color: PackageColor) => void;
   removePackageColor: (id: string) => void;
+  updatePackageColor: (id: string, updates: Partial<PackageColor>) => void;
   
-  // Config operations
-  whatsappNumber: string;
-  setWhatsappNumber: (number: string) => void;
+  // Configurações
+  bannerUrl: string | null;
+  bannerText: string | null;
+  setBannerUrl: (url: string) => void;
+  setBannerText: (text: string) => void;
 }
+
+export const useProductsStore = create<ProductsState>()(
+  devtools(
+    persist(
+      (...a) => ({
+        ...flavorSlice(...a),
+        ...ribbonSlice(...a),
+        ...packageSlice(...a),
+        ...configSlice(...a),
+      }),
+      {
+        name: 'products-storage',
+      }
+    )
+  )
+);
+
+export const useConfigStore = create<ConfigState>()(
+  devtools(
+    persist(
+      (...a) => ({
+        ...configSlice(...a),
+      }),
+      {
+        name: 'config-storage',
+      }
+    )
+  )
+);

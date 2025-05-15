@@ -1,6 +1,6 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/Header';
+import Banner from '@/components/Banner';
 import Calculator from '@/components/Calculator';
 import OrderForm from '@/components/OrderForm';
 import Visualizer from '@/components/Visualizer';
@@ -55,8 +55,7 @@ const Index: React.FC = () => {
       id: 'order',
       title: 'Faça seu Orçamento Detalhado',
       component: <OrderForm />,
-      description: 'Seus dados estão seguros! Usamos essas informações apenas para o lançamento no sistema.',
-      bg: 'bg-[#fef2e6]'
+      description: 'Seus dados estão seguros! Usamos essas informações apenas para o lançamento no sistema.'
     },
     {
       id: 'visualizer',
@@ -68,39 +67,35 @@ const Index: React.FC = () => {
       id: 'faq',
       title: 'Dúvidas Frequentes',
       component: <Faq />,
-      description: 'Encontre respostas para as perguntas mais comuns.',
-      bg: 'bg-white'
+      description: 'Encontre respostas para as perguntas mais comuns.'
     }
   ];
   
   return (
     <div className="min-h-screen bg-white">
       <Header />
+      <Banner />
       
       <main className="pb-12">
-        {sections.map((section, index) => (
+        {sections.map((section) => (
           <React.Fragment key={section.id}>
-            <section id={section.id} className={`section-container ${section.bg || 'bg-white'}`}>
+            <section id={section.id} className="section-container">
               <div className="bg-white rounded-3xl shadow-md p-6 mb-6 text-center">
                 <h2 className="text-xl sm:text-2xl font-semibold mb-3">{section.title}</h2>
                 <p className="mb-4 text-center">{section.description}</p>
                 {section.component}
               </div>
             </section>
-            {index < sections.length - 1 && <div className="section-divider" />}
           </React.Fragment>
         ))}
         
         {adminMode && (
-          <>
-            <div className="section-divider" />
-            <section id="admin" className="section-container">
-              <div className="bg-white rounded-3xl shadow-md p-6 mb-6 text-center">
-                <h2 className="text-xl sm:text-2xl font-semibold mb-3">Administração</h2>
-                <AdminPanel />
-              </div>
-            </section>
-          </>
+          <section id="admin" className="section-container">
+            <div className="bg-white rounded-3xl shadow-md p-6 mb-6 text-center">
+              <h2 className="text-xl sm:text-2xl font-semibold mb-3">Administração</h2>
+              <AdminPanel />
+            </div>
+          </section>
         )}
       </main>
       

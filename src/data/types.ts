@@ -1,10 +1,15 @@
-
-
 export interface Flavor {
   id: string;
   name: string;
   price: number;
+  categoryId: string;
   isNew?: boolean;
+  imageUrl?: string;
+}
+
+export interface Category {
+  id: string;
+  name: string;
 }
 
 export interface RibbonColor {
@@ -13,7 +18,6 @@ export interface RibbonColor {
   code: string;
   color: string;
   isNew?: boolean;
-  /** URL da imagem da fita (PNG transparente sobre fundo branco) */
   imageUrl?: string;
 }
 
@@ -23,9 +27,12 @@ export interface PackageColor {
   code: string;
   color: string;
   isNew?: boolean;
-  /** URL da imagem da embalagem (PNG transparente sobre fundo branco) */
   imageUrl?: string;
 }
 
-// export interface Combination { /* removido */ }
-
+export interface ConfigState {
+  bannerUrl: string | null;
+  bannerText: string | null;
+  setBannerUrl: (url: string) => void;
+  setBannerText: (text: string) => void;
+}
