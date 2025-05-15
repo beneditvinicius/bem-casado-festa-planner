@@ -43,15 +43,20 @@ export const useFormValidation = (
         newErrors[`flavor-${selection.id}`] = 'Selecione um sabor';
       }
       
-      if (!selection.quantity || selection.quantity < 20) {
+      if (!selection.quantity) {
+        newErrors[`quantity-${selection.id}`] = 'Quantidade é obrigatória';
+      } else if (selection.quantity < 20) {
         newErrors[`quantity-${selection.id}`] = 'A quantidade mínima é de 20 unidades';
       } else {
         totalQuantity += selection.quantity;
       }
     });
     
+    // Check for minimum total quantity
     if (totalQuantity === 0) {
       newErrors.quantity = 'A quantidade total deve ser de pelo menos 20 unidades';
+    } else if (totalQuantity < 20) {
+      newErrors.quantity = 'O pedido mínimo é de 20 unidades';
     }
     
     // Validate colors

@@ -49,7 +49,7 @@ const Calculator: React.FC = () => {
           onIncrement={incrementQuantity}
           onDecrement={decrementQuantity}
           onRemove={removeFlavorSelection}
-          showRemoveButton={flavorSelections.length > 1}
+          canRemove={flavorSelections.length > 1}
         />
       ))}
       

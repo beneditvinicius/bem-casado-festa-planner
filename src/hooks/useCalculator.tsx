@@ -40,6 +40,14 @@ export const useCalculator = (flavors: Flavor[]) => {
   const handleQuantityChange = (id: string, value: string) => {
     const quantity = value === '' ? null : parseInt(value);
     
+    if (quantity !== null && quantity > 0 && quantity < 20) {
+      toast({
+        title: "Quantidade mínima",
+        description: "O pedido mínimo é de 20 unidades."
+      });
+      // Still update the quantity, but inform user about minimum
+    }
+    
     setFlavorSelections(prev => prev.map(item => item.id === id ? {
       ...item,
       quantity
@@ -64,10 +72,7 @@ export const useCalculator = (flavors: Flavor[]) => {
           title: "Quantidade mínima",
           description: "O pedido mínimo é de 20 unidades."
         });
-        return {
-          ...item,
-          quantity: null
-        };
+        // We'll still update the value but inform the user
       }
       
       return {
