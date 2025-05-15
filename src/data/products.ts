@@ -1,5 +1,7 @@
 
 import { useProductsStore } from './store';
+import { Flavor, RibbonColor, PackageColor, Combination } from './types';
+
 export { useProductsStore };
 
 // Re-export types
