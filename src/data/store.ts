@@ -24,3 +24,38 @@ export const useProductsStore = create<RootState>()(
     }
   )
 );
+
+// Add update methods to the store slices
+const createStoreWithUpdates = () => {
+  const store = useProductsStore.getState();
+
+  // Add flavor update method
+  if (!store.updateFlavor) {
+    useProductsStore.setState({
+      updateFlavor: (id, data) => useProductsStore.setState((state) => ({
+        flavors: state.flavors.map(f => f.id === id ? { ...f, ...data } : f)
+      }))
+    });
+  }
+
+  // Add ribbon update method
+  if (!store.updateRibbonColor) {
+    useProductsStore.setState({
+      updateRibbonColor: (id, data) => useProductsStore.setState((state) => ({
+        ribbonColors: state.ribbonColors.map(r => r.id === id ? { ...r, ...data } : r)
+      }))
+    });
+  }
+
+  // Add package update method
+  if (!store.updatePackageColor) {
+    useProductsStore.setState({
+      updatePackageColor: (id, data) => useProductsStore.setState((state) => ({
+        packageColors: state.packageColors.map(p => p.id === id ? { ...p, ...data } : p)
+      }))
+    });
+  }
+};
+
+// Initialize the store with update methods
+createStoreWithUpdates();

@@ -60,6 +60,11 @@ const AdminPanel: React.FC = () => {
   const removeCombination = useProductsStore((state) => state.removeCombination);
   const setWhatsappNumber = useProductsStore((state) => state.setWhatsappNumber);
   
+  // Add editing states
+  const [editingFlavorId, setEditingFlavorId] = useState<string | null>(null);
+  const [editingRibbonId, setEditingRibbonId] = useState<string | null>(null);
+  const [editingPackageId, setEditingPackageId] = useState<string | null>(null);
+  
   const [newFlavor, setNewFlavor] = useState({ name: '', price: 0, isNew: false });
   const [newRibbon, setNewRibbon] = useState({ name: '', code: '', color: '#000000', isNew: false, imageUrl: '' });
   const [newPackage, setNewPackage] = useState({ name: '', code: '', color: '#000000', isNew: false, imageUrl: '' });
@@ -282,7 +287,6 @@ const AdminPanel: React.FC = () => {
       </CardHeader>
       <CardContent>
         {isMobile ? (
-          // Mobile view with dropdown
           <div className="mb-4">
             <Button 
               variant="outline" 
@@ -366,7 +370,22 @@ const AdminPanel: React.FC = () => {
                       />
                       <Label htmlFor="isNewFlavor" className="ml-2">Marcar como "Novidade"</Label>
                     </div>
-                    <Button onClick={handleAddFlavor}>Adicionar Sabor</Button>
+                    {editingFlavorId
+                      ? <Button onClick={() => {
+                          updateFlavor(editingFlavorId, { 
+                            name: newFlavor.name, 
+                            price: newFlavor.price, 
+                            isNew: newFlavor.isNew 
+                          });
+                          setEditingFlavorId(null);
+                          setNewFlavor({ name: '', price: 0, isNew: false });
+                          toast({ 
+                            title: 'Sabor atualizado', 
+                            description: `${newFlavor.name} foi atualizado com sucesso` 
+                          });
+                        }}>Salvar Alteração</Button>
+                      : <Button onClick={handleAddFlavor}>Adicionar Sabor</Button>
+                    }
                   </div>
                   
                   <Table>
@@ -393,9 +412,16 @@ const AdminPanel: React.FC = () => {
                           </TableCell>
                           <TableCell className="space-x-2">
                             <Button 
-                              variant="outline" 
+                              variant="secondary" 
                               size="sm"
-                              onClick={() => openEditModal('flavor', flavor)}
+                              onClick={() => {
+                                setNewFlavor({ 
+                                  name: flavor.name, 
+                                  price: flavor.price,
+                                  isNew: flavor.isNew || false
+                                });
+                                setEditingFlavorId(flavor.id);
+                              }}
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
@@ -470,7 +496,24 @@ const AdminPanel: React.FC = () => {
                       />
                       <Label htmlFor="isNewRibbon" className="ml-2">Marcar como "Novidade"</Label>
                     </div>
-                    <Button onClick={handleAddRibbon}>Adicionar Cor</Button>
+                    {editingRibbonId
+                      ? <Button onClick={() => {
+                          updateRibbonColor(editingRibbonId, { 
+                            name: newRibbon.name, 
+                            color: newRibbon.color, 
+                            code: newRibbon.code, 
+                            isNew: newRibbon.isNew,
+                            imageUrl: newRibbon.imageUrl 
+                          });
+                          setEditingRibbonId(null);
+                          setNewRibbon({ name: '', code: '', color: '#000000', isNew: false, imageUrl: '' });
+                          toast({ 
+                            title: 'Fita atualizada', 
+                            description: `${newRibbon.name} foi atualizada com sucesso` 
+                          });
+                        }}>Salvar Alteração</Button>
+                      : <Button onClick={handleAddRibbon}>Adicionar Cor</Button>
+                    }
                   </div>
                   
                   <Table>
@@ -498,9 +541,18 @@ const AdminPanel: React.FC = () => {
                           </TableCell>
                           <TableCell className="space-x-2">
                             <Button 
-                              variant="outline" 
+                              variant="secondary" 
                               size="sm"
-                              onClick={() => openEditModal('ribbon', ribbon)}
+                              onClick={() => {
+                                setNewRibbon({ 
+                                  name: ribbon.name, 
+                                  color: ribbon.color, 
+                                  code: ribbon.code, 
+                                  isNew: ribbon.isNew || false,
+                                  imageUrl: ribbon.imageUrl || ''
+                                });
+                                setEditingRibbonId(ribbon.id);
+                              }}
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
@@ -575,7 +627,24 @@ const AdminPanel: React.FC = () => {
                       />
                       <Label htmlFor="isNewPackage" className="ml-2">Marcar como "Novidade"</Label>
                     </div>
-                    <Button onClick={handleAddPackage}>Adicionar Cor</Button>
+                    {editingPackageId
+                      ? <Button onClick={() => {
+                          updatePackageColor(editingPackageId, { 
+                            name: newPackage.name, 
+                            color: newPackage.color, 
+                            code: newPackage.code,
+                            isNew: newPackage.isNew,
+                            imageUrl: newPackage.imageUrl 
+                          });
+                          setEditingPackageId(null);
+                          setNewPackage({ name: '', code: '', color: '#000000', isNew: false, imageUrl: '' });
+                          toast({ 
+                            title: 'Embalagem atualizada', 
+                            description: `${newPackage.name} foi atualizada com sucesso` 
+                          });
+                        }}>Salvar Alteração</Button>
+                      : <Button onClick={handleAddPackage}>Adicionar Cor</Button>
+                    }
                   </div>
                   
                   <Table>
@@ -598,16 +667,28 @@ const AdminPanel: React.FC = () => {
                                 className="w-6 h-6 rounded-full border"
                                 style={{ backgroundColor: pkg.color }}
                               />
-                              <span className="hidden sm:inline">{pkg.color}</span>
+                              <span>{pkg.color}</span>
                             </div>
+                          </TableCell>
+                          <TableCell>
+                            {pkg.isNew && <Badge className="bg-[#eb6824]">Novidade</Badge>}
                           </TableCell>
                           <TableCell className="space-x-2">
                             <Button 
-                              variant="outline" 
+                              variant="secondary" 
                               size="sm"
-                              onClick={() => openEditModal('package', pkg)}
+                              onClick={() => {
+                                setNewPackage({ 
+                                  name: pkg.name, 
+                                  color: pkg.color, 
+                                  code: pkg.code,
+                                  isNew: pkg.isNew || false,
+                                  imageUrl: pkg.imageUrl || ''
+                                });
+                                setEditingPackageId(pkg.id);
+                              }}
                             >
-                              <Edit className="h-4 w-4" />
+                              <Edit className="h-4 w-4 mr-1" /> Editar
                             </Button>
                             <Button 
                               variant="destructive" 
@@ -820,7 +901,6 @@ const AdminPanel: React.FC = () => {
             </div>
           </div>
         ) : (
-          // Desktop view with tabs
           <Tabs defaultValue="flavors" onValueChange={setCurrentTab}>
             <TabsList className="grid grid-cols-5">
               <TabsTrigger value="flavors">Sabores</TabsTrigger>
@@ -860,7 +940,22 @@ const AdminPanel: React.FC = () => {
                   />
                   <Label htmlFor="isNewFlavor" className="ml-2">Marcar como "Novidade"</Label>
                 </div>
-                <Button onClick={handleAddFlavor}>Adicionar Sabor</Button>
+                {editingFlavorId
+                  ? <Button onClick={() => {
+                      updateFlavor(editingFlavorId, { 
+                        name: newFlavor.name, 
+                        price: newFlavor.price, 
+                        isNew: newFlavor.isNew 
+                      });
+                      setEditingFlavorId(null);
+                      setNewFlavor({ name: '', price: 0, isNew: false });
+                      toast({ 
+                        title: 'Sabor atualizado', 
+                        description: newFlavor.name 
+                      });
+                    }}>Salvar Alteração</Button>
+                  : <Button onClick={handleAddFlavor}>Adicionar Sabor</Button>
+                }
               </div>
               
               <Table>
@@ -887,9 +982,16 @@ const AdminPanel: React.FC = () => {
                       </TableCell>
                       <TableCell className="space-x-2">
                         <Button 
-                          variant="outline" 
+                          variant="secondary" 
                           size="sm"
-                          onClick={() => openEditModal('flavor', flavor)}
+                          onClick={() => {
+                            setNewFlavor({ 
+                              name: flavor.name, 
+                              price: flavor.price,
+                              isNew: flavor.isNew || false
+                            });
+                            setEditingFlavorId(flavor.id);
+                          }}
                         >
                           <Edit className="h-4 w-4 mr-1" /> Editar
                         </Button>
@@ -964,7 +1066,24 @@ const AdminPanel: React.FC = () => {
                   <Label htmlFor="isNewRibbon" className="ml-2">Marcar como "Novidade"</Label>
                 </div>
                 <div className="md:col-span-2">
-                  <Button onClick={handleAddRibbon}>Adicionar Cor de Fita</Button>
+                  {editingRibbonId
+                    ? <Button onClick={() => {
+                        updateRibbonColor(editingRibbonId, { 
+                          name: newRibbon.name, 
+                          color: newRibbon.color, 
+                          code: newRibbon.code, 
+                          isNew: newRibbon.isNew,
+                          imageUrl: newRibbon.imageUrl 
+                        });
+                        setEditingRibbonId(null);
+                        setNewRibbon({ name: '', code: '', color: '#000000', isNew: false, imageUrl: '' });
+                        toast({ 
+                          title: 'Fita atualizada', 
+                          description: newRibbon.name 
+                        });
+                      }}>Salvar Alteração</Button>
+                    : <Button onClick={handleAddRibbon}>Adicionar Cor de Fita</Button>
+                  }
                 </div>
               </div>
               
@@ -997,9 +1116,18 @@ const AdminPanel: React.FC = () => {
                       </TableCell>
                       <TableCell className="space-x-2">
                         <Button 
-                          variant="outline" 
+                          variant="secondary" 
                           size="sm"
-                          onClick={() => openEditModal('ribbon', ribbon)}
+                          onClick={() => {
+                            setNewRibbon({ 
+                              name: ribbon.name, 
+                              color: ribbon.color, 
+                              code: ribbon.code,
+                              isNew: ribbon.isNew || false,
+                              imageUrl: ribbon.imageUrl || ''
+                            });
+                            setEditingRibbonId(ribbon.id);
+                          }}
                         >
                           <Edit className="h-4 w-4 mr-1" /> Editar
                         </Button>
@@ -1074,7 +1202,24 @@ const AdminPanel: React.FC = () => {
                   <Label htmlFor="isNewPackage" className="ml-2">Marcar como "Novidade"</Label>
                 </div>
                 <div className="md:col-span-2">
-                  <Button onClick={handleAddPackage}>Adicionar Cor de Embalagem</Button>
+                  {editingPackageId
+                    ? <Button onClick={() => {
+                        updatePackageColor(editingPackageId, { 
+                          name: newPackage.name, 
+                          color: newPackage.color, 
+                          code: newPackage.code,
+                          isNew: newPackage.isNew,
+                          imageUrl: newPackage.imageUrl 
+                        });
+                        setEditingPackageId(null);
+                        setNewPackage({ name: '', code: '', color: '#000000', isNew: false, imageUrl: '' });
+                        toast({ 
+                          title: 'Embalagem atualizada', 
+                          description: newPackage.name 
+                        });
+                      }}>Salvar Alteração</Button>
+                    : <Button onClick={handleAddPackage}>Adicionar Cor de Embalagem</Button>
+                  }
                 </div>
               </div>
               
@@ -1107,9 +1252,18 @@ const AdminPanel: React.FC = () => {
                       </TableCell>
                       <TableCell className="space-x-2">
                         <Button 
-                          variant="outline" 
+                          variant="secondary" 
                           size="sm"
-                          onClick={() => openEditModal('package', pkg)}
+                          onClick={() => {
+                            setNewPackage({ 
+                              name: pkg.name, 
+                              color: pkg.color, 
+                              code: pkg.code,
+                              isNew: pkg.isNew || false,
+                              imageUrl: pkg.imageUrl || ''
+                            });
+                            setEditingPackageId(pkg.id);
+                          }}
                         >
                           <Edit className="h-4 w-4 mr-1" /> Editar
                         </Button>
