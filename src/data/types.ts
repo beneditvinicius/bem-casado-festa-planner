@@ -1,3 +1,4 @@
+
 export interface Flavor {
   id: string;
   name: string;
@@ -33,6 +34,8 @@ export interface PackageColor {
 export interface ConfigState {
   bannerUrl: string | null;
   bannerText: string | null;
+  whatsappNumber: string;
   setBannerUrl: (url: string) => void;
   setBannerText: (text: string) => void;
+  setWhatsappNumber: (number: string) => void;
 }

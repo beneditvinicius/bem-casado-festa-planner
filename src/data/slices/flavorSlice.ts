@@ -17,17 +17,17 @@ export const createFlavorSlice: StateCreator<
   FlavorSlice
 > = (set) => ({
   flavors: [
-    { id: '1', name: 'Tradicional', price: 3.95 },
-    { id: '2', name: 'Brigadeiro Branco', price: 3.95 },
-    { id: '3', name: 'Limão Siciliano', price: 4.50 },
-    { id: '4', name: 'Frutas Vermelhas', price: 4.78 },
-    { id: '5', name: 'Doce de Leite com Coco', price: 4.78 },
-    { id: '6', name: '4 Leites', price: 4.90 },
-    { id: '7', name: 'Abacaxi com Coco', price: 4.90 },
-    { id: '8', name: 'Ninho com Nutella', price: 5.00 },
-    { id: '9', name: 'Pistache', price: 6.00 },
-    { id: '10', name: 'Bem Casado de Brownie', price: 5.50 },
-    { id: '11', name: 'Bem Casado de Pão de mel', price: 6.00 },
+    { id: '1', name: 'Tradicional', price: 3.95, categoryId: 'default' },
+    { id: '2', name: 'Brigadeiro Branco', price: 3.95, categoryId: 'default' },
+    { id: '3', name: 'Limão Siciliano', price: 4.50, categoryId: 'default' },
+    { id: '4', name: 'Frutas Vermelhas', price: 4.78, categoryId: 'default' },
+    { id: '5', name: 'Doce de Leite com Coco', price: 4.78, categoryId: 'default' },
+    { id: '6', name: '4 Leites', price: 4.90, categoryId: 'default' },
+    { id: '7', name: 'Abacaxi com Coco', price: 4.90, categoryId: 'default' },
+    { id: '8', name: 'Ninho com Nutella', price: 5.00, categoryId: 'default' },
+    { id: '9', name: 'Pistache', price: 6.00, categoryId: 'default' },
+    { id: '10', name: 'Bem Casado de Brownie', price: 5.50, categoryId: 'default' },
+    { id: '11', name: 'Bem Casado de Pão de mel', price: 6.00, categoryId: 'default' },
   ],
   
   addFlavor: (flavor) => set((state) => ({ 

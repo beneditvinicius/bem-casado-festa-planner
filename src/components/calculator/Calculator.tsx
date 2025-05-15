@@ -38,6 +38,11 @@ const Calculator: React.FC = () => {
     }
   };
   
+  // Convert string to number for the calculator
+  const handleQuantityChangeAdapter = (id: string, value: number | null) => {
+    handleQuantityChange(id, value);
+  };
+  
   const totalQuantity = getTotalQuantity();
   const showTotal = totalQuantity === 0 || totalQuantity >= 20;
   
@@ -53,7 +58,7 @@ const Calculator: React.FC = () => {
           flavors={flavors}
           selection={selection}
           onFlavorChange={handleFlavorChange}
-          onQuantityChange={handleQuantityChange}
+          onQuantityChange={handleQuantityChangeAdapter}
           onRemove={removeFlavorSelection}
           canRemove={flavorSelections.length > 1}
           hideButtons={true}
