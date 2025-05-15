@@ -83,8 +83,6 @@ const FlavorSelector: React.FC<FlavorSelectorProps> = ({
                   onQuantityChange(selection.id, '');
                 }
               }} 
-              onIncrement={() => onIncrement(selection.id)}
-              onDecrement={() => onDecrement(selection.id)}
               hasButtons={true}
               onKeyDown={(e) => handleKeyDown(e, selection.id)}
               className="w-full h-12"
