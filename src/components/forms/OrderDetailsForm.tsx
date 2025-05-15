@@ -49,6 +49,13 @@ const OrderDetailsForm: React.FC<OrderDetailsFormProps> = ({
   const handleQuantityChange = (id: string, value: number | null) => {
     handleFlavorQuantityChange(id, value !== null ? value.toString() : '');
   };
+  
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, id: string, value: number | null) => {
+    if (e.key === 'Enter' || e.key === 'Tab') {
+      e.preventDefault();
+      handleQuantityChange(id, value);
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -100,6 +107,11 @@ const OrderDetailsForm: React.FC<OrderDetailsFormProps> = ({
                 hasButtons={false}
                 className="h-12"
                 error={errors[`quantity-${selection.id}`]}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === 'Tab') {
+                    e.preventDefault();
+                  }
+                }}
               />
               {errors[`quantity-${selection.id}`] && <p className="text-red-500 text-sm mt-1">{errors[`quantity-${selection.id}`]}</p>}
               <p className="text-sm text-muted-foreground mt-1">O pedido mínimo é de 20 unidades.</p>

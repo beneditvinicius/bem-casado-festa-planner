@@ -1,133 +1,114 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, KeyboardEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Minus, Plus } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { cn } from '@/lib/utils';
+import { Plus, Minus } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface QuantityFieldProps {
-  id: string;
+  id?: string;
   value: number | null;
   onChange: (value: number | null) => void;
-  onIncrement?: () => void;
-  onDecrement?: () => void;
-  className?: string;
+  min?: number;
+  max?: number;
+  step?: number;
   hasButtons?: boolean;
+  className?: string;
   error?: string;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
-export const QuantityField: React.FC<QuantityFieldProps> = ({
+export function QuantityField({
   id,
   value,
   onChange,
-  onIncrement,
-  onDecrement,
-  className,
+  min = 0,
+  max,
+  step = 1,
   hasButtons = true,
-  error
-}) => {
-  const { toast } = useToast();
-  const [isFocused, setIsFocused] = useState(false);
-  const [localValue, setLocalValue] = useState<string>('');
-  
-  const handleFocus = () => {
-    setIsFocused(true);
-    setLocalValue('');
-  };
-  
-  const handleBlur = () => {
-    setIsFocused(false);
-    
-    const numericValue = localValue === '' ? null : parseInt(localValue, 10);
-    
-    if (numericValue !== null && numericValue < 20) {
-      toast({
-        title: "Quantidade mínima",
-        description: "O pedido mínimo é de 20 unidades."
-      });
-      onChange(null);
-      setLocalValue('');
-      return;
-    }
-    
-    onChange(numericValue);
-  };
-  
+  className,
+  error,
+  onKeyDown,
+}: QuantityFieldProps) {
+  const [inputValue, setInputValue] = useState<string>(
+    value !== null ? value.toString() : ""
+  );
+
+  useEffect(() => {
+    setInputValue(value !== null ? value.toString() : "");
+  }, [value]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLocalValue(e.target.value);
-  };
-  
-  const handleIncrement = () => {
-    if (onIncrement) {
-      onIncrement();
+    const newValue = e.target.value;
+    setInputValue(newValue);
+
+    const parsedValue = parseFloat(newValue);
+    if (newValue === "" || isNaN(parsedValue)) {
+      onChange(null);
     } else {
-      const newValue = (value || 0) + 1;
-      if (newValue >= 20) {
-        onChange(newValue);
-      }
+      onChange(parsedValue);
     }
   };
-  
-  const handleDecrement = () => {
-    if (onDecrement) {
-      onDecrement();
-    } else {
-      const newValue = (value || 0) - 1;
-      if (newValue >= 20) {
-        onChange(newValue);
-      } else {
-        toast({
-          title: "Quantidade mínima",
-          description: "O pedido mínimo é de 20 unidades."
-        });
-        onChange(null);
-      }
+
+  const increment = () => {
+    if (max !== undefined && value !== null && value >= max) return;
+    const newValue = (value || 0) + step;
+    onChange(newValue);
+  };
+
+  const decrement = () => {
+    if (value === null || value <= min) return;
+    const newValue = value - step;
+    onChange(newValue < min ? min : newValue);
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (onKeyDown) {
+      onKeyDown(e);
     }
   };
-  
-  // Display value in input only if not focused and value exists
-  const displayValue = isFocused ? localValue : (value ? value.toString() : '');
-  
+
   return (
-    <div className="flex items-center">
+    <div className={cn("flex flex-row", className)}>
       {hasButtons && (
-        <Button 
-          variant="outline" 
-          size="icon" 
-          onClick={handleDecrement} 
-          className="rounded-r-none h-12 w-12" 
-          disabled={value === null || value <= 20}
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          className="rounded-r-none"
+          onClick={decrement}
         >
           <Minus className="h-4 w-4" />
         </Button>
       )}
-      <Input 
-        id={id} 
-        type="number" 
-        value={displayValue} 
+      <Input
+        id={id}
+        type="number"
+        inputMode="numeric"
+        min={min}
+        max={max}
+        value={inputValue}
         onChange={handleChange}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        placeholder=""
-        min={20}
+        onKeyDown={handleKeyDown}
         className={cn(
-          "h-12 text-center", 
-          hasButtons && "rounded-none border-x-0",
-          error && "border-red-500",
-          className
-        )} 
+          hasButtons
+            ? "rounded-none text-center border-x-0"
+            : "min-w-0 w-full",
+          error && "border-destructive",
+        )}
+        aria-invalid={!!error}
       />
       {hasButtons && (
-        <Button 
-          variant="outline" 
-          size="icon" 
-          onClick={handleIncrement} 
-          className="rounded-l-none h-12 w-12"
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          className="rounded-l-none"
+          onClick={increment}
         >
           <Plus className="h-4 w-4" />
         </Button>
       )}
     </div>
   );
-};
+}
