@@ -38,18 +38,25 @@ const Calculator: React.FC = () => {
     }
   };
   
-  // Convert string to number for the calculator
+  // Convert number to number for the calculator (enforcing minimum of 20)
   const handleQuantityChangeAdapter = (id: string, value: number | null) => {
+    // If value is less than 20 and not null, set to 20
+    if (value !== null && value > 0 && value < 20) {
+      value = 20;
+    }
     handleQuantityChange(id, value);
   };
   
   const totalQuantity = getTotalQuantity();
-  const showTotal = totalQuantity === 0 || totalQuantity >= 20;
+  const showTotal = totalQuantity >= 20 || totalQuantity === 0;
   
   return (
     <div className="w-full max-w-3xl mx-auto flex flex-col items-center">
       <p className="text-center mb-6">
         Use esta calculadora para estimar o preço dos seus bem-casados de acordo com a quantidade e sabores desejados.
+        <span className="block mt-2 text-sm font-medium text-[#eb6824]">
+          O pedido mínimo é de 20 unidades.
+        </span>
       </p>
       
       {flavorSelections.map((selection) => (

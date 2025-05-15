@@ -36,6 +36,11 @@ export const useCalculator = (flavors: Flavor[]) => {
     
     if (!isValid && totalQuantity > 0) {
       setShowMinimumWarning(true);
+      toast({
+        title: "Quantidade mínima não atingida",
+        description: "É necessário um pedido mínimo de 20 unidades.",
+        variant: "destructive"
+      });
       
       // Remove warning after 3 seconds
       setTimeout(() => {
@@ -55,11 +60,14 @@ export const useCalculator = (flavors: Flavor[]) => {
     );
   };
   
-  // Handle quantity change
+  // Handle quantity change with minimum validation
   const handleQuantityChange = (id: string, value: number | null) => {
+    // Ensure that non-null values are at least 20 if they're greater than 0
+    const validValue = value !== null && value > 0 ? Math.max(20, value) : value;
+    
     setFlavorSelections(prev => 
       prev.map(selection => 
-        selection.id === id ? { ...selection, quantity: value } : selection
+        selection.id === id ? { ...selection, quantity: validValue } : selection
       )
     );
   };
