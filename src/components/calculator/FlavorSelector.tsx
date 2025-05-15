@@ -15,7 +15,7 @@ interface FlavorSelectorProps {
   onIncrement: (id: string) => void;
   onDecrement: (id: string) => void;
   onRemove: (id: string) => void;
-  canRemove: boolean;
+  showRemoveButton: boolean;
 }
 
 const FlavorSelector: React.FC<FlavorSelectorProps> = ({
@@ -26,7 +26,7 @@ const FlavorSelector: React.FC<FlavorSelectorProps> = ({
   onIncrement,
   onDecrement,
   onRemove,
-  canRemove
+  showRemoveButton
 }) => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, id: string) => {
     if (e.key === 'Enter' || e.key === 'Tab') {
@@ -98,7 +98,7 @@ const FlavorSelector: React.FC<FlavorSelectorProps> = ({
           <div className="text-xs text-muted-foreground mt-1 text-center">Mínimo: 20 un.</div>
         </div>
 
-        {canRemove && (
+        {showRemoveButton && (
           <div className="flex items-end md:pb-1">
             <Button
               type="button"
