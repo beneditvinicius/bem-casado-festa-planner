@@ -1,12 +1,12 @@
 
 import React, { useState } from 'react';
 import { useProductsStore } from '@/data/products';
-import { ColorSelector } from './visualizer/ColorSelector';
-import { VisualizationArea } from './visualizer/VisualizationArea'; 
-import { Disclaimer } from './visualizer/Disclaimer';
-import { DebugInfo } from './visualizer/DebugInfo';
+import ColorSelector from './visualizer/ColorSelector';
+import VisualizationArea from './visualizer/VisualizationArea'; 
+import Disclaimer from './visualizer/Disclaimer';
+import DebugInfo from './visualizer/DebugInfo';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { CombinationToastNotifier } from './visualizer/CombinationToastNotifier';
+import CombinationToastNotifier from './visualizer/CombinationToastNotifier';
 import { ImageExistenceProvider } from './visualizer/ImageExistenceProvider';
 
 const Visualizer: React.FC = () => {
@@ -32,51 +32,60 @@ const Visualizer: React.FC = () => {
     <div className="flex flex-col space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <ColorSelector 
-          title="Cor da Fita" 
-          colors={ribbonColors} 
-          selectedColorId={selectedRibbonId}
+          id="ribbon-color"
+          label="Cor da Fita" 
+          options={ribbonColors} 
+          value={selectedRibbonId}
           onChange={setSelectedRibbonId}
         />
         
         <ColorSelector 
-          title="Cor da Embalagem"
-          colors={packageColors}
-          selectedColorId={selectedPackageId}
+          id="package-color"
+          label="Cor da Embalagem"
+          options={packageColors}
+          value={selectedPackageId}
           onChange={setSelectedPackageId}
         />
       </div>
 
       {/* Visualization Area */}
-      <ImageExistenceProvider>
-        <div className="mt-6">
+      <div className="mt-6">
+        <ImageExistenceProvider 
+          ribbonUrl={ribbonImagePath} 
+          packageUrl={packageImagePath}
+        >
           <VisualizationArea 
             ribbonCode={selectedRibbon?.code || ''}
-            packageCode={selectedPackage?.code || ''}
+            ribbonName={selectedRibbon?.name || ''}
             ribbonColor={selectedRibbon?.color || ''}
+            packageCode={selectedPackage?.code || ''}
+            packageName={selectedPackage?.name || ''}
             packageColor={selectedPackage?.color || ''}
-            ribbonImagePath={ribbonImagePath}
-            packageImagePath={packageImagePath}
-            fallbackImagePath={fallbackCombinationImage}
+            fallbackCombinationImage={fallbackCombinationImage}
           />
-        </div>
-      </ImageExistenceProvider>
+          <CombinationToastNotifier
+            ribbonCode={selectedRibbon?.code || ''}
+            packageCode={selectedPackage?.code || ''}
+            ribbonName={selectedRibbon?.name || ''}
+            packageName={selectedPackage?.name || ''}
+          />
+        </ImageExistenceProvider>
+      </div>
       
       {/* Debug info - only shown in dev mode */}
       {process.env.NODE_ENV === 'development' && (
         <DebugInfo 
-          selectedRibbon={selectedRibbon}
-          selectedPackage={selectedPackage}
+          ribbonId={selectedRibbonId}
+          ribbonCode={selectedRibbon?.code}
+          packageId={selectedPackageId}
+          packageCode={selectedPackage?.code}
           ribbonImagePath={ribbonImagePath}
+          ribbonImageExists={false}
           packageImagePath={packageImagePath}
-          fallbackImagePath={fallbackCombinationImage}
+          packageImageExists={false}
+          fallbackCombinationImage={fallbackCombinationImage}
         />
       )}
-      
-      {/* Display combination toast notification */}
-      <CombinationToastNotifier 
-        ribbonCode={selectedRibbon?.code || ''} 
-        packageCode={selectedPackage?.code || ''} 
-      />
       
       <Disclaimer />
     </div>
