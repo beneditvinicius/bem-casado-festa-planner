@@ -34,6 +34,7 @@ const ColorSelector: React.FC<ColorSelectorProps> = ({
     onChange(newValue);
     const selected = options.find(option => option.id === newValue);
     if (selected) {
+      // Display just the name and code in the toast notification
       toast({
         title: `${label} selecionada: ${selected.name}`,
         description: undefined,
