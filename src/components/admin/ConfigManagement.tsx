@@ -6,13 +6,12 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useProductsStore } from '@/data/store';
-import { Phone, Save, Image } from "lucide-react";
+import { MessageSquare, Image } from "lucide-react";
 
 const ConfigManagement: React.FC = () => {
-  const { whatsappNumber, headerImageUrl, bannerText, setWhatsappNumber, setHeaderImageUrl, setBannerText } = useProductsStore();
+  const { whatsappNumber, headerImageUrl, setWhatsappNumber, setHeaderImageUrl } = useProductsStore();
   const [tempWhatsappNumber, setTempWhatsappNumber] = useState(whatsappNumber);
   const [tempHeaderImageUrl, setTempHeaderImageUrl] = useState(headerImageUrl || '');
-  const [tempBannerText, setTempBannerText] = useState(bannerText || '');
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -59,6 +58,15 @@ const ConfigManagement: React.FC = () => {
     }
   };
 
+  const handleRemoveHeaderImage = () => {
+    setTempHeaderImageUrl('');
+    setHeaderImageUrl('');
+    toast({
+      title: "Imagem removida",
+      description: "A imagem de cabeçalho foi removida com sucesso.",
+    });
+  };
+
   return (
     <div className="max-w-3xl mx-auto animate-fade-in">
       <h3 className="text-lg font-medium text-center mb-4">Configurações Gerais</h3>
@@ -67,9 +75,9 @@ const ConfigManagement: React.FC = () => {
         <CardContent className="pt-6">
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="whatsapp-number" className="text-center block">Número de WhatsApp</Label>
+              <Label htmlFor="whatsapp-number" className="text-center block">Número de WhatsApp (com código do país)</Label>
               <div className="flex gap-2 items-center">
-                <span className="text-sm text-gray-500">+</span>
+                <MessageSquare className="text-[#eb6824]" />
                 <Input
                   id="whatsapp-number"
                   value={tempWhatsappNumber}
@@ -81,7 +89,7 @@ const ConfigManagement: React.FC = () => {
                 />
               </div>
               <p className="text-xs text-gray-500 text-center mt-1">
-                Formato: código do país + DDD + número (ex: 5565992000000)
+                Atualmente configurado: {whatsappNumber || "Não configurado"}
               </p>
             </div>
           </div>
@@ -92,8 +100,7 @@ const ConfigManagement: React.FC = () => {
               className="rounded-full bg-[#eb6824] hover:bg-[#d25618] transition-all duration-300"
               disabled={isLoading}
             >
-              <Phone className="mr-2 h-4 w-4" />
-              {isLoading ? "Salvando..." : "Salvar Número de WhatsApp"}
+              {isLoading ? "Salvando..." : "Atualizar Número"}
             </Button>
           </div>
         </CardContent>
@@ -101,31 +108,60 @@ const ConfigManagement: React.FC = () => {
 
       <Card className="mb-6 rounded-3xl">
         <CardContent className="pt-6">
+          <h4 className="text-lg font-medium text-center mb-4">Foto de Cabeçalho</h4>
+          
           <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="headerImage" className="text-center block">Imagem de Cabeçalho</Label>
-              <div className="flex flex-col items-center space-y-4">
-                {tempHeaderImageUrl && (
-                  <div className="mb-2 transition-all duration-300 hover:scale-105">
-                    <img 
-                      src={tempHeaderImageUrl} 
-                      alt="Header atual" 
-                      className="max-h-40 rounded-lg border shadow-sm" 
-                    />
-                  </div>
-                )}
+            <p className="text-sm text-gray-600 text-center">
+              Faça upload de uma imagem para ser usada como background do cabeçalho do site. 
+              Recomendamos uma imagem de alta qualidade com dimensões mínimas de 1200×400 pixels.
+            </p>
+            
+            {tempHeaderImageUrl && (
+              <div className="flex justify-center">
+                <div className="relative w-64 h-64 border-2 border-dashed border-[#eb6824] rounded-full overflow-hidden">
+                  <img 
+                    src={tempHeaderImageUrl} 
+                    alt="Imagem do cabeçalho" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className="flex flex-col gap-4">
+              <div>
                 <Input 
                   id="headerImageFile" 
                   type="file" 
                   accept="image/*"
                   onChange={handleHeaderImageChange}
-                  className="max-w-md"
+                  className="mx-auto max-w-md"
                   disabled={isLoading}
                 />
               </div>
+                
+              <div className="flex justify-center space-x-4 mt-4">
+                <Button 
+                  variant="outline"
+                  onClick={handleRemoveHeaderImage}
+                  className="rounded-full"
+                  disabled={!tempHeaderImageUrl || isLoading}
+                >
+                  Remover imagem
+                </Button>
+                
+                <Button 
+                  onClick={handleSaveHeaderImage}
+                  className="rounded-full bg-[#eb6824] hover:bg-[#d25618] transition-all duration-300"
+                  disabled={!tempHeaderImageUrl || isLoading}
+                >
+                  <Image className="mr-2 h-4 w-4" />
+                  {isLoading ? "Salvando..." : "Salvar imagem"}
+                </Button>
+              </div>
             </div>
 
-            <div className="mb-4 rounded-xl overflow-hidden border">
+            <div className="mb-4 rounded-xl overflow-hidden border mt-6">
               <h4 className="text-base font-medium py-2 bg-gray-50 text-center">Prévia do Cabeçalho</h4>
               <div className="w-full h-36 relative">
                 {tempHeaderImageUrl ? (
@@ -145,17 +181,6 @@ const ConfigManagement: React.FC = () => {
                 )}
               </div>
             </div>
-          </div>
-          
-          <div className="flex justify-center mt-4">
-            <Button 
-              onClick={handleSaveHeaderImage}
-              className="rounded-full bg-[#eb6824] hover:bg-[#d25618] transition-all duration-300"
-              disabled={isLoading}
-            >
-              <Image className="mr-2 h-4 w-4" />
-              {isLoading ? "Salvando..." : "Salvar Imagem de Cabeçalho"}
-            </Button>
           </div>
         </CardContent>
       </Card>
