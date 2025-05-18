@@ -26,6 +26,14 @@ const Calculator: React.FC = () => {
     validateMinimumQuantity
   } = useCalculator(flavors);
   
+  // Function to handle going to FAQ section
+  const handleGoToFaq = () => {
+    const faqElement = document.getElementById('faq');
+    if (faqElement) {
+      faqElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+  
   return (
     <Card className="w-full rounded-3xl">
       <CardContent className="pt-6">
@@ -65,8 +73,10 @@ const Calculator: React.FC = () => {
           />
 
           <CalculatorFooter 
+            isMobile={isMobile}
             onReset={handleReset}
-            validateMinimumQuantity={validateMinimumQuantity}
+            onGoToFaq={handleGoToFaq}
+            onConfirm={validateMinimumQuantity}
           />
         </div>
       </CardContent>
