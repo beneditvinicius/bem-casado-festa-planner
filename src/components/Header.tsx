@@ -13,11 +13,11 @@ const Header: React.FC = () => {
     
     const onScroll = () => {
       const currentScrollY = window.scrollY;
-      if (currentScrollY > lastScrollY + 20) {
-        // Scrolling down
+      if (currentScrollY > lastScrollY) {
+        // Scrolling down - any movement
         setCollapsed(true);
-      } else if (currentScrollY < lastScrollY - 20) {
-        // Scrolling up
+      } else if (currentScrollY < lastScrollY) {
+        // Scrolling up - any movement
         setCollapsed(false);
       }
       lastScrollY = currentScrollY;

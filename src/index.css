@@ -36,6 +36,8 @@
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
+    --header-height: 160px;
+    --header-height-mobile: 140px;
   }
 
   * {
@@ -45,7 +47,7 @@
   body {
     @apply bg-white text-foreground font-sans;
     /* Add padding to top to account for fixed header */
-    padding-top: 160px;
+    padding-top: var(--header-height);
   }
 
   h1, h2, h3, h4, h5, h6, p, label, span {
@@ -110,7 +112,7 @@
     
     /* Adjust body padding for smaller header on mobile */
     body {
-      padding-top: 140px;
+      padding-top: var(--header-height-mobile);
     }
   }
 }
