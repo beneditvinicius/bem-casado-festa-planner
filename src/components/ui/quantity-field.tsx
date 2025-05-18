@@ -36,10 +36,13 @@ export function QuantityField({
     value !== null ? value.toString() : ""
   );
   const [buzzing, setBuzzing] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
-    setInputValue(value !== null ? value.toString() : "");
-  }, [value]);
+    if (!isFocused) {
+      setInputValue(value !== null ? value.toString() : "");
+    }
+  }, [value, isFocused]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
@@ -54,10 +57,16 @@ export function QuantityField({
   };
 
   const handleBlur = () => {
+    setIsFocused(false);
     if (value !== null && value > 0 && value < 20) {
       triggerBuzzAnimation();
       onChange(null);
     }
+  };
+
+  const handleFocus = () => {
+    setIsFocused(true);
+    setInputValue(""); // Clear the input field when focused
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -112,7 +121,7 @@ export function QuantityField({
           </Button>
         )}
         <div className="flex-grow relative">
-          {showMinimumMessage && value === null && (
+          {showMinimumMessage && value === null && !isFocused && (
             <div className="absolute inset-0 flex items-center justify-center text-gray-400 pointer-events-none text-sm">
               Mínimo: 20 unidades
             </div>
@@ -126,11 +135,12 @@ export function QuantityField({
             value={inputValue}
             onChange={handleChange}
             onBlur={handleBlur}
+            onFocus={handleFocus}
             onKeyDown={handleKeyPress}
             className={cn(
               "rounded-none text-center border-x-0",
               error && "border-destructive",
-              showMinimumMessage && value === null && "text-transparent", // Hide input text when showing placeholder
+              showMinimumMessage && value === null && !isFocused && "text-transparent", // Hide input text when showing placeholder
             )}
             aria-invalid={!!error}
             // Remove browser's default spinner arrows

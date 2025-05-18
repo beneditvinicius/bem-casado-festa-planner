@@ -54,9 +54,6 @@ const Calculator: React.FC = () => {
     <div className="w-full max-w-3xl mx-auto flex flex-col items-center">
       <p className="text-center mb-6">
         Use esta calculadora para estimar o preço dos seus bem-casados de acordo com a quantidade e sabores desejados.
-        <span className="block mt-2 text-sm font-medium text-[#eb6824]">
-          O pedido mínimo é de 20 unidades.
-        </span>
       </p>
       
       {flavorSelections.map((selection) => (

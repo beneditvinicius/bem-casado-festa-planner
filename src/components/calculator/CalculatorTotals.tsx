@@ -37,12 +37,14 @@ const CalculatorTotals: React.FC<CalculatorTotalsProps> = ({
             </span>
           </div>
           
-          <div className="flex justify-center items-center gap-2">
-            <span className="text-sm sm:text-base">Valor Total:</span>
-            <span className="text-[#eb6824] font-bold text-lg sm:text-xl">
-              {isValidQuantity ? formatCurrency(total) : "Aguardando qtd. mínima"}
-            </span>
-          </div>
+          {isValidQuantity && (
+            <div className="flex justify-center items-center gap-2">
+              <span className="text-sm sm:text-base">Valor Total:</span>
+              <span className="text-[#eb6824] font-bold text-lg sm:text-xl">
+                {formatCurrency(total)}
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </div>
