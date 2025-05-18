@@ -36,7 +36,7 @@ const ColorSelector: React.FC<ColorSelectorProps> = ({
     if (selected) {
       toast({
         title: `${label} selecionada: ${selected.name}`,
-        description: selected.code ? `Código: ${selected.code}` : undefined,
+        description: undefined,
         duration: 2000,
       });
     }
@@ -60,7 +60,7 @@ const ColorSelector: React.FC<ColorSelectorProps> = ({
                     border: option.color === '#FFFFFF' || option.color === '#F8F4E3' ? '1px solid #E2E8F0' : 'none'
                   }} 
                 />
-                {option.name} {option.code && `(${option.code})`}
+                {option.name}
                 {option.isNew && <Badge className="ml-2 bg-[#eb6824]">Novidade</Badge>}
               </div>
             </SelectItem>

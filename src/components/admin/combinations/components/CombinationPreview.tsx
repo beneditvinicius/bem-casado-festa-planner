@@ -46,7 +46,7 @@ const CombinationPreview: React.FC<CombinationPreviewProps> = ({
                       border: ribbon.color === '#FFFFFF' ? '1px solid #E2E8F0' : 'none'
                     }} 
                   />
-                  {ribbon.name} ({ribbon.code})
+                  {ribbon.name}
                 </div>
               </SelectItem>
             ))}
@@ -71,7 +71,7 @@ const CombinationPreview: React.FC<CombinationPreviewProps> = ({
                       border: pkg.color === '#FFFFFF' ? '1px solid #E2E8F0' : 'none'
                     }} 
                   />
-                  {pkg.name} ({pkg.code})
+                  {pkg.name}
                 </div>
               </SelectItem>
             ))}

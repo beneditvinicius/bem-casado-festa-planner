@@ -42,7 +42,7 @@ export const ColorSelectors: React.FC<ColorSelectorsProps> = ({
                     className="w-4 h-4 rounded-full mr-2"
                     style={{ backgroundColor: color.color, border: color.color === '#FFFFFF' || color.color === '#F8F4E3' ? '1px solid #E2E8F0' : 'none' }}
                   />
-                  {color.name} {color.code}
+                  {color.name}
                 </div>
               </SelectItem>
             ))}
@@ -68,7 +68,7 @@ export const ColorSelectors: React.FC<ColorSelectorsProps> = ({
                     className="w-4 h-4 rounded-full mr-2"
                     style={{ backgroundColor: color.color, border: color.color === '#FFFFFF' || color.color === '#F8F4E3' ? '1px solid #E2E8F0' : 'none' }}
                   />
-                  {color.name} {color.code}
+                  {color.name}
                 </div>
               </SelectItem>
             ))}

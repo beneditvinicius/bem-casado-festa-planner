@@ -56,8 +56,8 @@ Pedido de Bem-Casados:
 Quantidade Total: ${totalQuantity} unidades
 ${flavorDetails}
 
-Cor da Fita: ${selectedRibbon?.name || ''} ${selectedRibbon?.code || ''}
-Cor da Embalagem: ${selectedPackage?.name || ''} ${selectedPackage?.code || ''}
+Cor da Fita: ${selectedRibbon?.name || ''}
+Cor da Embalagem: ${selectedPackage?.name || ''}
 
 Valor Total: ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalPrice)}
 ${formData.observations ? `\nObservações: ${formData.observations}` : ''}
