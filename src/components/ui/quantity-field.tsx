@@ -1,8 +1,8 @@
 
-import React, { useState, useEffect, KeyboardEvent } from "react";
-import { Input } from "@/components/ui/input";
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
-import { Plus, Minus } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Minus, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface QuantityFieldProps {
@@ -37,6 +37,14 @@ export function QuantityField({
   );
   const [buzzing, setBuzzing] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  
+  // State and refs for rapid increment/decrement
+  const [incrementSpeed, setIncrementSpeed] = useState<number>(300); // Velocidade inicial em ms
+  const [decrementSpeed, setDecrementSpeed] = useState<number>(300);
+  const incrementTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const decrementTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const incrementSpeedTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const decrementSpeedTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (!isFocused) {
@@ -101,6 +109,93 @@ export function QuantityField({
     }
     onChange(newValue < min ? min : newValue);
   };
+  
+  // Funções para incremento rápido ao pressionar e segurar o botão
+  const startIncrementing = () => {
+    increment();
+    
+    // Limpa qualquer timer existente
+    if (incrementTimerRef.current) {
+      clearInterval(incrementTimerRef.current);
+    }
+    
+    // Inicia um novo timer para incremento contínuo
+    incrementTimerRef.current = setInterval(() => {
+      increment();
+    }, incrementSpeed);
+    
+    // Timer para acelerar o incremento quanto mais tempo o botão é pressionado
+    incrementSpeedTimerRef.current = setInterval(() => {
+      setIncrementSpeed(prev => Math.max(50, prev * 0.8)); // Aumenta a velocidade gradualmente
+    }, 1000);
+  };
+
+  const startDecrementing = () => {
+    decrement();
+    
+    // Limpa qualquer timer existente
+    if (decrementTimerRef.current) {
+      clearInterval(decrementTimerRef.current);
+    }
+    
+    // Inicia um novo timer para decremento contínuo
+    decrementTimerRef.current = setInterval(() => {
+      decrement();
+    }, decrementSpeed);
+    
+    // Timer para acelerar o decremento quanto mais tempo o botão é pressionado
+    decrementSpeedTimerRef.current = setInterval(() => {
+      setDecrementSpeed(prev => Math.max(50, prev * 0.8)); // Aumenta a velocidade gradualmente
+    }, 1000);
+  };
+
+  const stopIncrementing = () => {
+    if (incrementTimerRef.current) {
+      clearInterval(incrementTimerRef.current);
+      incrementTimerRef.current = null;
+    }
+    
+    if (incrementSpeedTimerRef.current) {
+      clearInterval(incrementSpeedTimerRef.current);
+      incrementSpeedTimerRef.current = null;
+    }
+    
+    // Reseta a velocidade para o valor inicial
+    setIncrementSpeed(300);
+  };
+
+  const stopDecrementing = () => {
+    if (decrementTimerRef.current) {
+      clearInterval(decrementTimerRef.current);
+      decrementTimerRef.current = null;
+    }
+    
+    if (decrementSpeedTimerRef.current) {
+      clearInterval(decrementSpeedTimerRef.current);
+      decrementSpeedTimerRef.current = null;
+    }
+    
+    // Reseta a velocidade para o valor inicial
+    setDecrementSpeed(300);
+  };
+  
+  // Limpa os timers quando o componente é desmontado
+  useEffect(() => {
+    return () => {
+      if (incrementTimerRef.current) {
+        clearInterval(incrementTimerRef.current);
+      }
+      if (decrementTimerRef.current) {
+        clearInterval(decrementTimerRef.current);
+      }
+      if (incrementSpeedTimerRef.current) {
+        clearInterval(incrementSpeedTimerRef.current);
+      }
+      if (decrementSpeedTimerRef.current) {
+        clearInterval(decrementSpeedTimerRef.current);
+      }
+    };
+  }, []);
 
   const triggerBuzzAnimation = () => {
     setBuzzing(true);
@@ -117,6 +212,11 @@ export function QuantityField({
             size="icon"
             className="rounded-full bg-[#eb6824] text-white hover:bg-[#d25618] w-10 h-10 flex items-center justify-center"
             onClick={decrement}
+            onMouseDown={startDecrementing}
+            onMouseUp={stopDecrementing}
+            onMouseLeave={stopDecrementing}
+            onTouchStart={startDecrementing}
+            onTouchEnd={stopDecrementing}
           >
             <Minus className="h-5 w-5" />
           </Button>
@@ -155,6 +255,11 @@ export function QuantityField({
             size="icon"
             className="rounded-full bg-[#eb6824] text-white hover:bg-[#d25618] w-10 h-10 flex items-center justify-center"
             onClick={increment}
+            onMouseDown={startIncrementing}
+            onMouseUp={stopIncrementing}
+            onMouseLeave={stopIncrementing}
+            onTouchStart={startIncrementing}
+            onTouchEnd={stopIncrementing}
           >
             <Plus className="h-5 w-5" />
           </Button>
