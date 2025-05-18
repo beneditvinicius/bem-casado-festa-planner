@@ -27,7 +27,7 @@ const Header: React.FC = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
   
-  // Use the uploaded image as a demo background
+  // Use the uploaded image as a header background
   const headerStyle = {
     backgroundImage: headerImageUrl 
       ? `url(${headerImageUrl})` 

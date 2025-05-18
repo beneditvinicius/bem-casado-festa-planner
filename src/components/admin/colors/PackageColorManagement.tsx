@@ -7,6 +7,7 @@ import { Plus } from "lucide-react";
 import { PackageColor } from '@/data/types';
 import PackageColorList from './components/PackageColorList';
 import PackageColorFormDialog from './components/PackageColorFormDialog';
+import ItemFormModal from './components/ItemFormModal';
 
 export const PackageColorManagement: React.FC = () => {
   const { 
@@ -17,42 +18,49 @@ export const PackageColorManagement: React.FC = () => {
   } = useProductsStore();
   
   const [isAddingPackage, setIsAddingPackage] = useState(false);
-  const [editingPackage, setEditingPackage] = useState<string | null>(null);
+  const [editingPackage, setEditingPackage] = useState<PackageColor | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const { toast } = useToast();
   
   const handleAddPackage = (data: Partial<PackageColor>) => {
-    if (editingPackage) {
-      // Make sure we're passing all required properties when updating
-      updatePackageColor(editingPackage, data);
-      toast({
-        title: "Cor de embalagem atualizada",
-        description: `A cor ${data.name} foi atualizada com sucesso.`,
-      });
-    } else {
-      // When adding a new color, ensure we explicitly provide all required fields
-      const newPackageColor: PackageColor = {
-        id: (packageColors.length + 1).toString(),
-        name: data.name || '',
-        code: data.code || '',
-        color: data.color || '#FFFFFF',
-        isNew: data.isNew || false,
-        imageUrl: data.imageUrl
-      };
-      
-      addPackageColor(newPackageColor);
-      
-      toast({
-        title: "Cor de embalagem adicionada",
-        description: `A cor ${data.name} foi adicionada com sucesso.`,
-      });
-    }
+    // When adding a new color, ensure we explicitly provide all required fields
+    const newPackageColor: PackageColor = {
+      id: (packageColors.length + 1).toString(),
+      name: data.name || '',
+      code: data.code || '',
+      color: data.color || '#FFFFFF',
+      isNew: data.isNew || false,
+      imageUrl: data.imageUrl
+    };
+    
+    addPackageColor(newPackageColor);
+    
+    toast({
+      title: "Cor de embalagem adicionada",
+      description: `A cor ${data.name} foi adicionada com sucesso.`,
+    });
+    
     setIsAddingPackage(false);
-    setEditingPackage(null);
   };
   
   const handleEditPackage = (id: string) => {
-    setEditingPackage(id);
-    setIsAddingPackage(true);
+    const packageColor = packageColors.find(p => p.id === id);
+    if (packageColor) {
+      setEditingPackage(packageColor);
+      setIsEditModalOpen(true);
+    }
+  };
+  
+  const handleUpdatePackage = (data: Partial<PackageColor>) => {
+    if (editingPackage) {
+      updatePackageColor(editingPackage.id, data);
+      toast({
+        title: "Cor de embalagem atualizada",
+        description: `A cor ${data.name || editingPackage.name} foi atualizada com sucesso.`,
+      });
+      setEditingPackage(null);
+      setIsEditModalOpen(false);
+    }
   };
   
   const handleRemovePackage = (id: string) => {
@@ -69,11 +77,6 @@ export const PackageColorManagement: React.FC = () => {
       setEditingPackage(null);
     }
   };
-
-  // Find the initial values for the form if editing a package
-  const initialValues = editingPackage 
-    ? packageColors.find(p => p.id === editingPackage) 
-    : undefined;
   
   return (
     <div className="space-y-4">
@@ -81,7 +84,6 @@ export const PackageColorManagement: React.FC = () => {
         <h3 className="text-lg font-medium text-center">Cores de Embalagens Disponíveis</h3>
         <Button 
           onClick={() => {
-            setEditingPackage(null);
             setIsAddingPackage(true);
           }}
           className="rounded-full"
@@ -100,8 +102,19 @@ export const PackageColorManagement: React.FC = () => {
         open={isAddingPackage}
         onOpenChange={handleOpenChange}
         onSubmit={handleAddPackage}
-        initialValues={initialValues}
+        initialValues={undefined}
       />
+      
+      {editingPackage && (
+        <ItemFormModal
+          open={isEditModalOpen}
+          onOpenChange={setIsEditModalOpen}
+          initialValues={editingPackage}
+          onSubmit={handleUpdatePackage}
+          itemType="package"
+          title="Editar Cor de Embalagem"
+        />
+      )}
     </div>
   );
 };

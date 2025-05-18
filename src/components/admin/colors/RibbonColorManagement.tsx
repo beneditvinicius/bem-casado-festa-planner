@@ -7,6 +7,7 @@ import { Plus } from "lucide-react";
 import { RibbonColor } from '@/data/types';
 import RibbonColorList from './components/RibbonColorList';
 import RibbonColorFormDialog from './components/RibbonColorFormDialog';
+import ItemFormModal from './components/ItemFormModal';
 
 export const RibbonColorManagement: React.FC = () => {
   const { 
@@ -17,38 +18,47 @@ export const RibbonColorManagement: React.FC = () => {
   } = useProductsStore();
   
   const [isAddingRibbon, setIsAddingRibbon] = useState(false);
-  const [editingRibbon, setEditingRibbon] = useState<string | null>(null);
+  const [editingRibbon, setEditingRibbon] = useState<RibbonColor | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const { toast } = useToast();
   
   const handleAddRibbon = (data: Partial<RibbonColor>) => {
-    if (editingRibbon) {
-      updateRibbonColor(editingRibbon, data);
-      toast({
-        title: "Cor de fita atualizada",
-        description: `A cor ${data.name} foi atualizada com sucesso.`,
-      });
-    } else {
-      const newId = (ribbonColors.length + 1).toString();
-      addRibbonColor({ 
-        id: newId, 
-        name: data.name || '',
-        code: data.code || '',
-        color: data.color || '#FFFFFF', 
-        isNew: data.isNew || false,
-        imageUrl: data.imageUrl || undefined
-      });
-      toast({
-        title: "Cor de fita adicionada",
-        description: `A cor ${data.name} foi adicionada com sucesso.`,
-      });
-    }
+    const newId = (ribbonColors.length + 1).toString();
+    addRibbonColor({ 
+      id: newId, 
+      name: data.name || '',
+      code: data.code || '',
+      color: data.color || '#FFFFFF', 
+      isNew: data.isNew || false,
+      imageUrl: data.imageUrl || undefined
+    });
+    
+    toast({
+      title: "Cor de fita adicionada",
+      description: `A cor ${data.name} foi adicionada com sucesso.`,
+    });
+    
     setIsAddingRibbon(false);
-    setEditingRibbon(null);
   };
   
   const handleEditRibbon = (id: string) => {
-    setEditingRibbon(id);
-    setIsAddingRibbon(true);
+    const ribbon = ribbonColors.find(r => r.id === id);
+    if (ribbon) {
+      setEditingRibbon(ribbon);
+      setIsEditModalOpen(true);
+    }
+  };
+  
+  const handleUpdateRibbon = (data: Partial<RibbonColor>) => {
+    if (editingRibbon) {
+      updateRibbonColor(editingRibbon.id, data);
+      toast({
+        title: "Cor de fita atualizada",
+        description: `A cor ${data.name || editingRibbon.name} foi atualizada com sucesso.`,
+      });
+      setEditingRibbon(null);
+      setIsEditModalOpen(false);
+    }
   };
   
   const handleRemoveRibbon = (id: string) => {
@@ -60,14 +70,8 @@ export const RibbonColorManagement: React.FC = () => {
   };
   
   const handleOpenAddDialog = () => {
-    setEditingRibbon(null);
     setIsAddingRibbon(true);
   };
-  
-  // Find the initial values for the form if editing a ribbon
-  const initialValues = editingRibbon 
-    ? ribbonColors.find(r => r.id === editingRibbon) 
-    : undefined;
   
   return (
     <div className="space-y-4">
@@ -88,8 +92,19 @@ export const RibbonColorManagement: React.FC = () => {
         open={isAddingRibbon} 
         onOpenChange={setIsAddingRibbon}
         onSubmit={handleAddRibbon}
-        initialValues={initialValues}
+        initialValues={undefined}
       />
+      
+      {editingRibbon && (
+        <ItemFormModal
+          open={isEditModalOpen}
+          onOpenChange={setIsEditModalOpen}
+          initialValues={editingRibbon}
+          onSubmit={handleUpdateRibbon}
+          itemType="ribbon"
+          title="Editar Cor de Fita"
+        />
+      )}
     </div>
   );
 };
