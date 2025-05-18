@@ -1,12 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Flavor, RibbonColor, PackageColor } from '@/data/types';
 import { ModalDialog } from '@/components/ui/modal-dialog';
-import { Checkbox } from "@/components/ui/checkbox";
-import ColorImageUploader from '../ColorImageUploader';
+import CommonFields from './fields/CommonFields';
+import FlavorFields from './fields/FlavorFields';
+import ColorFields from './fields/ColorFields';
 
 type FormData = {
   name: string;
@@ -158,93 +157,29 @@ const ItemFormModal = <T extends Flavor | RibbonColor | PackageColor>({
       confirmText="Salvar"
     >
       <div className="space-y-4">
-        <div className="space-y-2 text-center">
-          <Label htmlFor="name" className="text-center">Nome</Label>
-          <Input
-            id="name"
-            name="name"
-            placeholder="Digite o nome"
-            value={formData.name}
-            onChange={handleInputChange}
-            className="rounded-full text-center"
-            required
-          />
-        </div>
+        <CommonFields
+          name={formData.name}
+          isNew={formData.isNew}
+          onChange={handleInputChange}
+          onCheckboxChange={handleCheckboxChange}
+        />
 
         {itemType === 'flavor' && (
-          <div className="space-y-2 text-center">
-            <Label htmlFor="price" className="text-center">Preço (R$)</Label>
-            <Input
-              id="price"
-              name="price"
-              type="number"
-              step="0.01"
-              placeholder="0.00"
-              value={formData.price}
-              onChange={handleInputChange}
-              className="rounded-full text-center"
-              required
-            />
-          </div>
-        )}
-
-        {(itemType === 'ribbon' || itemType === 'package') && (
-          <>
-            <div className="space-y-2 text-center">
-              <Label htmlFor="code" className="text-center">Código</Label>
-              <Input
-                id="code"
-                name="code"
-                placeholder="Ex: 310"
-                value={formData.code}
-                onChange={handleInputChange}
-                className="rounded-full text-center"
-              />
-            </div>
-
-            <div className="space-y-2 text-center">
-              <Label htmlFor="color" className="text-center">Cor Hexadecimal</Label>
-              <div className="flex items-center justify-center gap-2">
-                <Input
-                  id="color"
-                  name="color"
-                  type="color"
-                  value={formData.color}
-                  onChange={handleInputChange}
-                  className="w-12 h-10 p-1 rounded-full"
-                />
-                <Input
-                  value={formData.color}
-                  onChange={handleInputChange}
-                  name="color"
-                  className="flex-1 rounded-full text-center"
-                />
-              </div>
-            </div>
-          </>
-        )}
-
-        <div className="flex items-center justify-center space-x-2">
-          <Checkbox 
-            id="isNew" 
-            checked={formData.isNew} 
-            onCheckedChange={handleCheckboxChange}
+          <FlavorFields
+            price={formData.price}
+            onChange={handleInputChange}
           />
-          <Label htmlFor="isNew" className="text-sm">Marcar como novidade</Label>
-        </div>
+        )}
 
         {(itemType === 'ribbon' || itemType === 'package') && (
-          <div className="space-y-2 text-center">
-            <Label className="text-center">Imagem (opcional)</Label>
-            <ColorImageUploader
-              imageUrl={formData.imageUrl}
-              onChange={handleImageChange}
-              colorType={itemType === 'ribbon' ? 'ribbon' : 'package'}
-            />
-            <p className="text-xs text-muted-foreground text-center">
-              Upload de imagem (PNG com transparência recomendado)
-            </p>
-          </div>
+          <ColorFields
+            code={formData.code}
+            color={formData.color}
+            imageUrl={formData.imageUrl}
+            onChange={handleInputChange}
+            onImageChange={handleImageChange}
+            colorType={itemType}
+          />
         )}
       </div>
     </ModalDialog>
