@@ -1,0 +1,62 @@
+
+/* Theme variables and color definitions */
+:root {
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+
+  --primary: 222.2 47.4% 11.2%;
+  --primary-foreground: 210 40% 98%;
+
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 222.2 84% 4.9%;
+
+  --radius: 0.5rem;
+  --header-height: 160px;
+  --header-height-mobile: 140px;
+}
+
+/* Cores personalizadas para Bem Casados */
+:root {
+  --color-bem: 14 82% 53%; /* #eb6824 */
+  --color-bem-light: 21 98% 88%; /* #FED7C3 */
+  --color-bem-dark: 19 82% 43%; /* #C54E15 */
+}
+
+/* Override de estilos do UI para padrão do projeto */
+.text-bem {
+  color: #eb6824;
+}
+.bg-bem {
+  background-color: #eb6824;
+}
+.bg-bem-light {
+  background-color: #FED7C3;
+}
+.bg-bem-dark {
+  background-color: #C54E15;
+}
+.hover\:bg-bem-dark:hover {
+  background-color: #C54E15;
+}
+.hover\:text-bem:hover {
+  color: #eb6824;
+}

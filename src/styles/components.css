@@ -1,0 +1,38 @@
+
+@layer components {
+  .section-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12;
+  }
+  
+  .section-title {
+    @apply text-xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 text-gray-800 text-center;
+  }
+  
+  .section-divider {
+    @apply w-full h-0.5 bg-gray-100 my-8 sm:my-12;
+  }
+  
+  /* Button styles */
+  button[type="button"], button[type="submit"] {
+    @apply rounded-full;
+  }
+  
+  /* Input styles */
+  input, select, textarea {
+    @apply rounded-2xl text-center;
+  }
+  
+  /* Card styles */
+  .card, .card-like {
+    @apply rounded-3xl shadow-md;
+  }
+  
+  /* Header animation styles */
+  .header {
+    transition: transform 0.3s ease;
+  }
+  
+  .header--collapsed {
+    transform: translateY(-100%);
+  }
+}
