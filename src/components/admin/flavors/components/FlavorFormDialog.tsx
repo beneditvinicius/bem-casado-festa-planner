@@ -8,6 +8,7 @@ interface FlavorFormDialogProps {
   onOpenChange: (open: boolean) => void;
   onSubmit: (data: Partial<Flavor>) => void;
   initialValues?: Flavor;
+  isLoading?: boolean;
 }
 
 const FlavorFormDialog = ({
@@ -15,6 +16,7 @@ const FlavorFormDialog = ({
   onOpenChange,
   onSubmit,
   initialValues,
+  isLoading = false,
 }: FlavorFormDialogProps) => {
   return (
     <ItemFormModal
