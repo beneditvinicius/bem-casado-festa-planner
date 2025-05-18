@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import { useCalculator } from '@/hooks/useCalculator';
-import { useProductsStore } from '@/data/products';
+import { useProductsStore } from '@/data/store';
 import { useIsMobile } from '@/hooks/use-mobile';
 import FlavorSelector from './FlavorSelector';
 import CalculatorTotals from './CalculatorTotals';
@@ -40,10 +40,6 @@ const Calculator: React.FC = () => {
   
   // Convert number to number for the calculator (enforcing minimum of 20)
   const handleQuantityChangeAdapter = (id: string, value: number | null) => {
-    // If value is less than 20 and not null, set to null
-    if (value !== null && value > 0 && value < 20) {
-      value = null;
-    }
     handleQuantityChange(id, value);
   };
   

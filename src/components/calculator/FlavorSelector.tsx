@@ -6,8 +6,8 @@ import { QuantityField } from "@/components/ui/quantity-field";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-import { Flavor } from '@/data/products';
-import { FlavorSelection } from './types';
+import { Flavor } from '@/data/types';
+import { FlavorSelection } from '@/hooks/useCalculator';
 
 interface FlavorSelectorProps {
   flavors: Flavor[];
@@ -65,9 +65,19 @@ const FlavorSelector: React.FC<FlavorSelectorProps> = ({
               id={`quantity-${selection.id}`}
               value={selection.quantity}
               onChange={handleQuantityChange}
-              min={0}
+              min={1}
               hasButtons={true}
               showMinimumMessage={true}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  const qty = selection.quantity ?? 0;
+                  if (qty > 0 && qty < 20) {
+                    // Clear input and trigger buzz animation
+                    handleQuantityChange(null);
+                    if (navigator.vibrate) navigator.vibrate(200);
+                  }
+                }
+              }}
             />
           </div>
         </div>

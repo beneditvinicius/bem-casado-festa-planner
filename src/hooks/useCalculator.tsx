@@ -60,14 +60,11 @@ export const useCalculator = (flavors: Flavor[]) => {
     );
   };
   
-  // Handle quantity change with minimum validation
+  // Handle quantity change
   const handleQuantityChange = (id: string, value: number | null) => {
-    // Ensure that non-null values are at least 20 if they're greater than 0
-    const validValue = value !== null && value > 0 && value < 20 ? null : value;
-    
     setFlavorSelections(prev => 
       prev.map(selection => 
-        selection.id === id ? { ...selection, quantity: validValue } : selection
+        selection.id === id ? { ...selection, quantity: value } : selection
       )
     );
   };

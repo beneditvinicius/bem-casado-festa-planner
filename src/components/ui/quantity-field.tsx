@@ -74,6 +74,7 @@ export function QuantityField({
       if (value !== null && value > 0 && value < 20) {
         triggerBuzzAnimation();
         onChange(null);
+        if (navigator.vibrate) navigator.vibrate(200);
       }
     }
     if (onKeyDown) {
@@ -89,13 +90,13 @@ export function QuantityField({
 
   const decrement = () => {
     if (value === null || value <= min) {
-      triggerBuzzAnimation();
       return;
     }
     const newValue = value - step;
     if (newValue < 20 && newValue > 0) {
       triggerBuzzAnimation();
       onChange(null);
+      if (navigator.vibrate) navigator.vibrate(200);
       return;
     }
     onChange(newValue < min ? min : newValue);
