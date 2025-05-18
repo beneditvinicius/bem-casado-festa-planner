@@ -64,25 +64,25 @@ const Header: React.FC = () => {
         <nav className="flex flex-wrap justify-center gap-4 sm:gap-6">
           <button 
             onClick={() => scrollToSection('calculator')} 
-            className="text-white hover:text-[#FED7C3] transition-colors"
+            className="text-white hover:text-[#FED7C3] transition-colors px-1 sm:px-2"
           >
             Calculadora
           </button>
           <button 
             onClick={() => scrollToSection('order')} 
-            className="text-white hover:text-[#FED7C3] transition-colors"
+            className="text-white hover:text-[#FED7C3] transition-colors px-1 sm:px-2"
           >
             Orçamento
           </button>
           <button 
             onClick={() => scrollToSection('visualizer')} 
-            className="text-white hover:text-[#FED7C3] transition-colors"
+            className="text-white hover:text-[#FED7C3] transition-colors px-1 sm:px-2"
           >
-            Teste de Bem Casado
+            {isMobile ? 'Visualizador' : 'Teste de Bem Casado'}
           </button>
           <button 
             onClick={() => scrollToSection('faq')} 
-            className="text-white hover:text-[#FED7C3] transition-colors"
+            className="text-white hover:text-[#FED7C3] transition-colors px-1 sm:px-2"
           >
             Dúvidas
           </button>
