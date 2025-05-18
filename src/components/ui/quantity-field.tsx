@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, KeyboardEvent } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plus, Minus } from "lucide-react";
@@ -36,36 +36,55 @@ export function QuantityField({
     value !== null ? value.toString() : ""
   );
   const [buzzing, setBuzzing] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setInputValue(value !== null ? value.toString() : "");
-  }, [value]);
+    if (!isFocused) {
+      setInputValue(value !== null ? value.toString() : "");
+    }
+  }, [value, isFocused]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setInputValue(newValue);
+  };
 
-    const parsedValue = parseFloat(newValue);
-    if (newValue === "" || isNaN(parsedValue)) {
+  const handleFocus = () => {
+    setIsFocused(true);
+    setInputValue(""); // Clear input when focused
+  };
+
+  const validateAndUpdateValue = () => {
+    setIsFocused(false);
+    const parsedValue = parseInt(inputValue, 10);
+    
+    if (isNaN(parsedValue) || parsedValue === 0) {
+      // If it's not a number or zero, reset
       onChange(null);
-    } else {
-      onChange(parsedValue);
+      return;
     }
+    
+    if (parsedValue < 20) {
+      // If less than minimum, buzz and reset
+      triggerBuzzAnimation();
+      onChange(null);
+      return;
+    }
+    
+    // Valid value
+    onChange(parsedValue);
   };
 
   const handleBlur = () => {
-    if (value !== null && value > 0 && value < 20) {
-      triggerBuzzAnimation();
-      onChange(null);
-    }
+    validateAndUpdateValue();
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      if (value !== null && value > 0 && value < 20) {
-        triggerBuzzAnimation();
-        onChange(null);
-      }
+      e.preventDefault();
+      validateAndUpdateValue();
+      inputRef.current?.blur();
     }
     if (onKeyDown) {
       onKeyDown(e);
@@ -73,23 +92,17 @@ export function QuantityField({
   };
 
   const increment = () => {
-    if (max !== undefined && value !== null && value >= max) return;
-    const newValue = (value || 0) + step;
-    onChange(newValue);
+    const currentValue = value || 0;
+    if (max !== undefined && currentValue >= max) return;
+    onChange(Math.max(20, currentValue + step)); // Ensure minimum is 20
   };
 
   const decrement = () => {
-    if (value === null || value <= min) {
+    if (value === null || value <= 20) {
       triggerBuzzAnimation();
       return;
     }
-    const newValue = value - step;
-    if (newValue < 20 && newValue > 0) {
-      triggerBuzzAnimation();
-      onChange(null);
-      return;
-    }
-    onChange(newValue < min ? min : newValue);
+    onChange(Math.max(20, (value || 0) - step)); // Ensure minimum is 20
   };
 
   const triggerBuzzAnimation = () => {
@@ -112,29 +125,28 @@ export function QuantityField({
           </Button>
         )}
         <div className="flex-grow relative">
-          {showMinimumMessage && value === null && (
+          {showMinimumMessage && value === null && !isFocused && (
             <div className="absolute inset-0 flex items-center justify-center text-gray-400 pointer-events-none text-sm">
               Mínimo: 20 unidades
             </div>
           )}
           <Input
             id={id}
+            ref={inputRef}
             type="number"
             inputMode="numeric"
-            min={min}
-            max={max}
             value={inputValue}
             onChange={handleChange}
+            onFocus={handleFocus}
             onBlur={handleBlur}
             onKeyDown={handleKeyPress}
             className={cn(
               "rounded-none text-center border-x-0",
               error && "border-destructive",
-              showMinimumMessage && value === null && "text-transparent", // Hide input text when showing placeholder
+              showMinimumMessage && value === null && !isFocused && "text-transparent" // Hide input text when showing placeholder
             )}
             aria-invalid={!!error}
-            // Remove browser's default spinner arrows
-            style={{ appearance: 'textfield' }}
+            style={{ appearance: 'textfield', WebkitAppearance: 'none', MozAppearance: 'textfield' }}
           />
         </div>
         {hasButtons && (

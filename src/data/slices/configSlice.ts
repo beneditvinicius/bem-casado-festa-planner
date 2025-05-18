@@ -4,11 +4,9 @@ import { ConfigState } from '../types';
 import { RootState } from '../store';
 
 export interface ConfigSlice {
-  bannerUrl: string | null;
-  bannerText: string | null;
+  headerImageUrl: string | null;
   whatsappNumber: string;
-  setBannerUrl: (url: string) => void;
-  setBannerText: (text: string) => void;
+  setHeaderImageUrl: (url: string) => void;
   setWhatsappNumber: (number: string) => void;
 }
 
@@ -18,11 +16,9 @@ export const createConfigSlice: StateCreator<
   [],
   ConfigSlice
 > = (set) => ({
-  bannerUrl: null,
-  bannerText: null,
+  headerImageUrl: null,
   whatsappNumber: "5565992000000", // Default WhatsApp number
   
-  setBannerUrl: (url: string) => set({ bannerUrl: url }),
-  setBannerText: (text: string) => set({ bannerText: text }),
+  setHeaderImageUrl: (url: string) => set({ headerImageUrl: url }),
   setWhatsappNumber: (number: string) => set({ whatsappNumber: number }),
 });

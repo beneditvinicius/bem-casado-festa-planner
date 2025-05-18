@@ -4,7 +4,6 @@ import { useProductsStore } from '@/data/products';
 import ColorSelector from './visualizer/ColorSelector';
 import VisualizationArea from './visualizer/VisualizationArea'; 
 import Disclaimer from './visualizer/Disclaimer';
-import DebugInfo from './visualizer/DebugInfo';
 import { useIsMobile } from '@/hooks/use-mobile';
 import CombinationToastNotifier from './visualizer/CombinationToastNotifier';
 import { ImageExistenceProvider } from './visualizer/ImageExistenceProvider';
@@ -28,13 +27,19 @@ const Visualizer: React.FC = () => {
   const ribbonImagePath = selectedRibbon?.code ? `/lovable-uploads/fita_${selectedRibbon.code.toLowerCase()}.png` : '';
   const packageImagePath = selectedPackage?.code ? `/lovable-uploads/embalagem_${selectedPackage.code.toLowerCase()}.png` : '';
   
+  // Updated format labels function
+  const getFormattedLabel = (name: string, code: string) => `${name} (${code})`;
+  
   return (
     <div className="flex flex-col space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <ColorSelector 
           id="ribbon-color"
           label="Cor da Fita" 
-          options={ribbonColors} 
+          options={ribbonColors.map(color => ({
+            ...color,
+            name: getFormattedLabel(color.name, color.code)
+          }))}
           value={selectedRibbonId}
           onChange={setSelectedRibbonId}
         />
@@ -42,7 +47,10 @@ const Visualizer: React.FC = () => {
         <ColorSelector 
           id="package-color"
           label="Cor da Embalagem"
-          options={packageColors}
+          options={packageColors.map(color => ({
+            ...color,
+            name: getFormattedLabel(color.name, color.code)
+          }))}
           value={selectedPackageId}
           onChange={setSelectedPackageId}
         />
@@ -66,26 +74,11 @@ const Visualizer: React.FC = () => {
           <CombinationToastNotifier
             ribbonCode={selectedRibbon?.code || ''}
             packageCode={selectedPackage?.code || ''}
-            ribbonName={selectedRibbon?.name || ''}
-            packageName={selectedPackage?.name || ''}
+            ribbonName={getFormattedLabel(selectedRibbon?.name || '', selectedRibbon?.code || '')}
+            packageName={getFormattedLabel(selectedPackage?.name || '', selectedPackage?.code || '')}
           />
         </ImageExistenceProvider>
       </div>
-      
-      {/* Debug info - only shown in dev mode */}
-      {process.env.NODE_ENV === 'development' && (
-        <DebugInfo 
-          ribbonId={selectedRibbonId}
-          ribbonCode={selectedRibbon?.code}
-          packageId={selectedPackageId}
-          packageCode={selectedPackage?.code}
-          ribbonImagePath={ribbonImagePath}
-          ribbonImageExists={false}
-          packageImagePath={packageImagePath}
-          packageImageExists={false}
-          fallbackCombinationImage={fallbackCombinationImage}
-        />
-      )}
       
       <Disclaimer />
     </div>
