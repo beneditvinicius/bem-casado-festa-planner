@@ -27,8 +27,11 @@ const Header: React.FC = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
   
-  const defaultHeaderStyle = {
-    backgroundImage: headerImageUrl ? `url(${headerImageUrl})` : 'linear-gradient(to right, #eb6824, #d25618)',
+  // Use the uploaded image as a demo background
+  const headerStyle = {
+    backgroundImage: headerImageUrl 
+      ? `url(${headerImageUrl})` 
+      : `url('/lovable-uploads/89d3444b-7495-4381-81c8-40dccbfb6016.png')`,
     backgroundSize: 'cover',
     backgroundPosition: 'center'
   };
@@ -49,7 +52,7 @@ const Header: React.FC = () => {
   return (
     <header 
       className={`py-6 sm:py-8 fixed top-0 left-0 w-full z-50 header ${collapsed ? 'header--collapsed' : ''}`} 
-      style={defaultHeaderStyle}
+      style={headerStyle}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col items-center">
         <img 
