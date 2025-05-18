@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { FlavorSelection } from './types';
-import { Flavor } from '@/data/products';
+import { Flavor } from '@/data/types';
 
 interface UseFlavorManagementReturn {
   flavorSelections: FlavorSelection[];
