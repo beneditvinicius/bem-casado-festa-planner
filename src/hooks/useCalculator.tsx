@@ -63,7 +63,7 @@ export const useCalculator = (flavors: Flavor[]) => {
   // Handle quantity change with minimum validation
   const handleQuantityChange = (id: string, value: number | null) => {
     // Ensure that non-null values are at least 20 if they're greater than 0
-    const validValue = value !== null && value > 0 ? Math.max(20, value) : value;
+    const validValue = value !== null && value > 0 && value < 20 ? null : value;
     
     setFlavorSelections(prev => 
       prev.map(selection => 
@@ -99,6 +99,9 @@ export const useCalculator = (flavors: Flavor[]) => {
   useEffect(() => {
     const newTotal = flavorSelections.reduce((acc, selection) => {
       if (!selection.flavorId || !selection.quantity) return acc;
+      
+      // Only count valid quantities (>= 20)
+      if (selection.quantity < 20) return acc;
       
       const flavor = flavors.find(f => f.id === selection.flavorId);
       if (!flavor) return acc;
