@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { PackageColor } from '@/data/types';
 import ColorImageUploader from '../ColorImageUploader';
 import { ModalDialog } from '@/components/ui/modal-dialog';
+import { Checkbox } from "@/components/ui/checkbox";
 
 type FormData = {
   name: string;
@@ -66,6 +67,10 @@ const PackageColorFormDialog: React.FC<PackageColorFormDialogProps> = ({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
   
+  const handleCheckboxChange = (checked: boolean) => {
+    setFormData((prev) => ({ ...prev, isNew: checked }));
+  };
+  
   const handleImageChange = (url: string | null) => {
     setFormData((prev) => ({ ...prev, imageUrl: url }));
   };
@@ -92,10 +97,6 @@ const PackageColorFormDialog: React.FC<PackageColorFormDialogProps> = ({
       };
       
       onSubmit(colorData);
-      
-      toast({
-        title: `Cor ${initialValues ? 'atualizada' : 'adicionada'} com sucesso!`,
-      });
       
       onOpenChange(false);
     } catch (error) {
@@ -124,7 +125,7 @@ const PackageColorFormDialog: React.FC<PackageColorFormDialogProps> = ({
           <Input
             id="name"
             name="name"
-            placeholder="Ex: Branco"
+            placeholder="Ex: Branco (B001)"
             value={formData.name}
             onChange={handleInputChange}
             className="rounded-full text-center"
@@ -162,6 +163,15 @@ const PackageColorFormDialog: React.FC<PackageColorFormDialogProps> = ({
               className="flex-1 rounded-full text-center"
             />
           </div>
+        </div>
+
+        <div className="flex items-center justify-center space-x-2">
+          <Checkbox 
+            id="isNew" 
+            checked={formData.isNew} 
+            onCheckedChange={handleCheckboxChange}
+          />
+          <Label htmlFor="isNew" className="text-sm">Marcar como novidade</Label>
         </div>
 
         <div className="space-y-2 text-center">

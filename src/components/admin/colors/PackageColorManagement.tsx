@@ -2,12 +2,11 @@
 import React, { useState } from 'react';
 import { useProductsStore } from '@/data/products';
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Plus } from "lucide-react";
-import { ColorFormValues } from './types';
+import { PackageColor } from '@/data/types';
 import PackageColorList from './components/PackageColorList';
 import PackageColorFormDialog from './components/PackageColorFormDialog';
-import { PackageColor } from '@/data/types';
 
 export const PackageColorManagement: React.FC = () => {
   const { 

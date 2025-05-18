@@ -3,6 +3,7 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash } from "lucide-react";
 import { PackageColor } from '@/data/types';
+import { Badge } from "@/components/ui/badge";
 
 interface PackageColorItemProps {
   color: PackageColor;
@@ -16,9 +17,15 @@ const PackageColorItem: React.FC<PackageColorItemProps> = ({ color, onEdit, onRe
       <div className="flex items-center space-x-3">
         <div 
           className="w-6 h-6 rounded-full" 
-          style={{ backgroundColor: color.color }}
+          style={{ 
+            backgroundColor: color.color,
+            border: color.color === '#FFFFFF' || color.color === '#F8F4E3' ? '1px solid #E2E8F0' : 'none'
+          }}
         />
-        <span className="font-medium text-center">{color.name}</span>
+        <div>
+          <span className="font-medium">{color.name}</span>
+          {color.isNew && <Badge className="ml-2 bg-[#eb6824]">Novidade</Badge>}
+        </div>
       </div>
       
       <div className="flex space-x-2">

@@ -13,6 +13,7 @@ const ConfigManagement: React.FC = () => {
   const { whatsappNumber, headerImageUrl, bannerText, setWhatsappNumber, setHeaderImageUrl, setBannerText } = useConfigStore();
   const [tempWhatsappNumber, setTempWhatsappNumber] = useState(whatsappNumber);
   const [tempHeaderImageUrl, setTempHeaderImageUrl] = useState(headerImageUrl || '');
+  const [tempBannerText, setTempBannerText] = useState(bannerText || '');
   const { toast } = useToast();
 
   const handleSaveWhatsapp = () => {

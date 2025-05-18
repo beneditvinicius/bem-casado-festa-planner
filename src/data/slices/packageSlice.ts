@@ -41,7 +41,7 @@ export const createPackageSlice: StateCreator<
     { id: '22', name: 'Prata (084)', code: '084', color: '#C0C0C0' },
     { id: '23', name: 'Marrom (391)', code: '391', color: '#8A4B38' },
     { id: '24', name: 'Terra (1383)', code: '1383', color: '#F97316' },
-    { id: '25', name: 'Branco', code: 'B001', color: '#FFFFFF' },
+    { id: '25', name: 'Branco (B001)', code: 'B001', color: '#FFFFFF' },
     { id: '26', name: 'Preto (219)', code: '219', color: '#000000' },
   ],
   

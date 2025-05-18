@@ -2,12 +2,11 @@
 import React, { useState } from 'react';
 import { useProductsStore } from '@/data/products';
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Plus } from "lucide-react";
-import { ColorFormValues } from './types';
+import { RibbonColor } from '@/data/types';
 import RibbonColorList from './components/RibbonColorList';
 import RibbonColorFormDialog from './components/RibbonColorFormDialog';
-import { RibbonColor } from '@/data/types';
 
 export const RibbonColorManagement: React.FC = () => {
   const { 

@@ -1,6 +1,5 @@
 
 import { StateCreator } from 'zustand';
-import { ConfigState } from '../types';
 import { RootState } from '../store';
 
 export interface ConfigSlice {
