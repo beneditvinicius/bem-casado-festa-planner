@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, KeyboardEvent, useRef } from "react";
+import React, { useState, useEffect, KeyboardEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plus, Minus } from "lucide-react";
@@ -37,24 +37,12 @@ export function QuantityField({
   );
   const [buzzing, setBuzzing] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-  const incrementTimerRef = useRef<number | null>(null);
-  const decrementTimerRef = useRef<number | null>(null);
-  const initialDelayMs = 500; // Initial delay before rapid increment starts
-  const incrementIntervalMs = 100; // How fast the value increments after the initial delay
 
   useEffect(() => {
     if (!isFocused) {
       setInputValue(value !== null ? value.toString() : "");
     }
   }, [value, isFocused]);
-
-  // Clean up any timers when unmounting
-  useEffect(() => {
-    return () => {
-      if (incrementTimerRef.current) window.clearTimeout(incrementTimerRef.current);
-      if (decrementTimerRef.current) window.clearTimeout(decrementTimerRef.current);
-    };
-  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
@@ -100,26 +88,6 @@ export function QuantityField({
     onChange(newValue);
   };
 
-  const startIncrement = () => {
-    increment(); // Immediate first increment
-    
-    // Start the hold-to-increment after initial delay
-    incrementTimerRef.current = window.setTimeout(() => {
-      const rapidIncrement = () => {
-        increment();
-        incrementTimerRef.current = window.setTimeout(rapidIncrement, incrementIntervalMs);
-      };
-      rapidIncrement();
-    }, initialDelayMs);
-  };
-
-  const stopIncrement = () => {
-    if (incrementTimerRef.current) {
-      window.clearTimeout(incrementTimerRef.current);
-      incrementTimerRef.current = null;
-    }
-  };
-
   const decrement = () => {
     if (value === null || value <= min) {
       return;
@@ -132,26 +100,6 @@ export function QuantityField({
       return;
     }
     onChange(newValue < min ? min : newValue);
-  };
-
-  const startDecrement = () => {
-    decrement(); // Immediate first decrement
-    
-    // Start the hold-to-decrement after initial delay
-    decrementTimerRef.current = window.setTimeout(() => {
-      const rapidDecrement = () => {
-        decrement();
-        decrementTimerRef.current = window.setTimeout(rapidDecrement, incrementIntervalMs);
-      };
-      rapidDecrement();
-    }, initialDelayMs);
-  };
-
-  const stopDecrement = () => {
-    if (decrementTimerRef.current) {
-      window.clearTimeout(decrementTimerRef.current);
-      decrementTimerRef.current = null;
-    }
   };
 
   const triggerBuzzAnimation = () => {
@@ -169,12 +117,6 @@ export function QuantityField({
             size="icon"
             className="rounded-full bg-[#eb6824] text-white hover:bg-[#d25618] w-10 h-10 flex items-center justify-center"
             onClick={decrement}
-            onMouseDown={startDecrement}
-            onMouseUp={stopDecrement}
-            onMouseLeave={stopDecrement}
-            onTouchStart={startDecrement}
-            onTouchEnd={stopDecrement}
-            onTouchCancel={stopDecrement}
           >
             <Minus className="h-5 w-5" />
           </Button>
@@ -213,12 +155,6 @@ export function QuantityField({
             size="icon"
             className="rounded-full bg-[#eb6824] text-white hover:bg-[#d25618] w-10 h-10 flex items-center justify-center"
             onClick={increment}
-            onMouseDown={startIncrement}
-            onMouseUp={stopIncrement}
-            onMouseLeave={stopIncrement}
-            onTouchStart={startIncrement}
-            onTouchEnd={stopIncrement}
-            onTouchCancel={stopIncrement}
           >
             <Plus className="h-5 w-5" />
           </Button>
