@@ -135,19 +135,6 @@
   color: #eb6824;
 }
 
-/* Header animation styles */
-.header-container {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  width: 100%;
-}
-
-.header-content {
-  overflow: hidden;
-  transition: transform 0.3s ease-out;
-}
-
 /* Melhoria de acessibilidade */
 button:focus-visible, 
 input:focus-visible, 
@@ -195,4 +182,3 @@ select:focus-visible,
     justify-content: center;
   }
 }
-
