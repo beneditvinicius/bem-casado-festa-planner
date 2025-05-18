@@ -36,7 +36,6 @@ const OrderForm: React.FC = () => {
     <Card className="w-full rounded-3xl" id="orcamento">
       <CardContent className="pt-6 card-content">
         <p className="text-center text-sm sm:text-base mb-4">Agora que já sabe qual será o seu orçamento, preencha seus dados para recebermos tudo prontinho no nosso WhatsApp para lançarmos seu pedido!</p>
-        <p className="text-center text-xs text-gray-500 mb-6">Seus dados estão seguros! Usamos essas informações apenas para o lançamento no sistema.</p>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

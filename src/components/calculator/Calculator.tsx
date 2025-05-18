@@ -1,17 +1,17 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { PlusCircle } from "lucide-react";
 import { useCalculator } from '@/hooks/useCalculator';
 import { useProductsStore } from '@/data/products';
 import { useIsMobile } from '@/hooks/use-mobile';
 import FlavorSelector from './FlavorSelector';
-import CalculatorFooter from './CalculatorFooter';
 import CalculatorTotals from './CalculatorTotals';
+import CalculatorFooter from './CalculatorFooter';
 
 const Calculator: React.FC = () => {
-  const isMobile = useIsMobile();
   const flavors = useProductsStore((state) => state.flavors);
+  const isMobile = useIsMobile();
   
   const {
     flavorSelections,
@@ -26,61 +26,74 @@ const Calculator: React.FC = () => {
     validateMinimumQuantity
   } = useCalculator(flavors);
   
-  // Function to handle going to FAQ section
   const handleGoToFaq = () => {
+    // First validate minimum quantity
+    if (!validateMinimumQuantity() && getTotalQuantity() > 0) {
+      return;
+    }
+    
     const faqElement = document.getElementById('faq');
     if (faqElement) {
       faqElement.scrollIntoView({ behavior: 'smooth' });
     }
   };
   
+  // Convert number to number for the calculator (enforcing minimum of 20)
+  const handleQuantityChangeAdapter = (id: string, value: number | null) => {
+    // If value is less than 20 and not null, set to 20
+    if (value !== null && value > 0 && value < 20) {
+      value = 20;
+    }
+    handleQuantityChange(id, value);
+  };
+  
+  const totalQuantity = getTotalQuantity();
+  const showTotal = totalQuantity >= 20 || totalQuantity === 0;
+  
   return (
-    <Card className="w-full rounded-3xl">
-      <CardContent className="pt-6">
-        <div className="space-y-6">
-          {/* Flavor selections */}
-          {flavorSelections.map((selection, index) => (
-            <FlavorSelector
-              key={selection.id}
-              flavors={flavors}
-              flavorId={selection.flavorId}
-              quantity={selection.quantity}
-              showDeleteButton={flavorSelections.length > 1}
-              onFlavorChange={(flavorId) => handleFlavorChange(selection.id, flavorId)}
-              onQuantityChange={(quantity) => handleQuantityChange(selection.id, quantity)}
-              onDelete={() => removeFlavorSelection(selection.id)}
-              showMinimumMessage={index === 0}
-            />
-          ))}
-
-          {/* Add more / totals */}
-          <div className={`flex ${isMobile ? 'flex-col gap-2' : 'justify-between items-center'}`}>
-            <Button 
-              type="button" 
-              onClick={addFlavorSelection}
-              className={`h-11 rounded-full ${isMobile ? 'w-full' : ''}`}
-              variant="outline"
-            >
-              + Adicionar outro sabor
-            </Button>
-          </div>
-
-          <CalculatorTotals 
-            totalQuantity={getTotalQuantity()}
-            total={total}
-            showMinimumWarning={showMinimumWarning}
-            hideSubtotal={true}  // Hide subtotal as requested
-          />
-
-          <CalculatorFooter 
-            isMobile={isMobile}
-            onReset={handleReset}
-            onGoToFaq={handleGoToFaq}
-            onConfirm={validateMinimumQuantity}
-          />
-        </div>
-      </CardContent>
-    </Card>
+    <div className="w-full max-w-3xl mx-auto flex flex-col items-center">
+      <p className="text-center mb-6">
+        Use esta calculadora para estimar o preço dos seus bem-casados de acordo com a quantidade e sabores desejados.
+        <span className="block mt-2 text-sm font-medium text-[#eb6824]">
+          O pedido mínimo é de 20 unidades.
+        </span>
+      </p>
+      
+      {flavorSelections.map((selection) => (
+        <FlavorSelector
+          key={selection.id}
+          flavors={flavors}
+          selection={selection}
+          onFlavorChange={handleFlavorChange}
+          onQuantityChange={handleQuantityChangeAdapter}
+          onRemove={removeFlavorSelection}
+          canRemove={flavorSelections.length > 1}
+          hideButtons={true}
+        />
+      ))}
+      
+      <Button 
+        variant="outline" 
+        className="w-full mb-6 flex items-center gap-2 rounded-full"
+        onClick={addFlavorSelection}
+      >
+        <PlusCircle className="h-4 w-4" />
+        Adicionar outro sabor
+      </Button>
+      
+      <CalculatorTotals
+        total={showTotal ? total : 0}
+        totalQuantity={totalQuantity}
+        showMinimumWarning={showMinimumWarning}
+      />
+      
+      <CalculatorFooter 
+        isMobile={isMobile} 
+        onReset={handleReset}
+        onGoToFaq={handleGoToFaq}
+        validateMinimum={validateMinimumQuantity}
+      />
+    </div>
   );
 };
 

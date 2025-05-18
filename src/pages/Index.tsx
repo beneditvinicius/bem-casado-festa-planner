@@ -1,6 +1,6 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/Header';
+import Banner from '@/components/Banner';
 import Calculator from '@/components/Calculator';
 import OrderForm from '@/components/OrderForm';
 import Visualizer from '@/components/Visualizer';
@@ -49,17 +49,17 @@ const Index: React.FC = () => {
       id: 'calculator',
       title: 'Calculadora de Bem-Casados',
       component: <Calculator />,
-      description: ''
+      description: 'Descubra quantos bem-casados você precisa para seu evento!'
     },
     {
       id: 'order',
       title: 'Faça seu Orçamento Detalhado',
       component: <OrderForm />,
-      description: ''
+      description: 'Seus dados estão seguros! Usamos essas informações apenas para o lançamento no sistema.'
     },
     {
       id: 'visualizer',
-      title: 'Teste de Bem Casado',
+      title: 'Visualize seu Bem-Casado',
       component: <Visualizer />,
       description: 'Veja como ficará a combinação de cores que você escolher.'
     },
@@ -74,6 +74,7 @@ const Index: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       <Header />
+      <Banner />
       
       <main className="pb-12">
         {sections.map((section) => (
@@ -81,7 +82,7 @@ const Index: React.FC = () => {
             <section id={section.id} className="section-container">
               <div className="bg-white rounded-3xl shadow-md p-6 mb-6 text-center">
                 <h2 className="text-xl sm:text-2xl font-semibold mb-3">{section.title}</h2>
-                {section.description && <p className="mb-4 text-center">{section.description}</p>}
+                <p className="mb-4 text-center">{section.description}</p>
                 {section.component}
               </div>
             </section>

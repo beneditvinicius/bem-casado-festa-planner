@@ -6,17 +6,17 @@ interface CalculatorFooterProps {
   isMobile: boolean;
   onReset: () => void;
   onGoToFaq: () => void;
-  onConfirm?: () => boolean;
+  validateMinimum: () => boolean;
 }
 
 const CalculatorFooter: React.FC<CalculatorFooterProps> = ({ 
   isMobile, 
   onReset, 
   onGoToFaq,
-  onConfirm
+  validateMinimum
 }) => {
   const handleGoToFaq = () => {
-    if (onConfirm) onConfirm();
+    validateMinimum();
     onGoToFaq();
   };
   
