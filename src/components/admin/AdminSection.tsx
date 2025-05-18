@@ -10,7 +10,7 @@ const AdminSection: React.FC = () => {
     <div className="container mx-auto py-8">
       <h1 className="text-2xl font-bold mb-6 text-center">Painel de Administração</h1>
       
-      <Tabs defaultValue="config" className="animate-fade-in">
+      <Tabs defaultValue="colors" className="animate-fade-in">
         <div className="flex justify-center mb-6">
           <TabsList className="grid grid-cols-4 w-full max-w-md rounded-xl p-1">
             <TabsTrigger value="colors" className="rounded-full data-[state=active]:bg-[#eb6824] data-[state=active]:text-white transition-all duration-300">

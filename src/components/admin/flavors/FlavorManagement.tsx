@@ -122,7 +122,7 @@ const FlavorManagement = () => {
         <CardTitle>Sabores</CardTitle>
         <Button 
           onClick={handleAddNewClick} 
-          className="ml-auto bg-[#eb6824] hover:bg-[#d25618] transition-colors duration-300"
+          className="ml-auto bg-[#eb6824] hover:bg-[#d25618] transition-colors duration-300 rounded-full"
         >
           <PlusCircle className="mr-2 h-4 w-4" />
           Adicionar Sabor
