@@ -36,8 +36,6 @@ const FlavorSelector: React.FC<FlavorSelectorProps> = ({
     onQuantityChange(selection.id, value);
   };
   
-  const selectedFlavor = flavors.find(f => f.id === selection.flavorId);
-  
   return (
     <Card className="w-full mb-4 rounded-3xl relative">
       <CardContent className="p-4">
@@ -73,14 +71,6 @@ const FlavorSelector: React.FC<FlavorSelectorProps> = ({
             />
           </div>
         </div>
-        
-        {selectedFlavor && selection.quantity && (
-          <div className="mt-3 text-center">
-            <span className="text-sm">
-              Subtotal: R$ {(selectedFlavor.price * selection.quantity).toFixed(2)}
-            </span>
-          </div>
-        )}
         
         {canRemove && (
           <Button 
