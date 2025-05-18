@@ -14,6 +14,7 @@ const ConfigManagement: React.FC = () => {
   const [tempWhatsappNumber, setTempWhatsappNumber] = useState(whatsappNumber);
   const [tempHeaderImageUrl, setTempHeaderImageUrl] = useState(headerImageUrl || '');
   const [tempBannerText, setTempBannerText] = useState(bannerText || '');
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   const handleSaveWhatsapp = () => {
@@ -26,23 +27,41 @@ const ConfigManagement: React.FC = () => {
       return;
     }
 
-    setWhatsappNumber(tempWhatsappNumber);
-    toast({
-      title: "Configurações atualizadas",
-      description: "O número de WhatsApp foi salvo com sucesso.",
-    });
+    setIsLoading(true);
+    
+    setTimeout(() => {
+      setWhatsappNumber(tempWhatsappNumber);
+      toast({
+        title: "Configurações atualizadas",
+        description: "O número de WhatsApp foi salvo com sucesso.",
+      });
+      setIsLoading(false);
+    }, 500);
   };
 
   const handleSaveHeaderImage = () => {
-    setHeaderImageUrl(tempHeaderImageUrl);
-    toast({
-      title: "Imagem de cabeçalho atualizada",
-      description: "A imagem de cabeçalho foi salva com sucesso.",
-    });
+    setIsLoading(true);
+    
+    setTimeout(() => {
+      setHeaderImageUrl(tempHeaderImageUrl);
+      toast({
+        title: "Imagem de cabeçalho atualizada",
+        description: "A imagem de cabeçalho foi salva com sucesso.",
+      });
+      setIsLoading(false);
+    }, 500);
+  };
+
+  const handleHeaderImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setTempHeaderImageUrl(url);
+    }
   };
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-3xl mx-auto animate-fade-in">
       <h3 className="text-lg font-medium text-center mb-4">Configurações Gerais</h3>
       
       <Card className="mb-6 rounded-3xl">
@@ -58,7 +77,8 @@ const ConfigManagement: React.FC = () => {
                   onChange={(e) => setTempWhatsappNumber(e.target.value)}
                   placeholder="5565992000000"
                   type="tel"
-                  className="flex-1"
+                  className="flex-1 transition-all duration-300 focus:ring-2 focus:ring-[#eb6824]"
+                  disabled={isLoading}
                 />
               </div>
               <p className="text-xs text-gray-500 text-center mt-1">
@@ -70,9 +90,11 @@ const ConfigManagement: React.FC = () => {
           <div className="flex justify-center mt-6">
             <Button 
               onClick={handleSaveWhatsapp}
-              className="rounded-full bg-[#eb6824] hover:bg-[#d25618]"
+              className="rounded-full bg-[#eb6824] hover:bg-[#d25618] transition-all duration-300"
+              disabled={isLoading}
             >
-              <Phone className="mr-2 h-4 w-4" /> Salvar Número de WhatsApp
+              <Phone className="mr-2 h-4 w-4" />
+              {isLoading ? "Salvando..." : "Salvar Número de WhatsApp"}
             </Button>
           </div>
         </CardContent>
@@ -82,11 +104,26 @@ const ConfigManagement: React.FC = () => {
         <CardContent className="pt-6">
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label className="text-center block">Imagem de Cabeçalho</Label>
-              <BannerImageUploader 
-                imageUrl={tempHeaderImageUrl}
-                onChange={setTempHeaderImageUrl}
-              />
+              <Label htmlFor="headerImage" className="text-center block">Imagem de Cabeçalho</Label>
+              <div className="flex flex-col items-center space-y-4">
+                {tempHeaderImageUrl && (
+                  <div className="mb-2 transition-all duration-300 hover:scale-105">
+                    <img 
+                      src={tempHeaderImageUrl} 
+                      alt="Header atual" 
+                      className="max-h-40 rounded-lg border shadow-sm" 
+                    />
+                  </div>
+                )}
+                <Input 
+                  id="headerImageFile" 
+                  type="file" 
+                  accept="image/*"
+                  onChange={handleHeaderImageChange}
+                  className="max-w-md"
+                  disabled={isLoading}
+                />
+              </div>
             </div>
 
             <div className="mb-4 rounded-xl overflow-hidden border">
@@ -114,9 +151,11 @@ const ConfigManagement: React.FC = () => {
           <div className="flex justify-center mt-4">
             <Button 
               onClick={handleSaveHeaderImage}
-              className="rounded-full bg-[#eb6824] hover:bg-[#d25618]"
+              className="rounded-full bg-[#eb6824] hover:bg-[#d25618] transition-all duration-300"
+              disabled={isLoading}
             >
-              <Image className="mr-2 h-4 w-4" /> Salvar Imagem de Cabeçalho
+              <Image className="mr-2 h-4 w-4" />
+              {isLoading ? "Salvando..." : "Salvar Imagem de Cabeçalho"}
             </Button>
           </div>
         </CardContent>
