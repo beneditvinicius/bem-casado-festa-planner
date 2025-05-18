@@ -5,7 +5,7 @@ import { useProductsStore } from '@/data/store';
 import { Flavor } from '@/data/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PlusCircle, Trash2 } from 'lucide-react';
+import { PlusCircle } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import {
   AlertDialog,
@@ -120,7 +120,10 @@ const FlavorManagement = () => {
     <Card className="animate-fade-in">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Sabores</CardTitle>
-        <Button onClick={handleAddNewClick} className="ml-auto bg-[#eb6824] hover:bg-[#d25618] transition-colors duration-300">
+        <Button 
+          onClick={handleAddNewClick} 
+          className="ml-auto bg-[#eb6824] hover:bg-[#d25618] transition-colors duration-300"
+        >
           <PlusCircle className="mr-2 h-4 w-4" />
           Adicionar Sabor
         </Button>

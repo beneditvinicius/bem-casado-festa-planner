@@ -3,8 +3,7 @@ import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ColorManagement from './ColorManagement';
 import ConfigManagement from './ConfigManagement';
-import FlavorManagement from './FlavorManagement';
-import { Settings, Plus, Check } from 'lucide-react';
+import FlavorManagement from './flavors/FlavorManagement';
 
 const AdminSection: React.FC = () => {
   return (

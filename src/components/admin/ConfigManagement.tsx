@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useProductsStore } from '@/data/store';
 import { Phone, Save, Image } from "lucide-react";
-import BannerImageUploader from './BannerImageUploader';
 
 const ConfigManagement: React.FC = () => {
   const { whatsappNumber, headerImageUrl, bannerText, setWhatsappNumber, setHeaderImageUrl, setBannerText } = useProductsStore();
