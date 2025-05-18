@@ -112,7 +112,12 @@
     
     /* Adjust body padding for smaller header on mobile */
     body {
-      padding-top: var(--header-height-mobile);
+      padding-top: calc(var(--header-height-mobile) + 20px); /* Aumentado com margem extra para evitar sobreposição */
+    }
+    
+    /* Adicionar margem superior extra para a primeira seção */
+    #calculator {
+      margin-top: 15px;
     }
   }
 }

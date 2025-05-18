@@ -36,7 +36,11 @@ const Header: React.FC = () => {
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({
+      // Adicionando um pequeno offset para evitar que o conteúdo fique abaixo do header
+      const offset = 20; 
+      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+      window.scrollTo({
+        top: elementPosition - offset,
         behavior: 'smooth'
       });
     }
