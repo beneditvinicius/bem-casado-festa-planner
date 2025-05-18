@@ -1,8 +1,7 @@
 
 import React, { useState } from 'react';
 import { useToast } from "@/hooks/use-toast";
-import { useAppDispatch, useAppSelector } from '@/data/store';
-import { addFlavor, updateFlavor, deleteFlavor, selectFlavors } from '@/data/slices/flavorSlice';
+import { useProductsStore } from '@/data/store';
 import { Flavor } from '@/data/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,22 +12,22 @@ import FlavorList from './components/FlavorList';
 import FlavorFormDialog from './components/FlavorFormDialog';
 
 const FlavorManagement = () => {
-  const dispatch = useAppDispatch();
-  const flavors = useAppSelector(selectFlavors);
+  const { flavors, addFlavor, updateFlavor, removeFlavor } = useProductsStore();
   const { toast } = useToast();
   
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedFlavor, setSelectedFlavor] = useState<Flavor | undefined>(undefined);
 
   const handleAddFlavor = (flavorData: Partial<Flavor>) => {
-    const newFlavor = {
+    const newFlavor: Flavor = {
       id: uuidv4(),
       name: flavorData.name || 'Novo Sabor',
       price: flavorData.price || 0,
+      categoryId: flavorData.categoryId || 'default',
       isNew: flavorData.isNew || false,
     };
 
-    dispatch(addFlavor(newFlavor));
+    addFlavor(newFlavor);
     
     toast({
       title: "Sabor adicionado",
@@ -38,16 +37,11 @@ const FlavorManagement = () => {
 
   const handleUpdateFlavor = (flavorData: Partial<Flavor>) => {
     if (selectedFlavor?.id) {
-      const updatedFlavor = {
-        ...selectedFlavor,
-        ...flavorData,
-      };
-      
-      dispatch(updateFlavor(updatedFlavor));
+      updateFlavor(selectedFlavor.id, flavorData);
       
       toast({
         title: "Sabor atualizado",
-        description: `${updatedFlavor.name} foi atualizado com sucesso.`,
+        description: `${flavorData.name || selectedFlavor.name} foi atualizado com sucesso.`,
       });
     }
   };
@@ -56,7 +50,7 @@ const FlavorManagement = () => {
     const flavorToDelete = flavors.find(flavor => flavor.id === id);
     
     if (flavorToDelete) {
-      dispatch(deleteFlavor(id));
+      removeFlavor(id);
       
       toast({
         title: "Sabor removido",
