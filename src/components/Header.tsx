@@ -1,11 +1,37 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useConfigStore } from '@/data/products';
 
 const Header: React.FC = () => {
   const isMobile = useIsMobile();
   const { headerImageUrl } = useConfigStore();
+  const [collapsed, setCollapsed] = useState(false);
+  
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+    
+    const onScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY + 20) {
+        // Scrolling down
+        setCollapsed(true);
+      } else if (currentScrollY < lastScrollY - 20) {
+        // Scrolling up
+        setCollapsed(false);
+      }
+      lastScrollY = currentScrollY;
+    };
+    
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+  
+  const defaultHeaderStyle = {
+    backgroundImage: headerImageUrl ? `url(${headerImageUrl})` : 'linear-gradient(to right, #eb6824, #d25618)',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center'
+  };
   
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -16,14 +42,11 @@ const Header: React.FC = () => {
     }
   };
   
-  const defaultHeaderStyle = {
-    backgroundImage: headerImageUrl ? `url(${headerImageUrl})` : 'linear-gradient(to right, #eb6824, #d25618)',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center'
-  };
-  
   return (
-    <header className="py-6 sm:py-8 sticky top-0 z-50" style={defaultHeaderStyle}>
+    <header 
+      className={`py-6 sm:py-8 fixed top-0 left-0 w-full z-50 header ${collapsed ? 'header--collapsed' : ''}`} 
+      style={defaultHeaderStyle}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col items-center">
         <img 
           src="/lovable-uploads/f59e834a-effd-4659-a7d2-ac466e9aa740.png" 
