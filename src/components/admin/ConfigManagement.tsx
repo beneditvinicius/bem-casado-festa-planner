@@ -10,10 +10,9 @@ import { Phone, Save, Image } from "lucide-react";
 import BannerImageUploader from './BannerImageUploader';
 
 const ConfigManagement: React.FC = () => {
-  const { whatsappNumber, bannerUrl, bannerText, setWhatsappNumber, setBannerUrl, setBannerText } = useConfigStore();
+  const { whatsappNumber, headerImageUrl, bannerText, setWhatsappNumber, setHeaderImageUrl, setBannerText } = useConfigStore();
   const [tempWhatsappNumber, setTempWhatsappNumber] = useState(whatsappNumber);
-  const [tempBannerUrl, setTempBannerUrl] = useState(bannerUrl || '');
-  const [tempBannerText, setTempBannerText] = useState(bannerText || '');
+  const [tempHeaderImageUrl, setTempHeaderImageUrl] = useState(headerImageUrl || '');
   const { toast } = useToast();
 
   const handleSaveWhatsapp = () => {
@@ -33,12 +32,11 @@ const ConfigManagement: React.FC = () => {
     });
   };
 
-  const handleSaveBanner = () => {
-    setBannerUrl(tempBannerUrl);
-    setBannerText(tempBannerText);
+  const handleSaveHeaderImage = () => {
+    setHeaderImageUrl(tempHeaderImageUrl);
     toast({
-      title: "Banner atualizado",
-      description: "As configurações do banner foram salvas com sucesso.",
+      title: "Imagem de cabeçalho atualizada",
+      description: "A imagem de cabeçalho foi salva com sucesso.",
     });
   };
 
@@ -83,45 +81,29 @@ const ConfigManagement: React.FC = () => {
         <CardContent className="pt-6">
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="banner-text" className="text-center block">Texto do Banner</Label>
-              <Input
-                id="banner-text"
-                value={tempBannerText}
-                onChange={(e) => setTempBannerText(e.target.value)}
-                placeholder="Digite o texto para exibir no banner"
-              />
-            </div>
-            
-            <div className="space-y-2 pb-4">
-              <Label className="text-center block">Imagem do Banner</Label>
+              <Label className="text-center block">Imagem de Cabeçalho</Label>
               <BannerImageUploader 
-                imageUrl={tempBannerUrl}
-                onChange={setTempBannerUrl}
+                imageUrl={tempHeaderImageUrl}
+                onChange={setTempHeaderImageUrl}
               />
             </div>
 
             <div className="mb-4 rounded-xl overflow-hidden border">
-              <h4 className="text-base font-medium py-2 bg-gray-50 text-center">Prévia do Banner</h4>
+              <h4 className="text-base font-medium py-2 bg-gray-50 text-center">Prévia do Cabeçalho</h4>
               <div className="w-full h-36 relative">
-                {tempBannerUrl ? (
+                {tempHeaderImageUrl ? (
                   <img 
-                    src={tempBannerUrl} 
-                    alt="Prévia do Banner" 
+                    src={tempHeaderImageUrl} 
+                    alt="Prévia do Cabeçalho" 
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full bg-[#fef2e6] flex items-center justify-center">
-                    <p className="text-[#eb6824] font-semibold px-4 py-2 text-center">
-                      {tempBannerText || "La Badiane Bem-Casados"}
-                    </p>
-                  </div>
-                )}
-                
-                {tempBannerUrl && tempBannerText && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                    <h2 className="text-xl text-white font-semibold px-4 py-2 text-center">
-                      {tempBannerText}
-                    </h2>
+                  <div className="w-full h-full bg-[#eb6824] flex items-center justify-center">
+                    <img 
+                      src="/lovable-uploads/f59e834a-effd-4659-a7d2-ac466e9aa740.png" 
+                      alt="La Badiane Bem Casados"
+                      className="h-16 filter brightness-0 invert" 
+                    />
                   </div>
                 )}
               </div>
@@ -130,10 +112,10 @@ const ConfigManagement: React.FC = () => {
           
           <div className="flex justify-center mt-4">
             <Button 
-              onClick={handleSaveBanner}
+              onClick={handleSaveHeaderImage}
               className="rounded-full bg-[#eb6824] hover:bg-[#d25618]"
             >
-              <Image className="mr-2 h-4 w-4" /> Salvar Configurações do Banner
+              <Image className="mr-2 h-4 w-4" /> Salvar Imagem de Cabeçalho
             </Button>
           </div>
         </CardContent>

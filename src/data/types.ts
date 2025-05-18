@@ -32,10 +32,10 @@ export interface PackageColor {
 }
 
 export interface ConfigState {
-  bannerUrl: string | null;
+  headerImageUrl: string | null;
   bannerText: string | null;
   whatsappNumber: string;
-  setBannerUrl: (url: string) => void;
+  setHeaderImageUrl: (url: string) => void;
   setBannerText: (text: string) => void;
   setWhatsappNumber: (number: string) => void;
 }
