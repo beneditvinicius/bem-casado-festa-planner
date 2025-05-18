@@ -40,9 +40,9 @@ const Calculator: React.FC = () => {
   
   // Convert number to number for the calculator (enforcing minimum of 20)
   const handleQuantityChangeAdapter = (id: string, value: number | null) => {
-    // If value is less than 20 and not null, set to 20
+    // If value is less than 20 and not null, set to null
     if (value !== null && value > 0 && value < 20) {
-      value = 20;
+      value = null;
     }
     handleQuantityChange(id, value);
   };
