@@ -3,6 +3,7 @@ import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ColorManagement from './ColorManagement';
 import ConfigManagement from './ConfigManagement';
+import FlavorManagement from './FlavorManagement';
 
 const AdminSection: React.FC = () => {
   return (
@@ -12,11 +13,16 @@ const AdminSection: React.FC = () => {
       <Tabs defaultValue="config">
         <TabsList className="mb-6 flex justify-center">
           <TabsTrigger value="colors" className="rounded-full">Gerenciar Cores</TabsTrigger>
+          <TabsTrigger value="flavors" className="rounded-full">Gerenciar Sabores</TabsTrigger>
           <TabsTrigger value="config" className="rounded-full">Configurações</TabsTrigger>
         </TabsList>
         
         <TabsContent value="colors">
           <ColorManagement />
+        </TabsContent>
+        
+        <TabsContent value="flavors">
+          <FlavorManagement />
         </TabsContent>
         
         <TabsContent value="config">

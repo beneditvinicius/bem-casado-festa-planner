@@ -5,12 +5,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { useConfigStore } from '@/data/products';
+import { useProductsStore } from '@/data/store';
 import { Phone, Save, Image } from "lucide-react";
 import BannerImageUploader from './BannerImageUploader';
 
 const ConfigManagement: React.FC = () => {
-  const { whatsappNumber, headerImageUrl, bannerText, setWhatsappNumber, setHeaderImageUrl, setBannerText } = useConfigStore();
+  const { whatsappNumber, headerImageUrl, bannerText, setWhatsappNumber, setHeaderImageUrl, setBannerText } = useProductsStore();
   const [tempWhatsappNumber, setTempWhatsappNumber] = useState(whatsappNumber);
   const [tempHeaderImageUrl, setTempHeaderImageUrl] = useState(headerImageUrl || '');
   const [tempBannerText, setTempBannerText] = useState(bannerText || '');

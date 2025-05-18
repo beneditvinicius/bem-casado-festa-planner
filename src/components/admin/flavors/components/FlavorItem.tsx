@@ -1,58 +1,44 @@
 
 import React from 'react';
 import { Flavor } from '@/data/types';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { formatCurrency } from '@/utils/formatter';
+import { Card, CardContent } from '@/components/ui/card';
+import { Edit, Trash } from 'lucide-react';
 
 interface FlavorItemProps {
   flavor: Flavor;
-  onEdit: (flavor: Flavor) => void;
-  onDelete: (id: string) => void;
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
-const FlavorItem: React.FC<FlavorItemProps> = ({ flavor, onEdit, onDelete }) => {
+const FlavorItem = ({ flavor, onEdit, onDelete }: FlavorItemProps) => {
+  const formattedPrice = new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  }).format(flavor.price);
+
   return (
-    <tr key={flavor.id} className="border-b hover:bg-muted/50 transition-colors">
-      <td className="p-3 pl-4 text-left">
-        <span className="font-medium">{flavor.name}</span>
-        {flavor.isNew && (
-          <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-            Novo
-          </span>
-        )}
-      </td>
-      <td className="p-3 text-right">{formatCurrency(flavor.price)}</td>
-      <td className="p-3 text-center">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <MoreHorizontal className="h-4 w-4" />
-              <span className="sr-only">Opções</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => onEdit(flavor)}>
-              <Pencil className="mr-2 h-4 w-4" />
-              Editar
-            </DropdownMenuItem>
-            <DropdownMenuItem 
-              className="text-red-600" 
-              onClick={() => onDelete(flavor.id)}
-            >
-              <Trash2 className="mr-2 h-4 w-4" />
-              Excluir
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </td>
-    </tr>
+    <Card className="overflow-hidden">
+      <CardContent className="p-4 flex items-center justify-between">
+        <div className="flex-1">
+          <div className="flex items-center gap-2">
+            <h3 className="font-medium">{flavor.name}</h3>
+            {flavor.isNew && <Badge className="bg-[#eb6824]">Novidade</Badge>}
+          </div>
+          <p className="text-sm text-muted-foreground">{formattedPrice}</p>
+        </div>
+        
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={onEdit}>
+            <Edit className="h-4 w-4" />
+          </Button>
+          <Button variant="destructive" size="sm" onClick={onDelete}>
+            <Trash className="h-4 w-4" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

@@ -9,32 +9,21 @@ interface FlavorListProps {
   onDeleteFlavor: (id: string) => void;
 }
 
-const FlavorList: React.FC<FlavorListProps> = ({ 
-  flavors, 
-  onEditFlavor, 
-  onDeleteFlavor 
-}) => {
+const FlavorList = ({ flavors, onEditFlavor, onDeleteFlavor }: FlavorListProps) => {
+  if (flavors.length === 0) {
+    return <div className="text-center py-6">Nenhum sabor encontrado. Adicione um novo sabor.</div>;
+  }
+
   return (
-    <div className="border rounded-lg overflow-hidden">
-      <table className="w-full">
-        <thead className="bg-muted/50">
-          <tr>
-            <th className="p-3 pl-4 text-left font-medium">Nome</th>
-            <th className="p-3 text-right font-medium">Preço</th>
-            <th className="p-3 text-center font-medium w-12">Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {flavors.map(flavor => (
-            <FlavorItem 
-              key={flavor.id} 
-              flavor={flavor} 
-              onEdit={onEditFlavor}
-              onDelete={onDeleteFlavor}
-            />
-          ))}
-        </tbody>
-      </table>
+    <div className="space-y-4">
+      {flavors.map((flavor) => (
+        <FlavorItem
+          key={flavor.id}
+          flavor={flavor}
+          onEdit={() => onEditFlavor(flavor)}
+          onDelete={() => onDeleteFlavor(flavor.id)}
+        />
+      ))}
     </div>
   );
 };
