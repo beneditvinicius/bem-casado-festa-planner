@@ -7,7 +7,6 @@ import { Plus } from "lucide-react";
 import { PackageColor } from '@/data/types';
 import PackageColorList from './components/PackageColorList';
 import PackageColorFormDialog from './components/PackageColorFormDialog';
-import ItemFormModal from './components/ItemFormModal';
 
 export const PackageColorManagement: React.FC = () => {
   const { 
@@ -78,6 +77,13 @@ export const PackageColorManagement: React.FC = () => {
     }
   };
   
+  const handleEditModalOpenChange = (open: boolean) => {
+    setIsEditModalOpen(open);
+    if (!open) {
+      setEditingPackage(null);
+    }
+  };
+  
   return (
     <div className="space-y-4">
       <div className="flex justify-between">
@@ -106,13 +112,11 @@ export const PackageColorManagement: React.FC = () => {
       />
       
       {editingPackage && (
-        <ItemFormModal
+        <PackageColorFormDialog
           open={isEditModalOpen}
-          onOpenChange={setIsEditModalOpen}
+          onOpenChange={handleEditModalOpenChange}
           initialValues={editingPackage}
           onSubmit={handleUpdatePackage}
-          itemType="package"
-          title="Editar Cor de Embalagem"
         />
       )}
     </div>
