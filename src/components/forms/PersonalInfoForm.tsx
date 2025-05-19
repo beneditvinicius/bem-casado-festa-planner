@@ -4,7 +4,8 @@ import { Input } from "@/components/ui/input";
 import { FormItem } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2 } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface PersonalInfoFormProps {
@@ -24,7 +25,7 @@ interface PersonalInfoFormProps {
   isLoadingCep: boolean;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSelectChange: (name: string, value: string) => void;
-  searchCep: (cep: string) => void;
+  searchCep: () => void;
 }
 
 const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
@@ -52,11 +53,8 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
           placeholder="Digite seu nome completo" 
           value={formData.name}
           onChange={handleInputChange}
-          className="w-full rounded-full border-gray-300"
+          className={`w-full rounded-full border-gray-300 ${errors.name && 'border-red-500'}`}
         />
-        {errors.name && (
-          <p className="text-sm text-red-500 mt-1">{errors.name}</p>
-        )}
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -71,11 +69,8 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
             placeholder="000.000.000-00" 
             value={formData.cpf}
             onChange={handleInputChange}
-            className="w-full rounded-full border-gray-300"
+            className={`w-full rounded-full border-gray-300 ${errors.cpf && 'border-red-500'}`}
           />
-          {errors.cpf && (
-            <p className="text-sm text-red-500 mt-1">{errors.cpf}</p>
-          )}
         </div>
         
         <div>
@@ -89,11 +84,8 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
             placeholder="(00) 00000-0000" 
             value={formData.phone}
             onChange={handleInputChange}
-            className="w-full rounded-full border-gray-300"
+            className={`w-full rounded-full border-gray-300 ${errors.phone && 'border-red-500'}`}
           />
-          {errors.phone && (
-            <p className="text-sm text-red-500 mt-1">{errors.phone}</p>
-          )}
         </div>
       </div>
       
@@ -101,30 +93,30 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
         <Label htmlFor="cep" className="block text-gray-700 mb-1">
           CEP *
         </Label>
-        <div className="relative">
+        <div className="relative flex">
           <Input 
             type="text" 
             id="cep"
             name="cep"
             placeholder="00000-000" 
             value={formData.cep}
-            onChange={(e) => {
-              handleInputChange(e);
-              if (e.target.value.replace(/\D/g, '').length === 8) {
-                searchCep(e.target.value);
-              }
-            }}
-            className="w-full rounded-full border-gray-300"
+            onChange={handleInputChange}
+            className={`w-full rounded-full border-gray-300 ${errors.cep && 'border-red-500'}`}
           />
-          {isLoadingCep && (
-            <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
+          <Button
+            type="button"
+            variant="ghost"
+            className="absolute right-0 h-full rounded-full px-2"
+            onClick={searchCep}
+            disabled={isLoadingCep}
+          >
+            {isLoadingCep ? (
               <Loader2 className="h-4 w-4 animate-spin text-gray-500" />
-            </div>
-          )}
+            ) : (
+              <Search className="h-4 w-4 text-gray-500" />
+            )}
+          </Button>
         </div>
-        {errors.cep && (
-          <p className="text-sm text-red-500 mt-1">{errors.cep}</p>
-        )}
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-x-4 gap-y-4">
@@ -139,11 +131,8 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
             placeholder="Nome da rua" 
             value={formData.street}
             onChange={handleInputChange}
-            className="w-full rounded-full border-gray-300"
+            className={`w-full rounded-full border-gray-300 ${errors.street && 'border-red-500'}`}
           />
-          {errors.street && (
-            <p className="text-sm text-red-500 mt-1">{errors.street}</p>
-          )}
         </div>
         
         <div>
@@ -157,11 +146,8 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
             placeholder="Nº" 
             value={formData.number}
             onChange={handleInputChange}
-            className="w-full rounded-full border-gray-300"
+            className={`w-full rounded-full border-gray-300 ${errors.number && 'border-red-500'}`}
           />
-          {errors.number && (
-            <p className="text-sm text-red-500 mt-1">{errors.number}</p>
-          )}
         </div>
       </div>
       
@@ -191,11 +177,8 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
           placeholder="Nome do bairro" 
           value={formData.neighborhood}
           onChange={handleInputChange}
-          className="w-full rounded-full border-gray-300"
+          className={`w-full rounded-full border-gray-300 ${errors.neighborhood && 'border-red-500'}`}
         />
-        {errors.neighborhood && (
-          <p className="text-sm text-red-500 mt-1">{errors.neighborhood}</p>
-        )}
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -210,11 +193,8 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
             placeholder="Nome da cidade" 
             value={formData.city}
             onChange={handleInputChange}
-            className="w-full rounded-full border-gray-300"
+            className={`w-full rounded-full border-gray-300 ${errors.city && 'border-red-500'}`}
           />
-          {errors.city && (
-            <p className="text-sm text-red-500 mt-1">{errors.city}</p>
-          )}
         </div>
         
         <div>
@@ -225,7 +205,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
             value={formData.state}
             onValueChange={(value) => handleSelectChange('state', value)}
           >
-            <SelectTrigger className="w-full rounded-full h-10 border-gray-300">
+            <SelectTrigger className={`w-full rounded-full h-10 border-gray-300 ${errors.state && 'border-red-500'}`}>
               <SelectValue placeholder="Selecione um estado" />
             </SelectTrigger>
             <SelectContent>
@@ -258,9 +238,6 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
               <SelectItem value="TO">Tocantins</SelectItem>
             </SelectContent>
           </Select>
-          {errors.state && (
-            <p className="text-sm text-red-500 mt-1">{errors.state}</p>
-          )}
         </div>
       </div>
     </div>
