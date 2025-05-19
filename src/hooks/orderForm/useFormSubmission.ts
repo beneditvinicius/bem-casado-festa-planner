@@ -1,8 +1,9 @@
 
 import { FormData, FlavorSelection, AdditionalSelection, ProductType } from './types';
 import { Flavor, BoloGeladoFlavor, RibbonColor, PackageColor, Additional } from '@/data/products';
-import { useToast } from "@/hooks/use-toast";
 import { createWhatsAppMessage } from './useWhatsAppMessageCreator';
+import { useFormValidationHelpers } from './useFormValidationHelpers';
+import { useWhatsAppRedirect } from './useWhatsAppRedirect';
 
 interface UseFormSubmissionProps {
   formData: FormData;
@@ -31,25 +32,22 @@ export const useFormSubmission = ({
   whatsappNumber,
   validateForm
 }: UseFormSubmissionProps) => {
-  const { toast } = useToast();
+  const { validateMinimumQuantity, showValidationError, showSuccessMessage } = useFormValidationHelpers();
+  const { redirectToWhatsApp } = useWhatsAppRedirect();
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (validateForm()) {
-      // Extra validation check for minimum quantity
+      // Get current selections based on product type
       const currentSelections = formData.productType === 'bem-casado' ? flavorSelections : boloGeladoSelections;
-      const totalQuantity = currentSelections.reduce((sum, item) => sum + (item.quantity || 0), 0);
       
-      if (totalQuantity < 20) {
-        toast({
-          title: "Pedido mínimo",
-          description: "O pedido mínimo é de 20 unidades.",
-          variant: "destructive"
-        });
+      // Validate minimum quantity
+      if (!validateMinimumQuantity(currentSelections)) {
         return;
       }
       
+      // Create WhatsApp message and URL
       const whatsappUrl = createWhatsAppMessage(
         formData, 
         flavorSelections, 
@@ -64,20 +62,13 @@ export const useFormSubmission = ({
       );
       
       // Show success message
-      toast({
-        title: "Pedido gerado com sucesso!",
-        description: "Você será redirecionado para o WhatsApp.",
-      });
+      showSuccessMessage();
       
-      // Open WhatsApp in a new tab
-      window.open(whatsappUrl, '_blank');
+      // Redirect to WhatsApp
+      redirectToWhatsApp(whatsappUrl);
     } else {
       // Show error message if validation fails
-      toast({
-        title: "Erro no formulário",
-        description: "Por favor, verifique os campos destacados.",
-        variant: "destructive"
-      });
+      showValidationError();
     }
   };
   
