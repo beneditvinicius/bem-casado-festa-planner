@@ -41,7 +41,7 @@ const EventInfoForm: React.FC<EventInfoFormProps> = ({
           value={formData.eventType}
           onValueChange={(value) => handleSelectChange('eventType', value)}
         >
-          <SelectTrigger className={`w-full rounded-lg ${errors.eventType ? 'border-red-500' : 'border-gray-300'}`}>
+          <SelectTrigger className="w-full rounded-full border-gray-300">
             <SelectValue placeholder="Selecione o tipo de evento" />
           </SelectTrigger>
           <SelectContent>
@@ -66,7 +66,7 @@ const EventInfoForm: React.FC<EventInfoFormProps> = ({
           <PopoverTrigger asChild>
             <Button
               variant="outline"
-              className={`w-full justify-start text-left font-normal rounded-lg ${errors.eventDate ? 'border-red-500' : 'border-gray-300'}`}
+              className="w-full justify-start text-left font-normal rounded-full border-gray-300"
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
               {formData.eventDate ? (
@@ -102,7 +102,7 @@ const EventInfoForm: React.FC<EventInfoFormProps> = ({
           placeholder="Nome do local ou endereço do evento" 
           value={formData.eventLocation}
           onChange={handleInputChange}
-          className="w-full rounded-lg border-gray-300"
+          className="w-full rounded-full border-gray-300"
         />
       </div>
     </div>

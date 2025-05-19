@@ -19,11 +19,11 @@ export const AdditionalSelectors: React.FC<AdditionalSelectorsProps> = ({
   return (
     <div className="w-full border border-gray-200 rounded-xl p-4 mb-4">
       <h4 className="font-medium mb-3">Adicionais</h4>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="space-y-3">
         {additionals.map((additional) => {
           const selection = additionalSelections.find(a => a.id === additional.id);
           return (
-            <div key={additional.id} className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg">
+            <div key={additional.id} className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-full">
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id={`order-additional-${additional.id}`}
@@ -34,7 +34,7 @@ export const AdditionalSelectors: React.FC<AdditionalSelectorsProps> = ({
                 />
                 <Label 
                   htmlFor={`order-additional-${additional.id}`}
-                  className="text-sm leading-tight"
+                  className="text-sm leading-tight cursor-pointer"
                 >
                   {additional.name}
                 </Label>
