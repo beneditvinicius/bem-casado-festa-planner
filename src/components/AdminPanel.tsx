@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -13,21 +13,24 @@ import {
   Upload, 
   Info, 
   Edit, 
-  ChevronDown 
+  ChevronDown,
+  Image as ImageIcon 
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Flavor, 
   RibbonColor, 
   PackageColor, 
-  useProductsStore 
+  useProductsStore,
+  useConfigStore
 } from '@/data/products';
 import { 
   Dialog, 
   DialogContent, 
   DialogHeader, 
   DialogTitle, 
-  DialogFooter 
+  DialogFooter,
+  DialogDescription
 } from "@/components/ui/dialog";
 import { 
   Select, 
@@ -46,6 +49,10 @@ const AdminPanel: React.FC = () => {
   const packageColors = useProductsStore((state) => state.packageColors);
   const whatsappNumber = useProductsStore((state) => state.whatsappNumber);
   
+  // Config state
+  const headerImageUrl = useConfigStore((state) => state.headerImageUrl);
+  const setHeaderImageUrl = useConfigStore((state) => state.setHeaderImageUrl);
+  
   const addFlavor = useProductsStore((state) => state.addFlavor);
   const removeFlavor = useProductsStore((state) => state.removeFlavor);
   const updateFlavor = useProductsStore((state) => state.updateFlavor);
@@ -57,18 +64,14 @@ const AdminPanel: React.FC = () => {
   const updatePackageColor = useProductsStore((state) => state.updatePackageColor);
   const setWhatsappNumber = useProductsStore((state) => state.setWhatsappNumber);
   
-  // Add editing states
-  const [editingFlavorId, setEditingFlavorId] = useState<string | null>(null);
-  const [editingRibbonId, setEditingRibbonId] = useState<string | null>(null);
-  const [editingPackageId, setEditingPackageId] = useState<string | null>(null);
-  
+  // Form states
   const [newFlavor, setNewFlavor] = useState({ name: '', price: 0, isNew: false });
   const [newRibbon, setNewRibbon] = useState({ name: '', code: '', color: '#000000', isNew: false, imageUrl: '' });
   const [newPackage, setNewPackage] = useState({ name: '', code: '', color: '#000000', isNew: false, imageUrl: '' });
   const [newWhatsappNumber, setNewWhatsappNumber] = useState(whatsappNumber || '5566999580591');
-  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+  const [headerImagePreview, setHeaderImagePreview] = useState<string | null>(headerImageUrl);
 
-  // Edit modal state
+  // Edit modal state - centralizado
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editType, setEditType] = useState<'flavor' | 'ribbon' | 'package'>('flavor');
   const [editItem, setEditItem] = useState<any>(null);
@@ -165,20 +168,21 @@ const AdminPanel: React.FC = () => {
     });
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleHeaderImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      const filesArray = Array.from(e.target.files);
-      setUploadedImages(prev => [...prev, ...filesArray]);
+      const file = e.target.files[0];
+      const imageUrl = URL.createObjectURL(file);
+      setHeaderImagePreview(imageUrl);
+      
+      // Em um ambiente real, aqui você faria o upload do arquivo para o servidor
+      // e então salvaria a URL retornada
+      setHeaderImageUrl(imageUrl);
       
       toast({
-        title: "Imagens carregadas",
-        description: `${filesArray.length} imagens adicionadas para upload.`,
+        title: "Imagem carregada",
+        description: "Imagem do cabeçalho atualizada com sucesso.",
       });
     }
-  };
-
-  const removeUploadedImage = (index: number) => {
-    setUploadedImages(prev => prev.filter((_, i) => i !== index));
   };
   
   // Edit functions
@@ -326,22 +330,7 @@ const AdminPanel: React.FC = () => {
                       />
                       <Label htmlFor="isNewFlavor" className="ml-2">Marcar como "Novidade"</Label>
                     </div>
-                    {editingFlavorId
-                      ? <Button onClick={() => {
-                          updateFlavor(editingFlavorId, { 
-                            name: newFlavor.name, 
-                            price: newFlavor.price, 
-                            isNew: newFlavor.isNew 
-                          });
-                          setEditingFlavorId(null);
-                          setNewFlavor({ name: '', price: 0, isNew: false });
-                          toast({ 
-                            title: 'Sabor atualizado', 
-                            description: `${newFlavor.name} foi atualizado com sucesso` 
-                          });
-                        }}>Salvar Alteração</Button>
-                      : <Button onClick={handleAddFlavor}>Adicionar Sabor</Button>
-                    }
+                    <Button onClick={handleAddFlavor}>Adicionar Sabor</Button>
                   </div>
                   
                   <Table>
@@ -370,14 +359,7 @@ const AdminPanel: React.FC = () => {
                             <Button 
                               variant="secondary" 
                               size="sm"
-                              onClick={() => {
-                                setNewFlavor({ 
-                                  name: flavor.name, 
-                                  price: flavor.price,
-                                  isNew: flavor.isNew || false
-                                });
-                                setEditingFlavorId(flavor.id);
-                              }}
+                              onClick={() => openEditModal('flavor', flavor)}
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
@@ -452,24 +434,7 @@ const AdminPanel: React.FC = () => {
                       />
                       <Label htmlFor="isNewRibbon" className="ml-2">Marcar como "Novidade"</Label>
                     </div>
-                    {editingRibbonId
-                      ? <Button onClick={() => {
-                          updateRibbonColor(editingRibbonId, { 
-                            name: newRibbon.name, 
-                            color: newRibbon.color, 
-                            code: newRibbon.code, 
-                            isNew: newRibbon.isNew,
-                            imageUrl: newRibbon.imageUrl 
-                          });
-                          setEditingRibbonId(null);
-                          setNewRibbon({ name: '', code: '', color: '#000000', isNew: false, imageUrl: '' });
-                          toast({ 
-                            title: 'Fita atualizada', 
-                            description: `${newRibbon.name} foi atualizada com sucesso` 
-                          });
-                        }}>Salvar Alteração</Button>
-                      : <Button onClick={handleAddRibbon}>Adicionar Cor</Button>
-                    }
+                    <Button onClick={handleAddRibbon}>Adicionar Cor</Button>
                   </div>
                   
                   <Table>
@@ -499,16 +464,7 @@ const AdminPanel: React.FC = () => {
                             <Button 
                               variant="secondary" 
                               size="sm"
-                              onClick={() => {
-                                setNewRibbon({ 
-                                  name: ribbon.name, 
-                                  color: ribbon.color, 
-                                  code: ribbon.code, 
-                                  isNew: ribbon.isNew || false,
-                                  imageUrl: ribbon.imageUrl || ''
-                                });
-                                setEditingRibbonId(ribbon.id);
-                              }}
+                              onClick={() => openEditModal('ribbon', ribbon)}
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
@@ -583,24 +539,7 @@ const AdminPanel: React.FC = () => {
                       />
                       <Label htmlFor="isNewPackage" className="ml-2">Marcar como "Novidade"</Label>
                     </div>
-                    {editingPackageId
-                      ? <Button onClick={() => {
-                          updatePackageColor(editingPackageId, { 
-                            name: newPackage.name, 
-                            color: newPackage.color, 
-                            code: newPackage.code,
-                            isNew: newPackage.isNew,
-                            imageUrl: newPackage.imageUrl 
-                          });
-                          setEditingPackageId(null);
-                          setNewPackage({ name: '', code: '', color: '#000000', isNew: false, imageUrl: '' });
-                          toast({ 
-                            title: 'Embalagem atualizada', 
-                            description: `${newPackage.name} foi atualizada com sucesso` 
-                          });
-                        }}>Salvar Alteração</Button>
-                      : <Button onClick={handleAddPackage}>Adicionar Cor</Button>
-                    }
+                    <Button onClick={handleAddPackage}>Adicionar Cor</Button>
                   </div>
                   
                   <Table>
@@ -634,16 +573,7 @@ const AdminPanel: React.FC = () => {
                             <Button 
                               variant="secondary" 
                               size="sm"
-                              onClick={() => {
-                                setNewPackage({ 
-                                  name: pkg.name, 
-                                  color: pkg.color, 
-                                  code: pkg.code,
-                                  isNew: pkg.isNew || false,
-                                  imageUrl: pkg.imageUrl || ''
-                                });
-                                setEditingPackageId(pkg.id);
-                              }}
+                              onClick={() => openEditModal('package', pkg)}
                             >
                               <Edit className="h-4 w-4 mr-1" /> Editar
                             </Button>
@@ -683,6 +613,30 @@ const AdminPanel: React.FC = () => {
                     <Button onClick={handleUpdateWhatsapp} className="bg-[#eb6824] hover:bg-[#d25618]">
                       Atualizar Número
                     </Button>
+                    
+                    <div className="mt-6">
+                      <Label htmlFor="headerImage">Foto de Cabeçalho</Label>
+                      <div className="flex flex-col space-y-4">
+                        {headerImagePreview && (
+                          <div className="relative w-32 h-32 mx-auto">
+                            <img 
+                              src={headerImagePreview} 
+                              alt="Imagem do cabeçalho" 
+                              className="w-full h-full object-cover rounded-full border-2 border-[#eb6824]"
+                            />
+                          </div>
+                        )}
+                        <div className="flex items-center">
+                          <ImageIcon className="mr-2 text-[#eb6824]" />
+                          <Input 
+                            id="headerImage" 
+                            type="file" 
+                            accept="image/*"
+                            onChange={handleHeaderImageUpload}
+                          />
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
@@ -727,22 +681,7 @@ const AdminPanel: React.FC = () => {
                   />
                   <Label htmlFor="isNewFlavor" className="ml-2">Marcar como "Novidade"</Label>
                 </div>
-                {editingFlavorId
-                  ? <Button onClick={() => {
-                      updateFlavor(editingFlavorId, { 
-                        name: newFlavor.name, 
-                        price: newFlavor.price, 
-                        isNew: newFlavor.isNew 
-                      });
-                      setEditingFlavorId(null);
-                      setNewFlavor({ name: '', price: 0, isNew: false });
-                      toast({ 
-                        title: 'Sabor atualizado', 
-                        description: newFlavor.name 
-                      });
-                    }}>Salvar Alteração</Button>
-                  : <Button onClick={handleAddFlavor}>Adicionar Sabor</Button>
-                }
+                <Button onClick={handleAddFlavor}>Adicionar Sabor</Button>
               </div>
               
               <Table>
@@ -771,14 +710,7 @@ const AdminPanel: React.FC = () => {
                         <Button 
                           variant="secondary" 
                           size="sm"
-                          onClick={() => {
-                            setNewFlavor({ 
-                              name: flavor.name, 
-                              price: flavor.price,
-                              isNew: flavor.isNew || false
-                            });
-                            setEditingFlavorId(flavor.id);
-                          }}
+                          onClick={() => openEditModal('flavor', flavor)}
                         >
                           <Edit className="h-4 w-4 mr-1" /> Editar
                         </Button>
@@ -853,24 +785,7 @@ const AdminPanel: React.FC = () => {
                   <Label htmlFor="isNewRibbon" className="ml-2">Marcar como "Novidade"</Label>
                 </div>
                 <div className="md:col-span-2">
-                  {editingRibbonId
-                    ? <Button onClick={() => {
-                        updateRibbonColor(editingRibbonId, { 
-                          name: newRibbon.name, 
-                          color: newRibbon.color, 
-                          code: newRibbon.code, 
-                          isNew: newRibbon.isNew,
-                          imageUrl: newRibbon.imageUrl 
-                        });
-                        setEditingRibbonId(null);
-                        setNewRibbon({ name: '', code: '', color: '#000000', isNew: false, imageUrl: '' });
-                        toast({ 
-                          title: 'Fita atualizada', 
-                          description: newRibbon.name 
-                        });
-                      }}>Salvar Alteração</Button>
-                    : <Button onClick={handleAddRibbon}>Adicionar Cor de Fita</Button>
-                  }
+                  <Button onClick={handleAddRibbon}>Adicionar Cor de Fita</Button>
                 </div>
               </div>
               
@@ -905,16 +820,7 @@ const AdminPanel: React.FC = () => {
                         <Button 
                           variant="secondary" 
                           size="sm"
-                          onClick={() => {
-                            setNewRibbon({ 
-                              name: ribbon.name, 
-                              color: ribbon.color, 
-                              code: ribbon.code,
-                              isNew: ribbon.isNew || false,
-                              imageUrl: ribbon.imageUrl || ''
-                            });
-                            setEditingRibbonId(ribbon.id);
-                          }}
+                          onClick={() => openEditModal('ribbon', ribbon)}
                         >
                           <Edit className="h-4 w-4 mr-1" /> Editar
                         </Button>
@@ -989,24 +895,7 @@ const AdminPanel: React.FC = () => {
                   <Label htmlFor="isNewPackage" className="ml-2">Marcar como "Novidade"</Label>
                 </div>
                 <div className="md:col-span-2">
-                  {editingPackageId
-                    ? <Button onClick={() => {
-                        updatePackageColor(editingPackageId, { 
-                          name: newPackage.name, 
-                          color: newPackage.color, 
-                          code: newPackage.code,
-                          isNew: newPackage.isNew,
-                          imageUrl: newPackage.imageUrl 
-                        });
-                        setEditingPackageId(null);
-                        setNewPackage({ name: '', code: '', color: '#000000', isNew: false, imageUrl: '' });
-                        toast({ 
-                          title: 'Embalagem atualizada', 
-                          description: newPackage.name 
-                        });
-                      }}>Salvar Alteração</Button>
-                    : <Button onClick={handleAddPackage}>Adicionar Cor de Embalagem</Button>
-                  }
+                  <Button onClick={handleAddPackage}>Adicionar Cor de Embalagem</Button>
                 </div>
               </div>
               
@@ -1041,16 +930,7 @@ const AdminPanel: React.FC = () => {
                         <Button 
                           variant="secondary" 
                           size="sm"
-                          onClick={() => {
-                            setNewPackage({ 
-                              name: pkg.name, 
-                              color: pkg.color, 
-                              code: pkg.code,
-                              isNew: pkg.isNew || false,
-                              imageUrl: pkg.imageUrl || ''
-                            });
-                            setEditingPackageId(pkg.id);
-                          }}
+                          onClick={() => openEditModal('package', pkg)}
                         >
                           <Edit className="h-4 w-4 mr-1" /> Editar
                         </Button>
@@ -1091,6 +971,52 @@ const AdminPanel: React.FC = () => {
                     Atualizar Número
                   </Button>
                 </div>
+                
+                <div className="md:col-span-2 mt-6">
+                  <Label htmlFor="headerImage" className="text-lg font-medium">Foto de Cabeçalho</Label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                    <div className="flex flex-col items-center justify-center">
+                      {headerImagePreview ? (
+                        <div className="relative w-48 h-48">
+                          <img 
+                            src={headerImagePreview} 
+                            alt="Imagem do cabeçalho" 
+                            className="w-full h-full object-cover rounded-full border-2 border-[#eb6824]"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-48 h-48 rounded-full bg-gray-200 flex items-center justify-center border-2 border-dashed border-[#eb6824]">
+                          <ImageIcon className="h-16 w-16 text-gray-400" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex flex-col justify-center">
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Faça upload de uma imagem para ser usada como background do cabeçalho do site.
+                        Recomendamos uma imagem de alta qualidade com dimensões mínimas de 1200x400 pixels.
+                      </p>
+                      <Input 
+                        id="headerImage" 
+                        type="file" 
+                        accept="image/*"
+                        onChange={handleHeaderImageUpload}
+                        className="mb-4"
+                      />
+                      {headerImagePreview && (
+                        <Button 
+                          variant="outline" 
+                          className="w-full"
+                          onClick={() => {
+                            setHeaderImagePreview(null);
+                            setHeaderImageUrl('');
+                          }}
+                        >
+                          Remover imagem
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
             </TabsContent>
           </Tabs>
@@ -1099,13 +1025,16 @@ const AdminPanel: React.FC = () => {
       
       {/* Edit Modal */}
       <Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>
               {editType === 'flavor' && 'Editar Sabor'}
               {editType === 'ribbon' && 'Editar Fita'}
               {editType === 'package' && 'Editar Embalagem'}
             </DialogTitle>
+            <DialogDescription>
+              Faça as alterações necessárias e clique em salvar quando terminar.
+            </DialogDescription>
           </DialogHeader>
           
           {editItem && (
@@ -1174,6 +1103,32 @@ const AdminPanel: React.FC = () => {
                       />
                     </div>
                   </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="edit-imageFile">
+                      {editType === 'ribbon' ? 'Imagem da Fita' : 'Imagem da Embalagem'}
+                    </Label>
+                    <Input 
+                      id="edit-imageFile" 
+                      type="file" 
+                      accept="image/*"
+                      onChange={e => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const url = URL.createObjectURL(file);
+                          setEditItem({ ...editItem, imageUrl: url });
+                        }
+                      }}
+                    />
+                    {editItem.imageUrl && (
+                      <div className="mt-2">
+                        <img 
+                          src={editItem.imageUrl} 
+                          alt="Pré-visualização" 
+                          className="max-h-32 rounded border"
+                        />
+                      </div>
+                    )}
+                  </div>
                   <div className="flex items-center space-x-2">
                     <Switch 
                       id="edit-isNew" 
@@ -1188,8 +1143,12 @@ const AdminPanel: React.FC = () => {
           )}
           
           <DialogFooter>
-            <Button variant="outline" onClick={() => setEditModalOpen(false)}>Cancelar</Button>
-            <Button onClick={handleSaveEdit}>Salvar Alterações</Button>
+            <Button variant="outline" onClick={() => setEditModalOpen(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSaveEdit}>
+              Salvar
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
