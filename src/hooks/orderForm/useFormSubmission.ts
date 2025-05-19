@@ -1,6 +1,6 @@
 
 import { FormData, FlavorSelection, AdditionalSelection, ProductType } from './types';
-import { Flavor, BoloGeladoFlavor, RibbonColor, PackageColor, Additional } from '@/data/products';
+import { Flavor, BoloGeladoFlavor, RibbonColor, PackageColor, Additional } from '@/data/types';
 import { useWhatsappMessageCreator } from './useWhatsAppMessageCreator';
 import { useFormValidationHelpers } from './useFormValidationHelpers';
 import { useWhatsAppRedirect } from './useWhatsAppRedirect';
@@ -48,11 +48,10 @@ export const useFormSubmission = ({
         return;
       }
       
-      // Create WhatsApp message
+      // Create WhatsApp message with combined flavorSelections (no longer passing boloGeladoSelections)
       const message = createWhatsAppMessage(
         formData, 
-        flavorSelections, 
-        boloGeladoSelections,
+        flavorSelections,
         additionalSelections,
         flavors, 
         boloGeladoFlavors,

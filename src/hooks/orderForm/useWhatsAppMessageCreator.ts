@@ -6,7 +6,6 @@ export const useWhatsappMessageCreator = () => {
   const createWhatsAppMessage = (
     formData: FormData,
     flavorSelections: FlavorSelection[],
-    boloGeladoSelections: FlavorSelection[],
     additionalSelections: AdditionalSelection[],
     flavors: Flavor[],
     boloGeladoFlavors: BoloGeladoFlavor[],
