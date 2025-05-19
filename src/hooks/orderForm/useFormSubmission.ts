@@ -1,7 +1,7 @@
 
 import { FormData, FlavorSelection, AdditionalSelection, ProductType } from './types';
 import { Flavor, BoloGeladoFlavor, RibbonColor, PackageColor, Additional } from '@/data/products';
-import { createWhatsAppMessage } from './useWhatsAppMessageCreator';
+import { useWhatsappMessageCreator } from './useWhatsAppMessageCreator';
 import { useFormValidationHelpers } from './useFormValidationHelpers';
 import { useWhatsAppRedirect } from './useWhatsAppRedirect';
 
@@ -34,6 +34,7 @@ export const useFormSubmission = ({
 }: UseFormSubmissionProps) => {
   const { validateMinimumQuantity, showValidationError, showSuccessMessage } = useFormValidationHelpers();
   const { redirectToWhatsApp } = useWhatsAppRedirect();
+  const { createWhatsAppMessage } = useWhatsappMessageCreator();
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,8 +48,8 @@ export const useFormSubmission = ({
         return;
       }
       
-      // Create WhatsApp message and URL
-      const whatsappUrl = createWhatsAppMessage(
+      // Create WhatsApp message
+      const message = createWhatsAppMessage(
         formData, 
         flavorSelections, 
         boloGeladoSelections,
@@ -57,14 +58,14 @@ export const useFormSubmission = ({
         boloGeladoFlavors,
         ribbonColors, 
         packageColors, 
-        additionals,
-        whatsappNumber
+        additionals
       );
       
       // Show success message
       showSuccessMessage();
       
       // Redirect to WhatsApp
+      const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${message}`;
       redirectToWhatsApp(whatsappUrl);
     } else {
       // Show error message if validation fails
