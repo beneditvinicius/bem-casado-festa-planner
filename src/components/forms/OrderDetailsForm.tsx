@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { Flavor, BoloGeladoFlavor, RibbonColor, PackageColor, Additional } from '@/data/types';
+import { Flavor, BoloGeladoFlavor, RibbonColor, PackageColor, Additional } from '@/data/products';
 import { FlavorSelection as FlavorSelectionType, ProductType, AdditionalSelection } from '@/hooks/orderForm/types';
 import { ProductTypeSelector } from './order-details/ProductTypeSelector';
 import { FlavorControls } from './order-details/FlavorControls';
@@ -28,7 +29,6 @@ interface OrderDetailsFormProps {
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   handleSelectChange: (name: string, value: string) => void;
   handleProductTypeChange: (type: ProductType) => void;
-  handleItemProductTypeChange: (id: string, type: ProductType) => void;
   handleAddFlavor: () => void;
   handleRemoveFlavor: (id: string) => void;
   handleFlavorChange: (id: string, flavorId: string) => void;
@@ -55,7 +55,6 @@ const OrderDetailsForm: React.FC<OrderDetailsFormProps> = ({
   handleInputChange,
   handleSelectChange,
   handleProductTypeChange,
-  handleItemProductTypeChange,
   handleAddFlavor,
   handleRemoveFlavor,
   handleFlavorChange,
@@ -75,25 +74,22 @@ const OrderDetailsForm: React.FC<OrderDetailsFormProps> = ({
     handleBoloGeladoQuantityChange(id, value !== null ? value.toString() : '');
   };
   
-  // Calculate total quantity of all selections
-  const totalQuantity = 
-    flavorSelections.reduce((sum, item) => sum + (item.quantity || 0), 0) +
-    boloGeladoSelections.reduce((sum, item) => sum + (item.quantity || 0), 0);
-
-  // Get all selections together for the combined view
-  const allSelections = [...flavorSelections];
-  
-  // Check if there are bem-casados to display color selectors and additionals
-  const hasBemCasados = flavorSelections.some(s => s.productType === 'bem-casado');
-  
-  // Check if there are bolo gelados to display the message
-  const hasBoloGelados = flavorSelections.some(s => s.productType === 'bolo-gelado');
+  // Calculate total quantity
+  const totalQuantity = formData.productType === 'bem-casado'
+    ? flavorSelections.reduce((sum, item) => sum + (item.quantity || 0), 0)
+    : boloGeladoSelections.reduce((sum, item) => sum + (item.quantity || 0), 0);
+    
+  const currentFlavors = formData.productType === 'bem-casado' ? flavors : boloGeladoFlavors;
+  const currentSelections = formData.productType === 'bem-casado' ? flavorSelections : boloGeladoSelections;
+  const handleCurrentFlavorChange = formData.productType === 'bem-casado' ? handleFlavorChange : handleBoloGeladoFlavorChange;
+  const handleCurrentQuantityChange = formData.productType === 'bem-casado' ? handleQuantityChange : handleBoloGeladoQuantityChangeAdapter;
+  const handleAddCurrentFlavor = formData.productType === 'bem-casado' ? handleAddFlavor : handleAddBoloGeladoFlavor;
+  const handleRemoveCurrentFlavor = formData.productType === 'bem-casado' ? handleRemoveFlavor : handleRemoveBoloGeladoFlavor;
 
   return (
     <div className="space-y-4 text-center">
       <h3 className="text-lg font-medium">Detalhes do Pedido</h3>
       
-      {/* Note: We're keeping the global product type selector for backward compatibility */}
       <ProductTypeSelector 
         productType={formData.productType} 
         handleProductTypeChange={handleProductTypeChange}
@@ -101,20 +97,18 @@ const OrderDetailsForm: React.FC<OrderDetailsFormProps> = ({
       
       <FlavorControls
         productType={formData.productType}
-        flavors={flavors}
-        boloGeladoFlavors={boloGeladoFlavors}
-        selections={flavorSelections}
+        flavors={currentFlavors}
+        selections={currentSelections}
         errors={errors}
-        handleAddFlavor={handleAddFlavor}
-        handleRemoveFlavor={handleRemoveFlavor}
-        handleFlavorChange={handleFlavorChange}
-        handleQuantityChange={handleQuantityChange}
-        handleItemProductTypeChange={handleItemProductTypeChange}
+        handleAddFlavor={handleAddCurrentFlavor}
+        handleRemoveFlavor={handleRemoveCurrentFlavor}
+        handleFlavorChange={handleCurrentFlavorChange}
+        handleQuantityChange={handleCurrentQuantityChange}
       />
       
-      {hasBoloGelados && <BoloGeladoMessage />}
+      {formData.productType === 'bolo-gelado' && <BoloGeladoMessage />}
       
-      {hasBemCasados && (
+      {formData.productType === 'bem-casado' && (
         <>
           <ColorSelectors
             formData={formData}

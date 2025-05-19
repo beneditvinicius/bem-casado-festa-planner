@@ -3,9 +3,11 @@ import { Flavor, BoloGeladoFlavor, Additional } from '@/data/types';
 import { FlavorSelection, AdditionalSelection, ProductType } from './types';
 
 export const useTotalCalculator = () => {
-  // Calculate total price based on selections
+  // Calculate total price based on product type and selections
   const calculateTotal = (
+    productType: ProductType,
     flavorSelections: FlavorSelection[],
+    boloGeladoSelections: FlavorSelection[],
     additionalSelections: AdditionalSelection[],
     flavors: Flavor[],
     boloGeladoFlavors: BoloGeladoFlavor[],
@@ -13,17 +15,11 @@ export const useTotalCalculator = () => {
   ): string => {
     let total = 0;
     
-    // Calculate price for all items
-    flavorSelections.forEach(selection => {
-      // Skip items without quantity
-      if (!selection.quantity || selection.quantity < 20) {
-        return;
-      }
-
-      if (selection.productType === 'bem-casado') {
-        // Calculate bem-casado price
+    if (productType === 'bem-casado') {
+      // Calculate bem-casado price
+      flavorSelections.forEach(selection => {
         const flavor = flavors.find(f => f.id === selection.flavorId);
-        if (flavor) {
+        if (flavor && selection.quantity >= 20) {
           // Add base price
           let unitPrice = flavor.price;
           
@@ -39,14 +35,16 @@ export const useTotalCalculator = () => {
           
           total += unitPrice * selection.quantity;
         }
-      } else {
-        // Calculate bolo gelado price
+      });
+    } else {
+      // Calculate bolo gelado price
+      boloGeladoSelections.forEach(selection => {
         const flavor = boloGeladoFlavors.find(f => f.id === selection.flavorId);
-        if (flavor) {
+        if (flavor && selection.quantity >= 20) {
           total += flavor.price * selection.quantity;
         }
-      }
-    });
+      });
+    }
     
     return `R$ ${total.toFixed(2).replace('.', ',')}`;
   };

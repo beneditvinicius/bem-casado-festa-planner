@@ -1,4 +1,6 @@
 
+import { Flavor, BoloGeladoFlavor, RibbonColor, PackageColor, Additional } from '@/data/types';
+
 export type ProductType = 'bem-casado' | 'bolo-gelado';
 
 export interface EventType {
@@ -9,8 +11,7 @@ export interface EventType {
 export interface FlavorSelection {
   id: string;
   flavorId: string;
-  quantity: number | null;
-  productType: ProductType;
+  quantity: number;
 }
 
 export interface AdditionalSelection {
@@ -60,7 +61,6 @@ export interface UseOrderFormReturn {
   handleRemoveFlavor: (id: string) => void;
   handleFlavorChange: (id: string, flavorId: string) => void;
   handleFlavorQuantityChange: (id: string, value: string) => void;
-  handleItemProductTypeChange: (id: string, type: ProductType) => void;
   handleAddBoloGeladoFlavor: () => void;
   handleRemoveBoloGeladoFlavor: (id: string) => void;
   handleBoloGeladoFlavorChange: (id: string, flavorId: string) => void;
@@ -70,5 +70,3 @@ export interface UseOrderFormReturn {
   calculateTotal: () => string;
   searchCep: () => void;
 }
-
-import { Flavor, BoloGeladoFlavor, RibbonColor, PackageColor, Additional } from '@/data/types';

@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
-import { useToast } from "@/hooks/use-toast";
-import { FlavorSelection, ProductType } from './types';
+import { v4 as uuidv4 } from 'uuid';
+import { FlavorSelection } from './types';
 import { BoloGeladoFlavor } from '@/data/types';
 
 interface UseBoloGeladoManagementReturn {
@@ -10,55 +10,47 @@ interface UseBoloGeladoManagementReturn {
   handleRemoveBoloGeladoFlavor: (id: string) => void;
   handleBoloGeladoFlavorChange: (id: string, flavorId: string) => void;
   handleBoloGeladoQuantityChange: (id: string, value: string) => void;
-  handleBoloGeladoProductTypeChange: (id: string, type: ProductType) => void;
 }
 
-export const useBoloGeladoManagement = (initialBoloGeladoFlavors: BoloGeladoFlavor[]): UseBoloGeladoManagementReturn => {
-  const { toast } = useToast();
-  const [boloGeladoSelections, setBoloGeladoSelections] = useState<FlavorSelection[]>([
-    { id: 'bg1', flavorId: initialBoloGeladoFlavors[0]?.id || '', quantity: null, productType: 'bolo-gelado' }
-  ]);
+export const useBoloGeladoManagement = (
+  initialFlavors: BoloGeladoFlavor[]
+): UseBoloGeladoManagementReturn => {
+  const [boloGeladoSelections, setBoloGeladoSelections] = useState([{
+    id: uuidv4(),
+    flavorId: initialFlavors[0]?.id || '',
+    quantity: 0
+  }]);
 
   const handleAddBoloGeladoFlavor = () => {
-    const newId = `bg${Date.now()}`;
-    setBoloGeladoSelections(prev => [...prev, { 
-      id: newId, 
-      flavorId: initialBoloGeladoFlavors[0]?.id || '', 
-      quantity: null,
-      productType: 'bolo-gelado'
-    }]);
+    const newSelection = {
+      id: uuidv4(),
+      flavorId: initialFlavors[0]?.id || '',
+      quantity: 0
+    };
+    setBoloGeladoSelections([...boloGeladoSelections, newSelection]);
   };
 
   const handleRemoveBoloGeladoFlavor = (id: string) => {
-    if (boloGeladoSelections.length <= 1) {
-      toast({
-        title: "Ação não permitida",
-        description: "Você precisa ter pelo menos um sabor selecionado.",
-      });
-      return;
+    if (boloGeladoSelections.length > 1) {
+      setBoloGeladoSelections(boloGeladoSelections.filter(selection => selection.id !== id));
     }
-    
-    setBoloGeladoSelections(prev => prev.filter(item => item.id !== id));
   };
 
   const handleBoloGeladoFlavorChange = (id: string, flavorId: string) => {
-    setBoloGeladoSelections(prev => prev.map(item => 
-      item.id === id ? { ...item, flavorId } : item
-    ));
+    setBoloGeladoSelections(
+      boloGeladoSelections.map(selection => 
+        selection.id === id ? { ...selection, flavorId } : selection
+      )
+    );
   };
 
   const handleBoloGeladoQuantityChange = (id: string, value: string) => {
-    const quantity = value === '' ? null : parseInt(value);
-    
-    setBoloGeladoSelections(prev => prev.map(item => 
-      item.id === id ? { ...item, quantity } : item
-    ));
-  };
-
-  const handleBoloGeladoProductTypeChange = (id: string, productType: ProductType) => {
-    setBoloGeladoSelections(prev => prev.map(item => 
-      item.id === id ? { ...item, productType } : item
-    ));
+    const quantity = parseInt(value);
+    setBoloGeladoSelections(
+      boloGeladoSelections.map(selection => 
+        selection.id === id ? { ...selection, quantity: isNaN(quantity) ? 0 : quantity } : selection
+      )
+    );
   };
 
   return {
@@ -66,7 +58,6 @@ export const useBoloGeladoManagement = (initialBoloGeladoFlavors: BoloGeladoFlav
     handleAddBoloGeladoFlavor,
     handleRemoveBoloGeladoFlavor,
     handleBoloGeladoFlavorChange,
-    handleBoloGeladoQuantityChange,
-    handleBoloGeladoProductTypeChange
+    handleBoloGeladoQuantityChange
   };
 };

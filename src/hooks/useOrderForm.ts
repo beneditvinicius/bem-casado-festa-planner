@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { useProductsStore } from '@/data/store';
+import { useProductsStore } from '@/data/products';
 import { useToast } from "@/hooks/use-toast";
 import { FormData, UseOrderFormReturn, ProductType } from './orderForm/types';
 import { useCepSearch } from './orderForm/useCepSearch';
@@ -52,8 +52,7 @@ export function useOrderForm(): UseOrderFormReturn {
   const { productType, handleProductTypeChange } = useProductTypeManagement(formData.productType);
   
   const { flavorSelections, handleAddFlavor, handleRemoveFlavor, 
-          handleFlavorChange, handleFlavorQuantityChange, 
-          handleItemProductTypeChange } = 
+          handleFlavorChange, handleFlavorQuantityChange } = 
     useFlavorManagement(flavors);
 
   const { boloGeladoSelections, handleAddBoloGeladoFlavor, handleRemoveBoloGeladoFlavor,
@@ -92,7 +91,9 @@ export function useOrderForm(): UseOrderFormReturn {
   // Calculate total value for the order
   const calculateTotalValue = () => {
     return calculateTotal(
+      formData.productType,
       flavorSelections,
+      boloGeladoSelections,
       additionalSelections,
       flavors,
       boloGeladoFlavors,
@@ -128,7 +129,6 @@ export function useOrderForm(): UseOrderFormReturn {
     handleRemoveFlavor,
     handleFlavorChange,
     handleFlavorQuantityChange,
-    handleItemProductTypeChange,
     handleAddBoloGeladoFlavor,
     handleRemoveBoloGeladoFlavor,
     handleBoloGeladoFlavorChange,

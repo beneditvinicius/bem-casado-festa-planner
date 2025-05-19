@@ -1,6 +1,8 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { PlusCircle } from "lucide-react";
 import { useCalculator } from '@/hooks/useCalculator';
@@ -9,16 +11,19 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import FlavorSelector from './FlavorSelector';
 import CalculatorTotals from './CalculatorTotals';
 import CalculatorFooter from './CalculatorFooter';
-import { Label } from "@/components/ui/label";
 
 const Calculator: React.FC = () => {
   const flavors = useProductsStore((state) => state.flavors);
   const boloGeladoFlavors = useProductsStore((state) => state.boloGeladoFlavors);
+  const ribbonColors = useProductsStore((state) => state.ribbonColors);
+  const packageColors = useProductsStore((state) => state.packageColors);
   const additionals = useProductsStore((state) => state.additionals);
   const isMobile = useIsMobile();
   
   const {
+    productType,
     flavorSelections,
+    boloGeladoSelections,
     additionalSelections,
     total,
     showMinimumWarning,
@@ -53,23 +58,42 @@ const Calculator: React.FC = () => {
   const totalQuantity = getTotalQuantity();
   const showTotal = totalQuantity >= 20 || totalQuantity === 0;
   
+  // Determine which selections to use based on product type
+  const currentSelections = productType === 'bem-casado' ? flavorSelections : boloGeladoSelections;
+  const currentFlavors = productType === 'bem-casado' ? flavors : boloGeladoFlavors;
+  
   return (
     <div className="w-full max-w-3xl mx-auto flex flex-col items-center">
       <p className="text-center mb-6">
         Use esta calculadora para estimar o preço dos seus produtos de acordo com a quantidade e sabores desejados.
       </p>
       
-      {flavorSelections.map((selection) => (
+      <div className="w-full mb-6">
+        <RadioGroup 
+          value={productType}
+          onValueChange={(val) => handleProductTypeChange(val as 'bem-casado' | 'bolo-gelado')}
+          className="flex justify-center gap-8"
+        >
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="bem-casado" id="bem-casado" />
+            <Label htmlFor="bem-casado" className="font-medium">Bem-Casado</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="bolo-gelado" id="bolo-gelado" />
+            <Label htmlFor="bolo-gelado" className="font-medium">Bolo Gelado</Label>
+          </div>
+        </RadioGroup>
+      </div>
+      
+      {currentSelections.map((selection) => (
         <FlavorSelector
           key={selection.id}
-          flavors={flavors}
-          boloGeladoFlavors={boloGeladoFlavors}
+          flavors={currentFlavors}
           selection={selection}
           onFlavorChange={handleFlavorChange}
           onQuantityChange={handleQuantityChangeAdapter}
-          onProductTypeChange={handleProductTypeChange}
           onRemove={removeFlavorSelection}
-          canRemove={flavorSelections.length > 1}
+          canRemove={currentSelections.length > 1}
           hideButtons={true}
         />
       ))}
@@ -83,10 +107,9 @@ const Calculator: React.FC = () => {
         Adicionar outro sabor
       </Button>
       
-      {/* Adicionais only shown if at least one bem-casado selection exists */}
-      {flavorSelections.some(s => s.productType === 'bem-casado') && (
+      {productType === 'bem-casado' && (
         <div className="w-full mb-6 border border-gray-200 rounded-xl p-4">
-          <h3 className="font-medium mb-3 text-center">Adicionais (para Bem-Casados)</h3>
+          <h3 className="font-medium mb-3 text-center">Adicionais</h3>
           <div className="space-y-3">
             {additionals.map((additional) => {
               const selection = additionalSelections.find(a => a.id === additional.id);

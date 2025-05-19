@@ -29,7 +29,6 @@ const OrderForm: React.FC = () => {
     handleRemoveFlavor,
     handleFlavorChange,
     handleFlavorQuantityChange,
-    handleItemProductTypeChange,
     handleAddBoloGeladoFlavor,
     handleRemoveBoloGeladoFlavor,
     handleBoloGeladoFlavorChange,
@@ -82,7 +81,6 @@ const OrderForm: React.FC = () => {
                 handleInputChange={handleInputChange}
                 handleSelectChange={handleSelectChange}
                 handleProductTypeChange={handleProductTypeChange}
-                handleItemProductTypeChange={handleItemProductTypeChange}
                 handleAddFlavor={handleAddFlavor}
                 handleRemoveFlavor={handleRemoveFlavor}
                 handleFlavorChange={handleFlavorChange}
