@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -8,9 +7,10 @@ import { PackageSlice, createPackageSlice } from './slices/packageSlice';
 import { ConfigSlice, createConfigSlice } from './slices/configSlice';
 import { BoloGeladoSlice, createBoloGeladoSlice } from './slices/boloGeladoSlice';
 import { AdditionalSlice, createAdditionalSlice } from './slices/additionalSlice';
+import { FaqSlice, createFaqSlice } from './slices/faqSlice';
 
 export type RootState = FlavorSlice & RibbonSlice & PackageSlice & ConfigSlice & 
-  BoloGeladoSlice & AdditionalSlice;
+  BoloGeladoSlice & AdditionalSlice & FaqSlice;
 
 export const useProductsStore = create<RootState>()(
   persist(
@@ -21,6 +21,7 @@ export const useProductsStore = create<RootState>()(
       ...createConfigSlice(...a),
       ...createBoloGeladoSlice(...a),
       ...createAdditionalSlice(...a),
+      ...createFaqSlice(...a),
     }),
     {
       name: 'products-store',
@@ -73,6 +74,15 @@ const createStoreWithUpdates = () => {
     useProductsStore.setState({
       updateAdditional: (id, data) => useProductsStore.setState((state) => ({
         additionals: state.additionals.map(a => a.id === id ? { ...a, ...data } : a)
+      }))
+    });
+  }
+
+  // Add FAQ update method if not already present
+  if (!store.updateFaqItem) {
+    useProductsStore.setState({
+      updateFaqItem: (index, item) => useProductsStore.setState((state) => ({
+        faqItems: state.faqItems.map((faq, i) => i === index ? { ...faq, ...item } : faq)
       }))
     });
   }

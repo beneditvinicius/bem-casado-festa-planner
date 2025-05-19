@@ -6,6 +6,7 @@ import ConfigManagement from './ConfigManagement';
 import FlavorManagement from './flavors/FlavorManagement';
 import BoloGeladoManagement from './bolos/BoloGeladoManagement';
 import AdditionalsManagement from './additionals/AdditionalsManagement';
+import FaqManagement from './faq/FaqManagement';
 
 const AdminSection: React.FC = () => {
   return (
@@ -14,7 +15,7 @@ const AdminSection: React.FC = () => {
       
       <Tabs defaultValue="flavors" className="animate-fade-in">
         <div className="flex justify-center mb-6">
-          <TabsList className="grid grid-cols-6 w-full max-w-4xl rounded-xl p-1">
+          <TabsList className="grid grid-cols-7 w-full max-w-4xl rounded-xl p-1">
             <TabsTrigger value="flavors" className="rounded-full data-[state=active]:bg-[#eb6824] data-[state=active]:text-white transition-all duration-300">
               Sabores
             </TabsTrigger>
@@ -29,6 +30,9 @@ const AdminSection: React.FC = () => {
             </TabsTrigger>
             <TabsTrigger value="additionals" className="rounded-full data-[state=active]:bg-[#eb6824] data-[state=active]:text-white transition-all duration-300">
               Adicionais
+            </TabsTrigger>
+            <TabsTrigger value="faq" className="rounded-full data-[state=active]:bg-[#eb6824] data-[state=active]:text-white transition-all duration-300">
+              FAQ
             </TabsTrigger>
             <TabsTrigger value="config" className="rounded-full data-[state=active]:bg-[#eb6824] data-[state=active]:text-white transition-all duration-300">
               Config.
@@ -54,6 +58,10 @@ const AdminSection: React.FC = () => {
         
         <TabsContent value="additionals" className="transition-all duration-300">
           <AdditionalsManagement />
+        </TabsContent>
+        
+        <TabsContent value="faq" className="transition-all duration-300">
+          <FaqManagement />
         </TabsContent>
         
         <TabsContent value="config" className="transition-all duration-300">
