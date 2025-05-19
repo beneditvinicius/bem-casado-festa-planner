@@ -1,6 +1,6 @@
 
 import { FormData, FlavorSelection, AdditionalSelection } from './types';
-import { Flavor, BoloGeladoFlavor, RibbonColor, PackageColor, Additional } from '@/data/products';
+import { Flavor, BoloGeladoFlavor, RibbonColor, PackageColor, Additional } from '@/data/types';
 
 export const useWhatsappMessageCreator = () => {
   const createWhatsAppMessage = (
@@ -14,14 +14,14 @@ export const useWhatsappMessageCreator = () => {
     packageColors: PackageColor[],
     additionals: Additional[]
   ) => {
-    const { name, phone, email, date, cep, street, number, complement, neighborhood, city, state, productType, ribbonId, packageId, observations } = formData;
+    const { name, cpf, phone, eventDate, cep, street, number, complement, neighborhood, city, state, productType, ribbonId, packageId, observations } = formData;
     
     // Get ribbon and package info if product type is bem-casado
     const ribbonColor = ribbonColors.find(r => r.id === ribbonId);
     const packageColor = packageColors.find(p => p.id === packageId);
     
     // Build message sections
-    const customerInfo = `*NOVO PEDIDO*\n\n*Dados do Cliente*\nNome: ${name}\nTelefone: ${phone}\nE-mail: ${email}\nData do Evento: ${date || 'Não informada'}\n\n`;
+    const customerInfo = `*NOVO PEDIDO*\n\n*Dados do Cliente*\nNome: ${name}\nCPF: ${cpf}\nTelefone: ${phone}\nData do Evento: ${eventDate ? eventDate.toLocaleDateString() : 'Não informada'}\n\n`;
     
     const addressInfo = `*Endereço de Entrega*\nCEP: ${cep}\nRua: ${street}\nNúmero: ${number}\nComplemento: ${complement || 'Não informado'}\nBairro: ${neighborhood}\nCidade: ${city}\nEstado: ${state}\n\n`;
     
