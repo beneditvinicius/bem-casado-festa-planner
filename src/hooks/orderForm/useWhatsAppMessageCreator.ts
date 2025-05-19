@@ -16,6 +16,9 @@ export const createWhatsAppMessage = (
   additionals: Additional[],
   whatsappNumber: string
 ): string => {
+  // Novo título da mensagem
+  const messageTitle = "*Aqui está meu pedido feito pelo site da La Badiane*\n\n";
+  
   // Format personal information
   const personalInfo = `*DADOS PESSOAIS*\n${formData.name}\nCPF: ${formData.cpf}\nTelefone: ${formData.phone}`;
   
@@ -44,7 +47,7 @@ export const createWhatsAppMessage = (
     
     // Format flavors
     const flavorsList = flavorSelections
-      .filter(item => item.flavorId && item.quantity && item.quantity >= 20)
+      .filter(item => item.flavorId && item.quantity && item.quantity > 0)
       .map(item => {
         const flavor = flavors.find(f => f.id === item.flavorId);
         if (flavor) {
@@ -81,7 +84,7 @@ export const createWhatsAppMessage = (
     
     // Format flavors
     const flavorsList = boloGeladoSelections
-      .filter(item => item.flavorId && item.quantity && item.quantity >= 20)
+      .filter(item => item.flavorId && item.quantity && item.quantity > 0)
       .map(item => {
         const flavor = boloGeladoFlavors.find(f => f.id === item.flavorId);
         if (flavor) {
@@ -105,8 +108,8 @@ export const createWhatsAppMessage = (
     orderDetails += `\n\n*Observações:*\n${formData.observations}`;
   }
   
-  // Combine all information
-  const message = [personalInfo, address, eventInfo, orderDetails].join('\n\n');
+  // Combine all information with the new title
+  const message = [messageTitle, personalInfo, address, eventInfo, orderDetails].join('\n\n');
   
   // Create WhatsApp URL with the message
   const encodedMessage = encodeURIComponent(message);
