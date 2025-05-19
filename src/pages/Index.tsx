@@ -52,8 +52,8 @@ const Index: React.FC = () => {
       description: ''
     },
     {
-      id: 'order',
-      title: 'Faça seu Orçamento Detalhado',
+      id: 'pedido',
+      title: 'Faça seu Pedido',
       component: <OrderForm />,
       description: 'Agora que já sabe qual será o seu orçamento, preencha seus dados para recebermos tudo prontinho no nosso WhatsApp para lançarmos seu pedido!'
     },
@@ -81,13 +81,13 @@ const Index: React.FC = () => {
             <section id={section.id} className="section-container">
               <div className="bg-white rounded-3xl shadow-md p-6 mb-6 text-center">
                 <h2 className="text-xl sm:text-2xl font-semibold mb-3">{section.title}</h2>
-                {section.id === 'order' && (
+                {section.id === 'pedido' && (
                   <>
                     <p className="mb-4 text-center">{section.description}</p>
                     <p className="text-xs text-gray-500 mb-4">Seus dados estão seguros! Usamos essas informações apenas para o lançamento no sistema.</p>
                   </>
                 )}
-                {section.id !== 'order' && section.description && (
+                {section.id !== 'pedido' && section.description && (
                   <p className="mb-4 text-center">{section.description}</p>
                 )}
                 {section.component}

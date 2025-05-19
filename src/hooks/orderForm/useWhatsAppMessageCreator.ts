@@ -1,69 +1,114 @@
 
-import { FormData, FlavorSelection } from './types';
-import { Flavor, RibbonColor, PackageColor } from '@/data/products';
+import { FormData, FlavorSelection, AdditionalSelection } from './types';
+import { Flavor, BoloGeladoFlavor, RibbonColor, PackageColor, Additional } from '@/data/products';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 export const createWhatsAppMessage = (
-  formData: FormData,
+  formData: FormData, 
   flavorSelections: FlavorSelection[],
-  flavors: Flavor[],
-  ribbonColors: RibbonColor[],
+  boloGeladoSelections: FlavorSelection[],
+  additionalSelections: AdditionalSelection[],
+  flavors: Flavor[], 
+  boloGeladoFlavors: BoloGeladoFlavor[],
+  ribbonColors: RibbonColor[], 
   packageColors: PackageColor[],
+  additionals: Additional[],
   whatsappNumber: string
 ): string => {
-  // Calculate total quantity
-  const totalQuantity = flavorSelections.reduce((sum, item) => sum + (item.quantity || 0), 0);
+  // Format personal information
+  const personalInfo = `*DADOS PESSOAIS*\n${formData.name}\nCPF: ${formData.cpf}\nTelefone: ${formData.phone}`;
   
-  // Find selected items
-  const selectedRibbon = ribbonColors.find(r => r.id === formData.ribbonId);
-  const selectedPackage = packageColors.find(p => p.id === formData.packageId);
+  // Format address
+  const address = `*ENDEREÇO*\nCEP: ${formData.cep}\n${formData.street}, ${formData.number}${formData.complement ? `, ${formData.complement}` : ''}\n${formData.neighborhood} - ${formData.city}/${formData.state}`;
   
-  // Build flavors details
-  const flavorDetails = flavorSelections
-    .filter(selection => selection.quantity > 0)
-    .map(selection => {
-      const flavor = flavors.find(f => f.id === selection.flavorId);
-      return `- ${selection.quantity} unidades de ${flavor?.name || ''} (${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(flavor?.price || 0)}/un)`;
-    })
-    .join('\n');
+  // Format event information
+  const eventDate = formData.eventDate ? format(formData.eventDate, 'dd/MM/yyyy', { locale: ptBR }) : 'Não informado';
+  const eventInfo = `*EVENTO*\nTipo: ${formData.eventType}\nData: ${eventDate}\nLocal: ${formData.eventLocation || 'Não informado'}`;
   
-  // Calculate total price
-  let totalPrice = 0;
-  flavorSelections.forEach(selection => {
-    const flavor = flavors.find(f => f.id === selection.flavorId);
-    if (flavor && selection.quantity > 0) {
-      totalPrice += flavor.price * selection.quantity;
+  // Initialize order details based on product type
+  let orderDetails = '';
+  let total = 0;
+  
+  if (formData.productType === 'bem-casado') {
+    // Format bem-casado order
+    orderDetails = `*PEDIDO - BEM CASADO*`;
+    
+    // Calculate additionals price per unit
+    const additionalsPricePerUnit = additionalSelections
+      .filter(a => a.selected)
+      .reduce((sum, a) => {
+        const additional = additionals.find(add => add.id === a.id);
+        return sum + (additional ? additional.price : 0);
+      }, 0);
+    
+    // Format flavors
+    const flavorsList = flavorSelections
+      .filter(item => item.flavorId && item.quantity && item.quantity >= 20)
+      .map(item => {
+        const flavor = flavors.find(f => f.id === item.flavorId);
+        if (flavor) {
+          const subtotal = (flavor.price + additionalsPricePerUnit) * item.quantity;
+          total += subtotal;
+          return `${flavor.name} - ${item.quantity} unids - R$ ${subtotal.toFixed(2)}`;
+        }
+        return '';
+      })
+      .filter(Boolean)
+      .join('\n');
+    
+    // Format ribbon and package
+    const ribbon = ribbonColors.find(r => r.id === formData.ribbonId);
+    const packageColor = packageColors.find(p => p.id === formData.packageId);
+    
+    // Format additionals
+    const additionalsList = additionals
+      .filter(add => {
+        const selection = additionalSelections.find(s => s.id === add.id);
+        return selection && selection.selected;
+      })
+      .map(add => `${add.name} - + R$ ${add.price.toFixed(2)} por unid`)
+      .join('\n');
+    
+    orderDetails = `*PEDIDO - BEM CASADO*\n\n*Sabores:*\n${flavorsList}\n\n*Fita:* ${ribbon?.name || 'Não selecionada'}\n*Embalagem:* ${packageColor?.name || 'Não selecionada'}`;
+    
+    if (additionalsList) {
+      orderDetails += `\n\n*Adicionais:*\n${additionalsList}`;
     }
-  });
+  } else {
+    // Format bolo gelado order
+    orderDetails = `*PEDIDO - BOLO GELADO*`;
+    
+    // Format flavors
+    const flavorsList = boloGeladoSelections
+      .filter(item => item.flavorId && item.quantity && item.quantity >= 20)
+      .map(item => {
+        const flavor = boloGeladoFlavors.find(f => f.id === item.flavorId);
+        if (flavor) {
+          const subtotal = flavor.price * item.quantity;
+          total += subtotal;
+          return `${flavor.name} - ${item.quantity} unids - R$ ${subtotal.toFixed(2)}`;
+        }
+        return '';
+      })
+      .filter(Boolean)
+      .join('\n');
+    
+    orderDetails = `*PEDIDO - BOLO GELADO*\n\n*Sabores:*\n${flavorsList}`;
+  }
   
-  // Build WhatsApp message
-  const message = `
-🎉 Novo Pedido de Orçamento (Site) 🎉
-
-Cliente: ${formData.name}
-CPF: ${formData.cpf}
-Telefone: ${formData.phone}
-
-Detalhes do Evento:
-Data: ${formData.eventDate ? new Intl.DateTimeFormat('pt-BR').format(formData.eventDate) : ''}
-Local: ${formData.eventLocation}
-
-Endereço de Entrega:
-${formData.street}, ${formData.number}${formData.complement ? `, ${formData.complement}` : ''}
-${formData.neighborhood}, ${formData.city} - ${formData.state}
-CEP: ${formData.cep}
-
-Pedido de Bem-Casados:
-Quantidade Total: ${totalQuantity} unidades
-${flavorDetails}
-
-Cor da Fita: ${selectedRibbon?.name || ''}
-Cor da Embalagem: ${selectedPackage?.name || ''}
-
-Valor Total: ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalPrice)}
-${formData.observations ? `\nObservações: ${formData.observations}` : ''}
-
-Aguardando contato para finalização.
-  `.trim();
-
-  return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+  // Add total
+  orderDetails += `\n\n*TOTAL: R$ ${total.toFixed(2)}*`;
+  
+  // Add observations if any
+  if (formData.observations) {
+    orderDetails += `\n\n*Observações:*\n${formData.observations}`;
+  }
+  
+  // Combine all information
+  const message = [personalInfo, address, eventInfo, orderDetails].join('\n\n');
+  
+  // Create WhatsApp URL with the message
+  const encodedMessage = encodeURIComponent(message);
+  return `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
 };

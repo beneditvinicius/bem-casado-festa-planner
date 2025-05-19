@@ -4,23 +4,31 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ColorManagement from './ColorManagement';
 import ConfigManagement from './ConfigManagement';
 import FlavorManagement from './flavors/FlavorManagement';
+import BoloGeladoManagement from './bolos/BoloGeladoManagement';
+import AdditionalsManagement from './additionals/AdditionalsManagement';
 
 const AdminSection: React.FC = () => {
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-2xl font-bold mb-6 text-center">Painel de Administração</h1>
       
-      <Tabs defaultValue="colors" className="animate-fade-in">
+      <Tabs defaultValue="flavors" className="animate-fade-in">
         <div className="flex justify-center mb-6">
-          <TabsList className="grid grid-cols-4 w-full max-w-md rounded-xl p-1">
-            <TabsTrigger value="colors" className="rounded-full data-[state=active]:bg-[#eb6824] data-[state=active]:text-white transition-all duration-300">
-              Cores
-            </TabsTrigger>
+          <TabsList className="grid grid-cols-6 w-full max-w-4xl rounded-xl p-1">
             <TabsTrigger value="flavors" className="rounded-full data-[state=active]:bg-[#eb6824] data-[state=active]:text-white transition-all duration-300">
               Sabores
             </TabsTrigger>
+            <TabsTrigger value="ribbons" className="rounded-full data-[state=active]:bg-[#eb6824] data-[state=active]:text-white transition-all duration-300">
+              Fitas
+            </TabsTrigger>
             <TabsTrigger value="packages" className="rounded-full data-[state=active]:bg-[#eb6824] data-[state=active]:text-white transition-all duration-300">
               Embalagens
+            </TabsTrigger>
+            <TabsTrigger value="bolo-gelado" className="rounded-full data-[state=active]:bg-[#eb6824] data-[state=active]:text-white transition-all duration-300">
+              Bolo Gelado
+            </TabsTrigger>
+            <TabsTrigger value="additionals" className="rounded-full data-[state=active]:bg-[#eb6824] data-[state=active]:text-white transition-all duration-300">
+              Adicionais
             </TabsTrigger>
             <TabsTrigger value="config" className="rounded-full data-[state=active]:bg-[#eb6824] data-[state=active]:text-white transition-all duration-300">
               Config.
@@ -28,21 +36,24 @@ const AdminSection: React.FC = () => {
           </TabsList>
         </div>
         
-        <TabsContent value="colors" className="transition-all duration-300">
-          <ColorManagement />
-        </TabsContent>
-        
         <TabsContent value="flavors" className="transition-all duration-300">
           <FlavorManagement />
         </TabsContent>
         
+        <TabsContent value="ribbons" className="transition-all duration-300">
+          <ColorManagement tabType="ribbon" />
+        </TabsContent>
+        
         <TabsContent value="packages" className="transition-all duration-300">
-          <div className="flex justify-center">
-            <div className="max-w-3xl w-full">
-              <h2 className="text-xl font-semibold mb-4 text-center">Gerenciamento de Embalagens</h2>
-              <p className="text-center text-gray-500">Conteúdo em desenvolvimento</p>
-            </div>
-          </div>
+          <ColorManagement tabType="package" />
+        </TabsContent>
+        
+        <TabsContent value="bolo-gelado" className="transition-all duration-300">
+          <BoloGeladoManagement />
+        </TabsContent>
+        
+        <TabsContent value="additionals" className="transition-all duration-300">
+          <AdditionalsManagement />
         </TabsContent>
         
         <TabsContent value="config" className="transition-all duration-300">

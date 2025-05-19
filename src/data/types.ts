@@ -8,6 +8,21 @@ export interface Flavor {
   imageUrl?: string;
 }
 
+export interface BoloGeladoFlavor {
+  id: string;
+  name: string;
+  price: number;
+  isNew?: boolean;
+  imageUrl?: string;
+}
+
+export interface Additional {
+  id: string;
+  name: string;
+  price: number;
+  isNew?: boolean;
+}
+
 export interface Category {
   id: string;
   name: string;

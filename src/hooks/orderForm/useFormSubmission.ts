@@ -1,15 +1,19 @@
 
-import { FormData, FlavorSelection } from './types';
-import { Flavor, RibbonColor, PackageColor } from '@/data/products';
+import { FormData, FlavorSelection, AdditionalSelection, ProductType } from './types';
+import { Flavor, BoloGeladoFlavor, RibbonColor, PackageColor, Additional } from '@/data/products';
 import { useToast } from "@/hooks/use-toast";
 import { createWhatsAppMessage } from './useWhatsAppMessageCreator';
 
 interface UseFormSubmissionProps {
   formData: FormData;
   flavorSelections: FlavorSelection[];
+  boloGeladoSelections: FlavorSelection[];
+  additionalSelections: AdditionalSelection[];
   flavors: Flavor[];
+  boloGeladoFlavors: BoloGeladoFlavor[];
   ribbonColors: RibbonColor[];
   packageColors: PackageColor[];
+  additionals: Additional[];
   whatsappNumber: string;
   validateForm: () => boolean;
 }
@@ -17,9 +21,13 @@ interface UseFormSubmissionProps {
 export const useFormSubmission = ({
   formData,
   flavorSelections,
+  boloGeladoSelections,
+  additionalSelections,
   flavors,
+  boloGeladoFlavors,
   ribbonColors,
   packageColors,
+  additionals,
   whatsappNumber,
   validateForm
 }: UseFormSubmissionProps) => {
@@ -30,7 +38,9 @@ export const useFormSubmission = ({
     
     if (validateForm()) {
       // Extra validation check for minimum quantity
-      const totalQuantity = flavorSelections.reduce((sum, item) => sum + (item.quantity || 0), 0);
+      const currentSelections = formData.productType === 'bem-casado' ? flavorSelections : boloGeladoSelections;
+      const totalQuantity = currentSelections.reduce((sum, item) => sum + (item.quantity || 0), 0);
+      
       if (totalQuantity < 20) {
         toast({
           title: "Pedido mínimo",
@@ -43,15 +53,19 @@ export const useFormSubmission = ({
       const whatsappUrl = createWhatsAppMessage(
         formData, 
         flavorSelections, 
+        boloGeladoSelections,
+        additionalSelections,
         flavors, 
+        boloGeladoFlavors,
         ribbonColors, 
         packageColors, 
+        additionals,
         whatsappNumber
       );
       
       // Show success message
       toast({
-        title: "Orçamento gerado com sucesso!",
+        title: "Pedido gerado com sucesso!",
         description: "Você será redirecionado para o WhatsApp.",
       });
       

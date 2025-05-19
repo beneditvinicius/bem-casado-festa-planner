@@ -1,69 +1,74 @@
 
-import { useState } from 'react';
-import { isBefore } from "date-fns";
+import { useState, useEffect } from 'react';
 import { FormData, FlavorSelection } from './types';
 
-interface UseFormValidationReturn {
-  errors: { [key: string]: string };
-  validateForm: () => boolean;
-}
-
 export const useFormValidation = (
-  formData: FormData,
-  flavorSelections: FlavorSelection[]
-): UseFormValidationReturn => {
+  formData: FormData, 
+  flavorSelections: FlavorSelection[],
+  boloGeladoSelections: FlavorSelection[]
+) => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-
+  
+  // Validate form fields whenever they change
+  useEffect(() => {
+    validateForm();
+  }, [formData, flavorSelections, boloGeladoSelections]);
+  
   const validateForm = (): boolean => {
     const newErrors: { [key: string]: string } = {};
     
-    // Validate personal info
-    if (!formData.name.trim()) newErrors.name = 'Nome é obrigatório';
-    if (!formData.cpf.trim() || formData.cpf.length < 14) newErrors.cpf = 'CPF inválido';
-    if (!formData.phone.trim() || formData.phone.length < 14) newErrors.phone = 'Telefone inválido';
-    if (!formData.cep.trim() || formData.cep.length < 9) newErrors.cep = 'CEP inválido';
-    if (!formData.street.trim()) newErrors.street = 'Rua é obrigatória';
-    if (!formData.number.trim()) newErrors.number = 'Número é obrigatório';
-    if (!formData.neighborhood.trim()) newErrors.neighborhood = 'Bairro é obrigatório';
-    if (!formData.city.trim()) newErrors.city = 'Cidade é obrigatória';
+    // Personal info validation
+    if (!formData.name) newErrors.name = 'Nome é obrigatório';
+    if (!formData.phone) newErrors.phone = 'Telefone é obrigatório';
+    if (!formData.cpf) newErrors.cpf = 'CPF é obrigatório';
+    
+    // Address validation
+    if (!formData.cep) newErrors.cep = 'CEP é obrigatório';
+    if (!formData.street) newErrors.street = 'Rua é obrigatório';
+    if (!formData.number) newErrors.number = 'Número é obrigatório';
+    if (!formData.neighborhood) newErrors.neighborhood = 'Bairro é obrigatório';
+    if (!formData.city) newErrors.city = 'Cidade é obrigatória';
     if (!formData.state) newErrors.state = 'Estado é obrigatório';
     
-    // Validate event info
-    if (!formData.eventDate) {
-      newErrors.eventDate = 'Data do evento é obrigatória';
-    } else if (isBefore(formData.eventDate, new Date())) {
-      newErrors.eventDate = 'A data do evento não pode ser no passado';
-    }
-    if (!formData.eventLocation.trim()) newErrors.eventLocation = 'Local do evento é obrigatório';
+    // Event validation
+    if (!formData.eventDate) newErrors.eventDate = 'Data do evento é obrigatória';
+    if (!formData.eventType) newErrors.eventType = 'Tipo de evento é obrigatório';
     
-    // Validate flavor selections
+    // Product type specific validations
+    const currentSelections = formData.productType === 'bem-casado' 
+      ? flavorSelections 
+      : boloGeladoSelections;
+
+    // Order validation
     let totalQuantity = 0;
-    flavorSelections.forEach((selection) => {
-      if (!selection.flavorId) {
-        newErrors[`flavor-${selection.id}`] = 'Selecione um sabor';
-      }
-      
-      if (!selection.quantity) {
-        newErrors[`quantity-${selection.id}`] = 'Quantidade é obrigatória';
-      } else {
+    let hasValidFlavor = false;
+    
+    currentSelections.forEach(selection => {
+      if (selection.flavorId && selection.quantity) {
         totalQuantity += selection.quantity;
+        hasValidFlavor = true;
       }
     });
     
-    // Check for minimum total quantity - stricter validation
-    if (totalQuantity === 0) {
-      newErrors.quantity = 'A quantidade total deve ser de pelo menos 20 unidades';
-    } else if (totalQuantity < 20) {
+    if (!hasValidFlavor) {
+      newErrors.flavor = 'Selecione pelo menos um sabor';
+    }
+    
+    if (totalQuantity < 20) {
       newErrors.quantity = 'O pedido mínimo é de 20 unidades';
     }
     
-    // Validate colors
-    if (!formData.ribbonId) newErrors.ribbonId = 'Selecione a cor da fita';
-    if (!formData.packageId) newErrors.packageId = 'Selecione a cor da embalagem';
+    if (formData.productType === 'bem-casado') {
+      if (!formData.ribbonId) newErrors.ribbonId = 'Selecione uma fita';
+      if (!formData.packageId) newErrors.packageId = 'Selecione uma embalagem';
+    }
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
-  return { errors, validateForm };
+  
+  return {
+    errors,
+    validateForm
+  };
 };

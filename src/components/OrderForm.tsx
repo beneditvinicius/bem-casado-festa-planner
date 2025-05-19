@@ -14,9 +14,13 @@ const OrderForm: React.FC = () => {
     formData,
     errors,
     flavors,
+    boloGeladoFlavors,
     ribbonColors,
     packageColors,
+    additionals,
     flavorSelections,
+    boloGeladoSelections,
+    additionalSelections,
     isLoadingCep,
     handleInputChange,
     handleSelectChange,
@@ -25,24 +29,69 @@ const OrderForm: React.FC = () => {
     handleRemoveFlavor,
     handleFlavorChange,
     handleFlavorQuantityChange,
+    handleAddBoloGeladoFlavor,
+    handleRemoveBoloGeladoFlavor,
+    handleBoloGeladoFlavorChange,
+    handleBoloGeladoQuantityChange,
+    handleAdditionalChange,
+    handleProductTypeChange,
     handleSubmit,
     handleReset,
     calculateTotal,
     searchCep
   } = useOrderForm();
   const isMobile = useIsMobile();
-  return <Card className="w-full rounded-3xl" id="orcamento">
+  
+  return (
+    <Card className="w-full rounded-3xl" id="pedido">
       <CardContent className="pt-6 card-content">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Informações Pessoais */}
-            <PersonalInfoForm formData={formData} errors={errors} isLoadingCep={isLoadingCep} handleInputChange={handleInputChange} handleSelectChange={handleSelectChange} searchCep={searchCep} />
+            <PersonalInfoForm 
+              formData={formData} 
+              errors={errors} 
+              isLoadingCep={isLoadingCep} 
+              handleInputChange={handleInputChange} 
+              handleSelectChange={handleSelectChange} 
+              searchCep={searchCep} 
+            />
             
             {/* Informações do Evento e Pedido */}
             <div className="space-y-6">
-              <EventInfoForm formData={formData} errors={errors} handleInputChange={handleInputChange} handleDateChange={handleDateChange} />
+              <EventInfoForm 
+                formData={formData} 
+                errors={errors} 
+                handleInputChange={handleInputChange} 
+                handleDateChange={handleDateChange}
+                handleSelectChange={handleSelectChange}
+              />
               
-              <OrderDetailsForm formData={formData} errors={errors} flavors={flavors} ribbonColors={ribbonColors} packageColors={packageColors} flavorSelections={flavorSelections} handleInputChange={handleInputChange} handleSelectChange={handleSelectChange} handleAddFlavor={handleAddFlavor} handleRemoveFlavor={handleRemoveFlavor} handleFlavorChange={handleFlavorChange} handleFlavorQuantityChange={handleFlavorQuantityChange} calculateTotal={calculateTotal} />
+              <OrderDetailsForm 
+                formData={formData}
+                errors={errors}
+                flavors={flavors}
+                boloGeladoFlavors={boloGeladoFlavors}
+                ribbonColors={ribbonColors}
+                packageColors={packageColors}
+                additionals={additionals}
+                flavorSelections={flavorSelections}
+                boloGeladoSelections={boloGeladoSelections}
+                additionalSelections={additionalSelections}
+                handleInputChange={handleInputChange}
+                handleSelectChange={handleSelectChange}
+                handleProductTypeChange={handleProductTypeChange}
+                handleAddFlavor={handleAddFlavor}
+                handleRemoveFlavor={handleRemoveFlavor}
+                handleFlavorChange={handleFlavorChange}
+                handleFlavorQuantityChange={handleFlavorQuantityChange}
+                handleAddBoloGeladoFlavor={handleAddBoloGeladoFlavor}
+                handleRemoveBoloGeladoFlavor={handleRemoveBoloGeladoFlavor}
+                handleBoloGeladoFlavorChange={handleBoloGeladoFlavorChange}
+                handleBoloGeladoQuantityChange={handleBoloGeladoQuantityChange}
+                handleAdditionalChange={handleAdditionalChange}
+                calculateTotal={calculateTotal}
+              />
             </div>
           </div>
           
@@ -52,11 +101,13 @@ const OrderForm: React.FC = () => {
             </Button>
             <Button type="submit" className={`h-12 rounded-full bg-[#eb6824] hover:bg-[#d25618] text-white ${isMobile ? 'w-full' : 'px-6'}`}>
               <MessageSquare className="mr-2 h-4 w-4" />
-              Enviar Orçamento via WhatsApp
+              Enviar Pedido via WhatsApp
             </Button>
           </div>
         </form>
       </CardContent>
-    </Card>;
+    </Card>
+  );
 };
+
 export default OrderForm;

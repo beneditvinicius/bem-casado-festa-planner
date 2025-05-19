@@ -6,8 +6,11 @@ import { FlavorSlice, createFlavorSlice } from './slices/flavorSlice';
 import { RibbonSlice, createRibbonSlice } from './slices/ribbonSlice';
 import { PackageSlice, createPackageSlice } from './slices/packageSlice';
 import { ConfigSlice, createConfigSlice } from './slices/configSlice';
+import { BoloGeladoSlice, createBoloGeladoSlice } from './slices/boloGeladoSlice';
+import { AdditionalSlice, createAdditionalSlice } from './slices/additionalSlice';
 
-export type RootState = FlavorSlice & RibbonSlice & PackageSlice & ConfigSlice;
+export type RootState = FlavorSlice & RibbonSlice & PackageSlice & ConfigSlice & 
+  BoloGeladoSlice & AdditionalSlice;
 
 export const useProductsStore = create<RootState>()(
   persist(
@@ -16,6 +19,8 @@ export const useProductsStore = create<RootState>()(
       ...createRibbonSlice(...a),
       ...createPackageSlice(...a),
       ...createConfigSlice(...a),
+      ...createBoloGeladoSlice(...a),
+      ...createAdditionalSlice(...a),
     }),
     {
       name: 'products-store',
@@ -50,6 +55,24 @@ const createStoreWithUpdates = () => {
     useProductsStore.setState({
       updatePackageColor: (id, data) => useProductsStore.setState((state) => ({
         packageColors: state.packageColors.map(p => p.id === id ? { ...p, ...data } : p)
+      }))
+    });
+  }
+
+  // Add bolo gelado update method
+  if (!store.updateBoloGeladoFlavor) {
+    useProductsStore.setState({
+      updateBoloGeladoFlavor: (id, data) => useProductsStore.setState((state) => ({
+        boloGeladoFlavors: state.boloGeladoFlavors.map(bg => bg.id === id ? { ...bg, ...data } : bg)
+      }))
+    });
+  }
+
+  // Add additional update method
+  if (!store.updateAdditional) {
+    useProductsStore.setState({
+      updateAdditional: (id, data) => useProductsStore.setState((state) => ({
+        additionals: state.additionals.map(a => a.id === id ? { ...a, ...data } : a)
       }))
     });
   }

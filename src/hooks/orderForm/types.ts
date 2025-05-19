@@ -1,10 +1,22 @@
 
-import { Flavor, RibbonColor, PackageColor } from '@/data/products';
+import { Flavor, BoloGeladoFlavor, RibbonColor, PackageColor, Additional } from '@/data/types';
+
+export type ProductType = 'bem-casado' | 'bolo-gelado';
+
+export interface EventType {
+  value: string;
+  label: string;
+}
 
 export interface FlavorSelection {
   id: string;
   flavorId: string;
-  quantity: number | null;
+  quantity: number;
+}
+
+export interface AdditionalSelection {
+  id: string;
+  selected: boolean;
 }
 
 export interface FormData {
@@ -20,6 +32,8 @@ export interface FormData {
   state: string;
   eventDate: Date | undefined;
   eventLocation: string;
+  eventType: string;
+  productType: ProductType;
   ribbonId: string;
   packageId: string;
   observations: string;
@@ -29,9 +43,13 @@ export interface UseOrderFormReturn {
   formData: FormData;
   errors: { [key: string]: string };
   flavors: Flavor[];
+  boloGeladoFlavors: BoloGeladoFlavor[];
   ribbonColors: RibbonColor[];
   packageColors: PackageColor[];
+  additionals: Additional[];
   flavorSelections: FlavorSelection[];
+  boloGeladoSelections: FlavorSelection[];
+  additionalSelections: AdditionalSelection[];
   whatsappNumber: string;
   isLoadingCep: boolean;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
@@ -43,6 +61,12 @@ export interface UseOrderFormReturn {
   handleRemoveFlavor: (id: string) => void;
   handleFlavorChange: (id: string, flavorId: string) => void;
   handleFlavorQuantityChange: (id: string, value: string) => void;
+  handleAddBoloGeladoFlavor: () => void;
+  handleRemoveBoloGeladoFlavor: (id: string) => void;
+  handleBoloGeladoFlavorChange: (id: string, flavorId: string) => void;
+  handleBoloGeladoQuantityChange: (id: string, value: string) => void;
+  handleAdditionalChange: (id: string, selected: boolean) => void;
+  handleProductTypeChange: (type: ProductType) => void;
   calculateTotal: () => string;
   searchCep: () => void;
 }
