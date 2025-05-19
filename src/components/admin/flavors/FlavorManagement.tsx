@@ -1,171 +1,142 @@
 
 import React, { useState } from 'react';
-import { useToast } from "@/hooks/use-toast";
+import { Plus, Pencil, Trash } from 'lucide-react';
 import { useProductsStore } from '@/data/store';
-import { Flavor } from '@/data/types';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PlusCircle } from 'lucide-react';
-import { v4 as uuidv4 } from 'uuid';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+import { Input } from '@/components/ui/input';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { ModalDialog } from '@/components/ui/modal-dialog';
+import { toast } from 'sonner';
+import { Flavor } from '@/data/types';
 
-import FlavorList from './components/FlavorList';
-import FlavorFormDialog from './components/FlavorFormDialog';
-
-const FlavorManagement = () => {
+const FlavorManagement: React.FC = () => {
   const { flavors, addFlavor, updateFlavor, removeFlavor } = useProductsStore();
-  const { toast } = useToast();
-  
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedFlavor, setSelectedFlavor] = useState<Flavor | undefined>(undefined);
-  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const [flavorToDelete, setFlavorToDelete] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingFlavor, setEditingFlavor] = useState<Flavor | null>(null);
+  const [newFlavor, setNewFlavor] = useState({ name: '', price: 0 });
 
-  const handleAddFlavor = (flavorData: Partial<Flavor>) => {
-    setIsLoading(true);
+  const handleAddFlavor = () => {
+    if (!newFlavor.name) {
+      toast.error('Nome é obrigatório');
+      return;
+    }
+
+    const id = crypto.randomUUID();
+    addFlavor({ id, name: newFlavor.name, price: newFlavor.price, categoryId: 'default' });
+    setNewFlavor({ name: '', price: 0 });
+    toast.success('Sabor adicionado com sucesso!');
+  };
+
+  const openEditModal = (flavor: Flavor) => {
+    setEditingFlavor(flavor);
+    setIsModalOpen(true);
+  };
+
+  const handleSaveFlavor = () => {
+    if (!editingFlavor) return;
     
-    setTimeout(() => {
-      const newFlavor: Flavor = {
-        id: uuidv4(),
-        name: flavorData.name || 'Novo Sabor',
-        price: flavorData.price || 0,
-        categoryId: flavorData.categoryId || 'default',
-        isNew: flavorData.isNew || false,
-      };
-
-      addFlavor(newFlavor);
-      
-      toast({
-        title: "Sabor adicionado",
-        description: `${newFlavor.name} foi adicionado com sucesso.`,
-      });
-      
-      setIsLoading(false);
-    }, 500); // Simulação de carregamento
+    updateFlavor(editingFlavor.id, editingFlavor);
+    setIsModalOpen(false);
+    toast.success('Sabor atualizado com sucesso!');
   };
 
-  const handleUpdateFlavor = (flavorData: Partial<Flavor>) => {
-    if (selectedFlavor?.id) {
-      setIsLoading(true);
-      
-      setTimeout(() => {
-        updateFlavor(selectedFlavor.id, flavorData);
-        
-        toast({
-          title: "Sabor atualizado",
-          description: `${flavorData.name || selectedFlavor.name} foi atualizado com sucesso.`,
-        });
-        
-        setIsLoading(false);
-      }, 500); // Simulação de carregamento
+  const handleDeleteFlavor = (id: string) => {
+    if (window.confirm('Tem certeza que deseja excluir este sabor?')) {
+      removeFlavor(id);
+      toast.success('Sabor excluído com sucesso!');
     }
-  };
-
-  const confirmDeleteFlavor = (id: string) => {
-    setFlavorToDelete(id);
-    setDeleteConfirmOpen(true);
-  };
-
-  const handleDeleteFlavor = () => {
-    if (flavorToDelete) {
-      setIsLoading(true);
-      
-      const flavorToRemove = flavors.find(flavor => flavor.id === flavorToDelete);
-      
-      setTimeout(() => {
-        removeFlavor(flavorToDelete);
-        
-        toast({
-          title: "Sabor removido",
-          description: flavorToRemove ? `${flavorToRemove.name} foi removido com sucesso.` : "Sabor removido com sucesso.",
-        });
-        
-        setDeleteConfirmOpen(false);
-        setFlavorToDelete(null);
-        setIsLoading(false);
-      }, 500); // Simulação de carregamento
-    }
-  };
-
-  const handleEditClick = (flavor: Flavor) => {
-    setSelectedFlavor(flavor);
-    setIsDialogOpen(true);
-  };
-
-  const handleAddNewClick = () => {
-    setSelectedFlavor(undefined);
-    setIsDialogOpen(true);
-  };
-
-  const handleDialogSubmit = (data: Partial<Flavor>) => {
-    if (selectedFlavor) {
-      handleUpdateFlavor(data);
-    } else {
-      handleAddFlavor(data);
-    }
-    setIsDialogOpen(false);
   };
 
   return (
-    <Card className="animate-fade-in">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Sabores</CardTitle>
-        <Button 
-          onClick={handleAddNewClick} 
-          className="ml-auto bg-[#eb6824] hover:bg-[#d25618] transition-colors duration-300 rounded-full"
-        >
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Adicionar Sabor
-        </Button>
-      </CardHeader>
-      <CardContent>
-        <FlavorList 
-          flavors={flavors} 
-          onEditFlavor={handleEditClick}
-          onDeleteFlavor={confirmDeleteFlavor}
-          isLoading={isLoading}
-        />
-        
-        <FlavorFormDialog
-          open={isDialogOpen}
-          onOpenChange={setIsDialogOpen}
-          onSubmit={handleDialogSubmit}
-          initialValues={selectedFlavor}
-          isLoading={isLoading}
-        />
-        
-        <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
-          <AlertDialogContent className="rounded-2xl">
-            <AlertDialogHeader>
-              <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
-              <AlertDialogDescription>
-                Tem certeza que deseja remover este sabor? Esta ação não pode ser desfeita.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel className="rounded-full">Cancelar</AlertDialogCancel>
-              <AlertDialogAction 
-                onClick={handleDeleteFlavor} 
-                className="rounded-full bg-destructive hover:bg-destructive/90"
-                disabled={isLoading}
-              >
-                {isLoading ? "Removendo..." : "Confirmar Exclusão"}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </CardContent>
-    </Card>
+    <div className="space-y-6">
+      <div className="rounded-lg border p-4">
+        <h2 className="text-lg font-semibold mb-4">Sabores Disponíveis</h2>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Nome</TableHead>
+              <TableHead>Preço</TableHead>
+              <TableHead className="text-right">Ações</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {flavors.map((flavor) => (
+              <TableRow key={flavor.id}>
+                <TableCell>{flavor.name}</TableCell>
+                <TableCell>R$ {flavor.price.toFixed(2)}</TableCell>
+                <TableCell className="text-right space-x-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => openEditModal(flavor)}
+                    className="h-8 w-8 p-0"
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => handleDeleteFlavor(flavor.id)}
+                    className="h-8 w-8 p-0 text-red-500 hover:text-red-500"
+                  >
+                    <Trash className="h-4 w-4" />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      <div className="rounded-lg border p-4">
+        <h2 className="text-lg font-semibold mb-4">Adicionar Novo Sabor</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Input 
+            placeholder="Nome" 
+            value={newFlavor.name} 
+            onChange={(e) => setNewFlavor({ ...newFlavor, name: e.target.value })} 
+          />
+          <Input 
+            type="number" 
+            placeholder="Preço" 
+            value={newFlavor.price === 0 ? '' : newFlavor.price} 
+            onChange={(e) => setNewFlavor({ ...newFlavor, price: parseFloat(e.target.value) || 0 })} 
+          />
+          <Button onClick={handleAddFlavor} className="bg-[#eb6824] hover:bg-[#d25618]">
+            <Plus className="mr-1 h-4 w-4" /> Adicionar
+          </Button>
+        </div>
+      </div>
+
+      {/* Edit Modal */}
+      <ModalDialog
+        title="Editar Sabor"
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleSaveFlavor}
+        confirmText="Salvar"
+      >
+        <div className="space-y-4">
+          <div>
+            <label htmlFor="edit-name" className="block text-sm font-medium mb-1">Nome</label>
+            <Input 
+              id="edit-name"
+              value={editingFlavor?.name || ''} 
+              onChange={(e) => setEditingFlavor(prev => prev ? { ...prev, name: e.target.value } : prev)} 
+            />
+          </div>
+          <div>
+            <label htmlFor="edit-price" className="block text-sm font-medium mb-1">Preço</label>
+            <Input 
+              id="edit-price"
+              type="number" 
+              value={editingFlavor?.price || 0} 
+              onChange={(e) => setEditingFlavor(prev => prev ? { ...prev, price: parseFloat(e.target.value) || 0 } : prev)} 
+            />
+          </div>
+        </div>
+      </ModalDialog>
+    </div>
   );
 };
 

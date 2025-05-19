@@ -1,236 +1,141 @@
 
 import React, { useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogFooter
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Pencil, Trash2, Plus } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { Plus, Pencil, Trash } from 'lucide-react';
 import { useProductsStore } from '@/data/store';
-import { v4 as uuidv4 } from 'uuid';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { ModalDialog } from '@/components/ui/modal-dialog';
+import { toast } from 'sonner';
 import { Additional } from '@/data/types';
 
 const AdditionalsManagement: React.FC = () => {
-  const { toast } = useToast();
-  const additionals = useProductsStore(state => state.additionals);
-  const addAdditional = useProductsStore(state => state.addAdditional);
-  const removeAdditional = useProductsStore(state => state.removeAdditional);
-  const updateAdditional = useProductsStore(state => state.updateAdditional);
-  
-  const [editAdditional, setEditAdditional] = useState<Additional | null>(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [newAdditional, setNewAdditional] = useState({
-    name: '',
-    price: ''
-  });
-
-  const handleEdit = (additional: Additional) => {
-    setEditAdditional(additional);
-    setIsEditModalOpen(true);
-  };
-
-  const handleRemove = (id: string) => {
-    removeAdditional(id);
-    toast({
-      title: "Adicional removido",
-      description: "O item adicional foi removido com sucesso."
-    });
-  };
-
-  const handleUpdateAdditional = () => {
-    if (!editAdditional) return;
-    
-    if (!editAdditional.name || !editAdditional.price) {
-      toast({
-        title: "Dados incompletos",
-        description: "Por favor, preencha todos os campos.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    updateAdditional(editAdditional.id, editAdditional);
-    setIsEditModalOpen(false);
-    setEditAdditional(null);
-    
-    toast({
-      title: "Adicional atualizado",
-      description: "O item adicional foi atualizado com sucesso."
-    });
-  };
+  const { additionals, addAdditional, updateAdditional, removeAdditional } = useProductsStore();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingAdditional, setEditingAdditional] = useState<Additional | null>(null);
+  const [newAdditional, setNewAdditional] = useState({ name: '', price: 0 });
 
   const handleAddAdditional = () => {
-    if (!newAdditional.name || !newAdditional.price) {
-      toast({
-        title: "Dados incompletos",
-        description: "Por favor, preencha todos os campos.",
-        variant: "destructive"
-      });
+    if (!newAdditional.name) {
+      toast.error('Nome é obrigatório');
       return;
     }
+
+    const id = crypto.randomUUID();
+    addAdditional({ id, name: newAdditional.name, price: newAdditional.price });
+    setNewAdditional({ name: '', price: 0 });
+    toast.success('Adicional adicionado com sucesso!');
+  };
+
+  const openEditModal = (additional: Additional) => {
+    setEditingAdditional(additional);
+    setIsModalOpen(true);
+  };
+
+  const handleSaveAdditional = () => {
+    if (!editingAdditional) return;
     
-    const price = parseFloat(newAdditional.price);
-    if (isNaN(price)) {
-      toast({
-        title: "Preço inválido",
-        description: "Por favor, insira um preço válido.",
-        variant: "destructive"
-      });
-      return;
+    updateAdditional(editingAdditional.id, editingAdditional);
+    setIsModalOpen(false);
+    toast.success('Adicional atualizado com sucesso!');
+  };
+
+  const handleDeleteAdditional = (id: string) => {
+    if (window.confirm('Tem certeza que deseja excluir este adicional?')) {
+      removeAdditional(id);
+      toast.success('Adicional excluído com sucesso!');
     }
-    
-    const additional: Additional = {
-      id: uuidv4(),
-      name: newAdditional.name,
-      price: price
-    };
-    
-    addAdditional(additional);
-    setNewAdditional({ name: '', price: '' });
-    
-    toast({
-      title: "Adicional adicionado",
-      description: "O novo item adicional foi adicionado com sucesso."
-    });
   };
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <h3 className="text-lg font-medium text-center mb-4">Gerenciamento de Itens Adicionais</h3>
-      
-      <div className="grid gap-4 mb-6">
-        {additionals.map(additional => (
-          <Card key={additional.id} className="rounded-xl overflow-hidden">
-            <CardContent className="p-4 flex justify-between items-center">
-              <div className="flex-1">
-                <h4 className="font-medium">{additional.name}</h4>
-                <p className="text-sm text-gray-500">+ R$ {additional.price.toFixed(2)} por unidade</p>
-              </div>
-              <div className="flex space-x-2">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => handleEdit(additional)}
-                  className="h-8 w-8 p-0 rounded-full"
-                >
-                  <Pencil className="h-4 w-4" />
-                  <span className="sr-only">Editar</span>
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => handleRemove(additional.id)}
-                  className="h-8 w-8 p-0 rounded-full text-red-500 hover:text-red-700 hover:bg-red-50"
-                >
-                  <Trash2 className="h-4 w-4" />
-                  <span className="sr-only">Remover</span>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+    <div className="space-y-6">
+      <div className="rounded-lg border p-4">
+        <h2 className="text-lg font-semibold mb-4">Adicionais Disponíveis</h2>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Nome</TableHead>
+              <TableHead>Preço</TableHead>
+              <TableHead className="text-right">Ações</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {additionals.map((additional) => (
+              <TableRow key={additional.id}>
+                <TableCell>{additional.name}</TableCell>
+                <TableCell>R$ {additional.price.toFixed(2)}</TableCell>
+                <TableCell className="text-right space-x-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => openEditModal(additional)}
+                    className="h-8 w-8 p-0"
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => handleDeleteAdditional(additional.id)}
+                    className="h-8 w-8 p-0 text-red-500 hover:text-red-500"
+                  >
+                    <Trash className="h-4 w-4" />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
-      
-      <Card className="rounded-xl">
-        <CardContent className="p-5">
-          <h4 className="font-medium mb-4">Adicionar Novo Item</h4>
-          <div className="grid gap-3">
-            <div>
-              <Label htmlFor="new-name" className="text-sm">Nome</Label>
-              <Input 
-                id="new-name" 
-                value={newAdditional.name} 
-                onChange={e => setNewAdditional({...newAdditional, name: e.target.value})}
-                className="mt-1 rounded-xl"
-                placeholder="Nome do item adicional"
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="new-price" className="text-sm">Preço por unidade (R$)</Label>
-              <Input 
-                id="new-price" 
-                value={newAdditional.price} 
-                onChange={e => setNewAdditional({...newAdditional, price: e.target.value})}
-                className="mt-1 rounded-xl"
-                placeholder="0.00"
-                type="number"
-                step="0.01"
-                min="0"
-              />
-            </div>
-            
-            <Button 
-              onClick={handleAddAdditional}
-              className="mt-2 w-full rounded-full bg-[#eb6824] hover:bg-[#d25618]"
-            >
-              <Plus className="mr-2 h-4 w-4" /> Adicionar Item
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-      
+
+      <div className="rounded-lg border p-4">
+        <h2 className="text-lg font-semibold mb-4">Adicionar Novo Adicional</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Input 
+            placeholder="Nome" 
+            value={newAdditional.name} 
+            onChange={(e) => setNewAdditional({ ...newAdditional, name: e.target.value })} 
+          />
+          <Input 
+            type="number" 
+            placeholder="Preço" 
+            value={newAdditional.price === 0 ? '' : newAdditional.price} 
+            onChange={(e) => setNewAdditional({ ...newAdditional, price: parseFloat(e.target.value) || 0 })} 
+          />
+          <Button onClick={handleAddAdditional} className="bg-[#eb6824] hover:bg-[#d25618]">
+            <Plus className="mr-1 h-4 w-4" /> Adicionar
+          </Button>
+        </div>
+      </div>
+
       {/* Edit Modal */}
-      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent className="sm:max-w-md rounded-xl">
-          <DialogHeader>
-            <DialogTitle>Editar Item Adicional</DialogTitle>
-          </DialogHeader>
-          
-          {editAdditional && (
-            <div className="grid gap-4 py-4">
-              <div>
-                <Label htmlFor="edit-name" className="text-sm">Nome</Label>
-                <Input 
-                  id="edit-name" 
-                  value={editAdditional.name} 
-                  onChange={e => setEditAdditional({...editAdditional, name: e.target.value})}
-                  className="mt-1 rounded-xl"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="edit-price" className="text-sm">Preço por unidade (R$)</Label>
-                <Input 
-                  id="edit-price" 
-                  value={editAdditional.price} 
-                  onChange={e => setEditAdditional({
-                    ...editAdditional, 
-                    price: isNaN(parseFloat(e.target.value)) ? 0 : parseFloat(e.target.value)
-                  })}
-                  className="mt-1 rounded-xl"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                />
-              </div>
-            </div>
-          )}
-          
-          <DialogFooter>
-            <Button 
-              variant="outline" 
-              onClick={() => setIsEditModalOpen(false)}
-              className="rounded-full"
-            >
-              Cancelar
-            </Button>
-            <Button 
-              onClick={handleUpdateAdditional}
-              className="rounded-full bg-[#eb6824] hover:bg-[#d25618]"
-            >
-              Salvar Alterações
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ModalDialog
+        title="Editar Adicional"
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleSaveAdditional}
+        confirmText="Salvar"
+      >
+        <div className="space-y-4">
+          <div>
+            <label htmlFor="edit-name" className="block text-sm font-medium mb-1">Nome</label>
+            <Input 
+              id="edit-name"
+              value={editingAdditional?.name || ''} 
+              onChange={(e) => setEditingAdditional(prev => prev ? { ...prev, name: e.target.value } : prev)} 
+            />
+          </div>
+          <div>
+            <label htmlFor="edit-price" className="block text-sm font-medium mb-1">Preço</label>
+            <Input 
+              id="edit-price"
+              type="number" 
+              value={editingAdditional?.price || 0} 
+              onChange={(e) => setEditingAdditional(prev => prev ? { ...prev, price: parseFloat(e.target.value) || 0 } : prev)} 
+            />
+          </div>
+        </div>
+      </ModalDialog>
     </div>
   );
 };
