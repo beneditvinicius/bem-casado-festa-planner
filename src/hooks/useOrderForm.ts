@@ -1,14 +1,17 @@
+
 import { useState } from 'react';
-import { formatCPF, formatPhone, formatCEP } from '@/utils/formatter.tsx';
 import { useProductsStore } from '@/data/products';
 import { useToast } from "@/hooks/use-toast";
-import { v4 as uuidv4 } from 'uuid';
+import { FormData, UseOrderFormReturn, ProductType } from './orderForm/types';
 import { useCepSearch } from './orderForm/useCepSearch';
 import { useFlavorManagement } from './orderForm/useFlavorManagement';
 import { useFormValidation } from './orderForm/useFormValidation';
 import { useFormHandlers } from './orderForm/useFormHandlers';
 import { useFormSubmission } from './orderForm/useFormSubmission';
-import { FormData, UseOrderFormReturn, AdditionalSelection, ProductType } from './orderForm/types';
+import { useBoloGeladoManagement } from './orderForm/useBoloGeladoManagement';
+import { useProductTypeManagement } from './orderForm/useProductTypeManagement';
+import { useAdditionalSelectionManagement } from './orderForm/useAdditionalSelectionManagement';
+import { useTotalCalculator } from './orderForm/useTotalCalculator';
 
 export { type FlavorSelection } from './orderForm/types';
 export { type FormData } from './orderForm/types';
@@ -24,12 +27,7 @@ export function useOrderForm(): UseOrderFormReturn {
   const additionals = useProductsStore((state) => state.additionals);
   const whatsappNumber = useProductsStore((state) => state.whatsappNumber);
 
-  // Initialize additionals selections
-  const initialAdditionalSelections = additionals.map(additional => ({
-    id: additional.id,
-    selected: false
-  }));
-
+  // Initialize form data
   const [formData, setFormData] = useState<FormData>({
     name: '',
     cpf: '',
@@ -50,63 +48,22 @@ export function useOrderForm(): UseOrderFormReturn {
     observations: ''
   });
 
-  const [additionalSelections, setAdditionalSelections] = useState<AdditionalSelection[]>(initialAdditionalSelections);
-
+  // Use our specialized hooks
+  const { productType, handleProductTypeChange } = useProductTypeManagement(formData.productType);
+  
   const { flavorSelections, handleAddFlavor, handleRemoveFlavor, 
-          handleFlavorChange, handleFlavorQuantityChange, calculateTotal } = 
+          handleFlavorChange, handleFlavorQuantityChange } = 
     useFlavorManagement(flavors);
 
-  // Management for bolo gelado flavors
-  const [boloGeladoSelections, setBoloGeladoSelections] = useState([{
-    id: uuidv4(),
-    flavorId: boloGeladoFlavors[0]?.id || '',
-    quantity: 0
-  }]);
+  const { boloGeladoSelections, handleAddBoloGeladoFlavor, handleRemoveBoloGeladoFlavor,
+          handleBoloGeladoFlavorChange, handleBoloGeladoQuantityChange } = 
+    useBoloGeladoManagement(boloGeladoFlavors);
+  
+  const { additionalSelections, handleAdditionalChange } =
+    useAdditionalSelectionManagement(additionals);
 
-  const handleAddBoloGeladoFlavor = () => {
-    const newSelection = {
-      id: uuidv4(),
-      flavorId: boloGeladoFlavors[0]?.id || '',
-      quantity: 0
-    };
-    setBoloGeladoSelections([...boloGeladoSelections, newSelection]);
-  };
-
-  const handleRemoveBoloGeladoFlavor = (id: string) => {
-    if (boloGeladoSelections.length > 1) {
-      setBoloGeladoSelections(boloGeladoSelections.filter(selection => selection.id !== id));
-    }
-  };
-
-  const handleBoloGeladoFlavorChange = (id: string, flavorId: string) => {
-    setBoloGeladoSelections(
-      boloGeladoSelections.map(selection => 
-        selection.id === id ? { ...selection, flavorId } : selection
-      )
-    );
-  };
-
-  const handleBoloGeladoQuantityChange = (id: string, value: string) => {
-    const quantity = parseInt(value);
-    setBoloGeladoSelections(
-      boloGeladoSelections.map(selection => 
-        selection.id === id ? { ...selection, quantity: isNaN(quantity) ? 0 : quantity } : selection
-      )
-    );
-  };
-
-  const handleProductTypeChange = (type: ProductType) => {
-    setFormData({...formData, productType: type});
-  };
-
-  const handleAdditionalChange = (id: string, selected: boolean) => {
-    setAdditionalSelections(prev => 
-      prev.map(selection => 
-        selection.id === id ? { ...selection, selected } : selection
-      )
-    );
-  };
-
+  const { calculateTotal } = useTotalCalculator();
+  
   const { errors, validateForm } = useFormValidation(formData, flavorSelections, boloGeladoSelections);
   const { isLoadingCep, searchCep } = useCepSearch(formData, setFormData);
   
@@ -131,42 +88,23 @@ export function useOrderForm(): UseOrderFormReturn {
     validateForm
   });
 
-  // Calculate total based on product type
+  // Calculate total value for the order
   const calculateTotalValue = () => {
-    let total = 0;
-    
-    if (formData.productType === 'bem-casado') {
-      // Calculate bem-casado price
-      flavorSelections.forEach(selection => {
-        const flavor = flavors.find(f => f.id === selection.flavorId);
-        if (flavor && selection.quantity >= 20) {
-          // Add base price
-          let unitPrice = flavor.price;
-          
-          // Add additionals price
-          additionalSelections.forEach(addSelection => {
-            if (addSelection.selected) {
-              const additional = additionals.find(a => a.id === addSelection.id);
-              if (additional) {
-                unitPrice += additional.price;
-              }
-            }
-          });
-          
-          total += unitPrice * selection.quantity;
-        }
-      });
-    } else {
-      // Calculate bolo gelado price
-      boloGeladoSelections.forEach(selection => {
-        const flavor = boloGeladoFlavors.find(f => f.id === selection.flavorId);
-        if (flavor && selection.quantity >= 20) {
-          total += flavor.price * selection.quantity;
-        }
-      });
-    }
-    
-    return `R$ ${total.toFixed(2).replace('.', ',')}`;
+    return calculateTotal(
+      formData.productType,
+      flavorSelections,
+      boloGeladoSelections,
+      additionalSelections,
+      flavors,
+      boloGeladoFlavors,
+      additionals
+    );
+  };
+
+  // Update product type in form data when changed
+  const handleProductTypeChangeWrapper = (type: ProductType) => {
+    handleProductTypeChange(type);
+    setFormData({...formData, productType: type});
   };
 
   return {
@@ -196,7 +134,7 @@ export function useOrderForm(): UseOrderFormReturn {
     handleBoloGeladoFlavorChange,
     handleBoloGeladoQuantityChange,
     handleAdditionalChange,
-    handleProductTypeChange,
+    handleProductTypeChange: handleProductTypeChangeWrapper,
     calculateTotal: calculateTotalValue,
     searchCep
   };
