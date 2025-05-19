@@ -11,19 +11,13 @@ import { Switch } from "@/components/ui/switch";
 import { 
   MessageSquare, 
   Upload, 
-  Info, 
   Edit, 
   ChevronDown,
-  Image as ImageIcon 
+  ImageIcon 
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { 
-  Flavor, 
-  RibbonColor, 
-  PackageColor, 
-  useProductsStore,
-  useConfigStore
-} from '@/data/products';
+import { useProductsStore } from '@/data/store';
+import { useConfigStore } from '@/data/products';
 import { 
   Dialog, 
   DialogContent, 
@@ -32,48 +26,59 @@ import {
   DialogFooter,
   DialogDescription
 } from "@/components/ui/dialog";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const AdminPanel: React.FC = () => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  
+  // Store data
   const flavors = useProductsStore((state) => state.flavors);
   const ribbonColors = useProductsStore((state) => state.ribbonColors);
   const packageColors = useProductsStore((state) => state.packageColors);
+  const boloGeladoFlavors = useProductsStore((state) => state.boloGeladoFlavors);
+  const additionals = useProductsStore((state) => state.additionals);
   const whatsappNumber = useProductsStore((state) => state.whatsappNumber);
+  
+  // Store actions
+  const addFlavor = useProductsStore((state) => state.addFlavor);
+  const removeFlavor = useProductsStore((state) => state.removeFlavor);
+  const updateFlavor = useProductsStore((state) => state.updateFlavor);
+  
+  const addRibbonColor = useProductsStore((state) => state.addRibbonColor);
+  const removeRibbonColor = useProductsStore((state) => state.removeRibbonColor);
+  const updateRibbonColor = useProductsStore((state) => state.updateRibbonColor);
+  
+  const addPackageColor = useProductsStore((state) => state.addPackageColor);
+  const removePackageColor = useProductsStore((state) => state.removePackageColor);
+  const updatePackageColor = useProductsStore((state) => state.updatePackageColor);
+  
+  const addBoloGeladoFlavor = useProductsStore((state) => state.addBoloGeladoFlavor);
+  const removeBoloGeladoFlavor = useProductsStore((state) => state.removeBoloGeladoFlavor);
+  const updateBoloGeladoFlavor = useProductsStore((state) => state.updateBoloGeladoFlavor);
+  
+  const addAdditional = useProductsStore((state) => state.addAdditional);
+  const removeAdditional = useProductsStore((state) => state.removeAdditional);
+  const updateAdditional = useProductsStore((state) => state.updateAdditional);
+  
+  const setWhatsappNumber = useProductsStore((state) => state.setWhatsappNumber);
   
   // Config state
   const headerImageUrl = useConfigStore((state) => state.headerImageUrl);
   const setHeaderImageUrl = useConfigStore((state) => state.setHeaderImageUrl);
   
-  const addFlavor = useProductsStore((state) => state.addFlavor);
-  const removeFlavor = useProductsStore((state) => state.removeFlavor);
-  const updateFlavor = useProductsStore((state) => state.updateFlavor);
-  const addRibbonColor = useProductsStore((state) => state.addRibbonColor);
-  const removeRibbonColor = useProductsStore((state) => state.removeRibbonColor);
-  const updateRibbonColor = useProductsStore((state) => state.updateRibbonColor);
-  const addPackageColor = useProductsStore((state) => state.addPackageColor);
-  const removePackageColor = useProductsStore((state) => state.removePackageColor);
-  const updatePackageColor = useProductsStore((state) => state.updatePackageColor);
-  const setWhatsappNumber = useProductsStore((state) => state.setWhatsappNumber);
-  
   // Form states
   const [newFlavor, setNewFlavor] = useState({ name: '', price: 0, isNew: false });
   const [newRibbon, setNewRibbon] = useState({ name: '', code: '', color: '#000000', isNew: false, imageUrl: '' });
   const [newPackage, setNewPackage] = useState({ name: '', code: '', color: '#000000', isNew: false, imageUrl: '' });
+  const [newBoloGeladoFlavor, setNewBoloGeladoFlavor] = useState({ name: '', price: 0, isNew: false, categoryId: 'bolo-gelado' });
+  const [newAdditional, setNewAdditional] = useState({ name: '', price: 0 });
   const [newWhatsappNumber, setNewWhatsappNumber] = useState(whatsappNumber || '5566999580591');
   const [headerImagePreview, setHeaderImagePreview] = useState<string | null>(headerImageUrl);
 
-  // Edit modal state - centralizado
+  // Edit modal state
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [editType, setEditType] = useState<'flavor' | 'ribbon' | 'package'>('flavor');
+  const [editType, setEditType] = useState<'flavor' | 'ribbon' | 'package' | 'boloGelado' | 'additional'>('flavor');
   const [editItem, setEditItem] = useState<any>(null);
   const [currentTab, setCurrentTab] = useState('flavors');
   
@@ -87,7 +92,7 @@ const AdminPanel: React.FC = () => {
         name: newFlavor.name,
         price: newFlavor.price,
         isNew: newFlavor.isNew,
-        categoryId: 'default' // Add the required categoryId
+        categoryId: 'default'
       });
       setNewFlavor({ name: '', price: 0, isNew: false });
       toast({
@@ -151,6 +156,50 @@ const AdminPanel: React.FC = () => {
     }
   };
 
+  const handleAddBoloGeladoFlavor = () => {
+    if (newBoloGeladoFlavor.name && newBoloGeladoFlavor.price > 0) {
+      addBoloGeladoFlavor({
+        id: Date.now().toString(),
+        name: newBoloGeladoFlavor.name,
+        price: newBoloGeladoFlavor.price,
+        isNew: newBoloGeladoFlavor.isNew,
+        categoryId: 'bolo-gelado'
+      });
+      setNewBoloGeladoFlavor({ name: '', price: 0, isNew: false, categoryId: 'bolo-gelado' });
+      toast({
+        title: "Sucesso",
+        description: "Sabor de bolo gelado adicionado com sucesso.",
+      });
+    } else {
+      toast({
+        title: "Erro",
+        description: "Preencha todos os campos corretamente.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleAddAdditional = () => {
+    if (newAdditional.name && newAdditional.price > 0) {
+      addAdditional({
+        id: Date.now().toString(),
+        name: newAdditional.name,
+        price: newAdditional.price
+      });
+      setNewAdditional({ name: '', price: 0 });
+      toast({
+        title: "Sucesso",
+        description: "Adicional adicionado com sucesso.",
+      });
+    } else {
+      toast({
+        title: "Erro",
+        description: "Preencha todos os campos corretamente.",
+        variant: "destructive"
+      });
+    }
+  };
+
   const handleUpdateWhatsapp = () => {
     if (!newWhatsappNumber) {
       toast({
@@ -174,8 +223,6 @@ const AdminPanel: React.FC = () => {
       const imageUrl = URL.createObjectURL(file);
       setHeaderImagePreview(imageUrl);
       
-      // Em um ambiente real, aqui você faria o upload do arquivo para o servidor
-      // e então salvaria a URL retornada
       setHeaderImageUrl(imageUrl);
       
       toast({
@@ -186,7 +233,7 @@ const AdminPanel: React.FC = () => {
   };
   
   // Edit functions
-  const openEditModal = (type: 'flavor' | 'ribbon' | 'package', item: any) => {
+  const openEditModal = (type: 'flavor' | 'ribbon' | 'package' | 'boloGelado' | 'additional', item: any) => {
     setEditType(type);
     setEditItem({...item});
     setEditModalOpen(true);
@@ -229,6 +276,28 @@ const AdminPanel: React.FC = () => {
           throw new Error("Todos os campos são obrigatórios");
         }
       }
+      else if (editType === 'boloGelado') {
+        if (editItem.name && editItem.price > 0) {
+          updateBoloGeladoFlavor(editItem.id, editItem);
+          toast({
+            title: "Sucesso",
+            description: "Sabor de bolo gelado atualizado com sucesso.",
+          });
+        } else {
+          throw new Error("Nome e preço são obrigatórios");
+        }
+      }
+      else if (editType === 'additional') {
+        if (editItem.name && editItem.price > 0) {
+          updateAdditional(editItem.id, editItem);
+          toast({
+            title: "Sucesso",
+            description: "Adicional atualizado com sucesso.",
+          });
+        } else {
+          throw new Error("Nome e preço são obrigatórios");
+        }
+      }
       
       setEditModalOpen(false);
       setEditItem(null);
@@ -263,6 +332,8 @@ const AdminPanel: React.FC = () => {
               {currentTab === 'flavors' && 'Sabores'}
               {currentTab === 'ribbons' && 'Fitas'}
               {currentTab === 'packages' && 'Embalagens'}
+              {currentTab === 'bolo-gelado' && 'Bolo Gelado'}
+              {currentTab === 'additionals' && 'Adicionais'}
               {currentTab === 'settings' && 'Configurações'}
               <ChevronDown className={`h-4 w-4 transition-transform ${mobileMenuOpen ? 'transform rotate-180' : ''}`} />
             </Button>
@@ -289,6 +360,18 @@ const AdminPanel: React.FC = () => {
                     Embalagens
                   </button>
                   <button
+                    className={`px-4 py-2 text-left hover:bg-gray-100 ${currentTab === 'bolo-gelado' ? 'bg-gray-50 font-medium' : ''}`}
+                    onClick={() => handleMobileTabChange('bolo-gelado')}
+                  >
+                    Bolo Gelado
+                  </button>
+                  <button
+                    className={`px-4 py-2 text-left hover:bg-gray-100 ${currentTab === 'additionals' ? 'bg-gray-50 font-medium' : ''}`}
+                    onClick={() => handleMobileTabChange('additionals')}
+                  >
+                    Adicionais
+                  </button>
+                  <button
                     className={`px-4 py-2 text-left hover:bg-gray-100 ${currentTab === 'settings' ? 'bg-gray-50 font-medium' : ''}`}
                     onClick={() => handleMobileTabChange('settings')}
                   >
@@ -299,7 +382,6 @@ const AdminPanel: React.FC = () => {
             )}
             
             <div className="mt-6">
-              {/* Mobile tab content */}
               {currentTab === 'flavors' && (
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 gap-4 items-end">
@@ -592,6 +674,150 @@ const AdminPanel: React.FC = () => {
                 </div>
               )}
               
+              {currentTab === 'bolo-gelado' && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 gap-4 items-end">
+                    <div>
+                      <Label htmlFor="boloGeladoName">Nome do Sabor</Label>
+                      <Input 
+                        id="boloGeladoName" 
+                        value={newBoloGeladoFlavor.name} 
+                        onChange={(e) => setNewBoloGeladoFlavor({ ...newBoloGeladoFlavor, name: e.target.value })} 
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="boloGeladoPrice">Preço (R$)</Label>
+                      <Input 
+                        id="boloGeladoPrice" 
+                        type="number" 
+                        step="0.01" 
+                        min="0"
+                        value={newBoloGeladoFlavor.price || ''} 
+                        onChange={(e) => setNewBoloGeladoFlavor({ ...newBoloGeladoFlavor, price: parseFloat(e.target.value) || 0 })} 
+                      />
+                    </div>
+                    <div className="flex items-center">
+                      <Switch 
+                        id="isNewBoloGelado" 
+                        checked={newBoloGeladoFlavor.isNew}
+                        onCheckedChange={(checked) => setNewBoloGeladoFlavor({ ...newBoloGeladoFlavor, isNew: checked })}
+                      />
+                      <Label htmlFor="isNewBoloGelado" className="ml-2">Marcar como "Novidade"</Label>
+                    </div>
+                    <Button onClick={handleAddBoloGeladoFlavor}>Adicionar Sabor de Bolo Gelado</Button>
+                  </div>
+                  
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Nome</TableHead>
+                        <TableHead>Preço</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Ações</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {boloGeladoFlavors.map((flavor) => (
+                        <TableRow key={flavor.id}>
+                          <TableCell>{flavor.name}</TableCell>
+                          <TableCell>
+                            {new Intl.NumberFormat('pt-BR', { 
+                              style: 'currency', 
+                              currency: 'BRL' 
+                            }).format(flavor.price)}
+                          </TableCell>
+                          <TableCell>
+                            {flavor.isNew && <Badge className="bg-[#eb6824]">Novidade</Badge>}
+                          </TableCell>
+                          <TableCell className="space-x-2">
+                            <Button 
+                              variant="secondary" 
+                              size="sm"
+                              onClick={() => openEditModal('boloGelado', flavor)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              variant="destructive" 
+                              size="sm"
+                              onClick={() => removeBoloGeladoFlavor(flavor.id)}
+                            >
+                              Remover
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+              
+              {currentTab === 'additionals' && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 gap-4 items-end">
+                    <div>
+                      <Label htmlFor="additionalName">Nome do Adicional</Label>
+                      <Input 
+                        id="additionalName" 
+                        value={newAdditional.name} 
+                        onChange={(e) => setNewAdditional({ ...newAdditional, name: e.target.value })} 
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="additionalPrice">Preço (R$)</Label>
+                      <Input 
+                        id="additionalPrice" 
+                        type="number" 
+                        step="0.01" 
+                        min="0"
+                        value={newAdditional.price || ''} 
+                        onChange={(e) => setNewAdditional({ ...newAdditional, price: parseFloat(e.target.value) || 0 })} 
+                      />
+                    </div>
+                    <Button onClick={handleAddAdditional}>Adicionar Adicional</Button>
+                  </div>
+                  
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Nome</TableHead>
+                        <TableHead>Preço</TableHead>
+                        <TableHead>Ações</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {additionals.map((additional) => (
+                        <TableRow key={additional.id}>
+                          <TableCell>{additional.name}</TableCell>
+                          <TableCell>
+                            {new Intl.NumberFormat('pt-BR', { 
+                              style: 'currency', 
+                              currency: 'BRL' 
+                            }).format(additional.price)}
+                          </TableCell>
+                          <TableCell className="space-x-2">
+                            <Button 
+                              variant="secondary" 
+                              size="sm"
+                              onClick={() => openEditModal('additional', additional)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              variant="destructive" 
+                              size="sm"
+                              onClick={() => removeAdditional(additional.id)}
+                            >
+                              Remover
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+              
               {currentTab === 'settings' && (
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 gap-4 items-end">
@@ -644,10 +870,12 @@ const AdminPanel: React.FC = () => {
           </div>
         ) : (
           <Tabs defaultValue="flavors" onValueChange={setCurrentTab}>
-            <TabsList className="grid grid-cols-4">
+            <TabsList className="grid grid-cols-6">
               <TabsTrigger value="flavors">Sabores</TabsTrigger>
               <TabsTrigger value="ribbons">Fitas</TabsTrigger>
               <TabsTrigger value="packages">Embalagens</TabsTrigger>
+              <TabsTrigger value="bolo-gelado">Bolo Gelado</TabsTrigger>
+              <TabsTrigger value="additionals">Adicionais</TabsTrigger>
               <TabsTrigger value="settings">Configurações</TabsTrigger>
             </TabsList>
             
@@ -948,6 +1176,150 @@ const AdminPanel: React.FC = () => {
               </Table>
             </TabsContent>
             
+            {/* Bolo Gelado Tab */}
+            <TabsContent value="bolo-gelado" className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                <div>
+                  <Label htmlFor="boloGeladoName">Nome do Sabor</Label>
+                  <Input 
+                    id="boloGeladoName" 
+                    value={newBoloGeladoFlavor.name} 
+                    onChange={(e) => setNewBoloGeladoFlavor({ ...newBoloGeladoFlavor, name: e.target.value })} 
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="boloGeladoPrice">Preço (R$)</Label>
+                  <Input 
+                    id="boloGeladoPrice" 
+                    type="number" 
+                    step="0.01" 
+                    min="0"
+                    value={newBoloGeladoFlavor.price || ''} 
+                    onChange={(e) => setNewBoloGeladoFlavor({ ...newBoloGeladoFlavor, price: parseFloat(e.target.value) || 0 })} 
+                  />
+                </div>
+                <div className="flex items-center">
+                  <Switch 
+                    id="isNewBoloGelado" 
+                    checked={newBoloGeladoFlavor.isNew}
+                    onCheckedChange={(checked) => setNewBoloGeladoFlavor({ ...newBoloGeladoFlavor, isNew: checked })}
+                  />
+                  <Label htmlFor="isNewBoloGelado" className="ml-2">Marcar como "Novidade"</Label>
+                </div>
+                <Button onClick={handleAddBoloGeladoFlavor}>Adicionar Sabor de Bolo Gelado</Button>
+              </div>
+              
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>Preço</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {boloGeladoFlavors.map((flavor) => (
+                    <TableRow key={flavor.id}>
+                      <TableCell>{flavor.name}</TableCell>
+                      <TableCell>
+                        {new Intl.NumberFormat('pt-BR', { 
+                          style: 'currency', 
+                          currency: 'BRL' 
+                        }).format(flavor.price)}
+                      </TableCell>
+                      <TableCell>
+                        {flavor.isNew && <Badge className="bg-[#eb6824]">Novidade</Badge>}
+                      </TableCell>
+                      <TableCell className="space-x-2">
+                        <Button 
+                          variant="secondary" 
+                          size="sm"
+                          onClick={() => openEditModal('boloGelado', flavor)}
+                        >
+                          <Edit className="h-4 w-4 mr-1" /> Editar
+                        </Button>
+                        <Button 
+                          variant="destructive" 
+                          size="sm"
+                          onClick={() => removeBoloGeladoFlavor(flavor.id)}
+                        >
+                          Remover
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TabsContent>
+            
+            {/* Additionals Tab */}
+            <TabsContent value="additionals" className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                <div>
+                  <Label htmlFor="additionalName">Nome do Adicional</Label>
+                  <Input 
+                    id="additionalName" 
+                    value={newAdditional.name} 
+                    onChange={(e) => setNewAdditional({ ...newAdditional, name: e.target.value })} 
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="additionalPrice">Preço (R$)</Label>
+                  <Input 
+                    id="additionalPrice" 
+                    type="number" 
+                    step="0.01" 
+                    min="0"
+                    value={newAdditional.price || ''} 
+                    onChange={(e) => setNewAdditional({ ...newAdditional, price: parseFloat(e.target.value) || 0 })} 
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <Button onClick={handleAddAdditional}>Adicionar Adicional</Button>
+                </div>
+              </div>
+              
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>Preço</TableHead>
+                    <TableHead>Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {additionals.map((additional) => (
+                    <TableRow key={additional.id}>
+                      <TableCell>{additional.name}</TableCell>
+                      <TableCell>
+                        {new Intl.NumberFormat('pt-BR', { 
+                          style: 'currency', 
+                          currency: 'BRL' 
+                        }).format(additional.price)}
+                      </TableCell>
+                      <TableCell className="space-x-2">
+                        <Button 
+                          variant="secondary" 
+                          size="sm"
+                          onClick={() => openEditModal('additional', additional)}
+                        >
+                          <Edit className="h-4 w-4 mr-1" /> Editar
+                        </Button>
+                        <Button 
+                          variant="destructive" 
+                          size="sm"
+                          onClick={() => removeAdditional(additional.id)}
+                        >
+                          Remover
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TabsContent>
+            
             {/* Settings Tab */}
             <TabsContent value="settings" className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
@@ -1031,6 +1403,8 @@ const AdminPanel: React.FC = () => {
               {editType === 'flavor' && 'Editar Sabor'}
               {editType === 'ribbon' && 'Editar Fita'}
               {editType === 'package' && 'Editar Embalagem'}
+              {editType === 'boloGelado' && 'Editar Bolo Gelado'}
+              {editType === 'additional' && 'Editar Adicional'}
             </DialogTitle>
             <DialogDescription>
               Faça as alterações necessárias e clique em salvar quando terminar.
@@ -1039,7 +1413,7 @@ const AdminPanel: React.FC = () => {
           
           {editItem && (
             <div className="space-y-4 py-4">
-              {editType === 'flavor' && (
+              {(editType === 'flavor' || editType === 'boloGelado' || editType === 'additional') && (
                 <>
                   <div className="grid gap-2">
                     <Label htmlFor="edit-name">Nome</Label>
@@ -1060,14 +1434,16 @@ const AdminPanel: React.FC = () => {
                       onChange={(e) => setEditItem({ ...editItem, price: parseFloat(e.target.value) || 0 })}
                     />
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Switch 
-                      id="edit-isNew" 
-                      checked={editItem.isNew}
-                      onCheckedChange={(checked) => setEditItem({ ...editItem, isNew: checked })}
-                    />
-                    <Label htmlFor="edit-isNew">Marcar como "Novidade"</Label>
-                  </div>
+                  {(editType === 'flavor' || editType === 'boloGelado') && (
+                    <div className="flex items-center space-x-2">
+                      <Switch 
+                        id="edit-isNew" 
+                        checked={editItem.isNew}
+                        onCheckedChange={(checked) => setEditItem({ ...editItem, isNew: checked })}
+                      />
+                      <Label htmlFor="edit-isNew">Marcar como "Novidade"</Label>
+                    </div>
+                  )}
                 </>
               )}
               
