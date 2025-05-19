@@ -89,7 +89,8 @@ const BoloGeladoManagement: React.FC = () => {
     const flavor: BoloGeladoFlavor = {
       id: uuidv4(),
       name: newFlavor.name,
-      price: price
+      price: price,
+      categoryId: 'bolo-gelado'
     };
     
     addBoloGeladoFlavor(flavor);

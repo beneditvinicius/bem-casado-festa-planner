@@ -17,14 +17,14 @@ export const createBoloGeladoSlice: StateCreator<
   BoloGeladoSlice
 > = (set) => ({
   boloGeladoFlavors: [
-    { id: 'bg1', name: 'Frutas Vermelhas', price: 7.00 },
-    { id: 'bg2', name: 'Ninho e Nutella', price: 7.00 },
-    { id: 'bg3', name: 'Côco', price: 7.00 },
-    { id: 'bg4', name: 'Abacaxi com Côco', price: 7.00 },
-    { id: 'bg5', name: 'Maracujá', price: 7.00 },
-    { id: 'bg6', name: 'Chocolate', price: 8.00 },
-    { id: 'bg7', name: 'Doce de Leite com Côco', price: 8.00 },
-    { id: 'bg8', name: 'Pistache', price: 8.00 },
+    { id: 'bg1', name: 'Frutas Vermelhas', price: 7.00, categoryId: 'bolo-gelado' },
+    { id: 'bg2', name: 'Ninho e Nutella', price: 7.00, categoryId: 'bolo-gelado' },
+    { id: 'bg3', name: 'Côco', price: 7.00, categoryId: 'bolo-gelado' },
+    { id: 'bg4', name: 'Abacaxi com Côco', price: 7.00, categoryId: 'bolo-gelado' },
+    { id: 'bg5', name: 'Maracujá', price: 7.00, categoryId: 'bolo-gelado' },
+    { id: 'bg6', name: 'Chocolate', price: 8.00, categoryId: 'bolo-gelado' },
+    { id: 'bg7', name: 'Doce de Leite com Côco', price: 8.00, categoryId: 'bolo-gelado' },
+    { id: 'bg8', name: 'Pistache', price: 8.00, categoryId: 'bolo-gelado' },
   ],
   
   addBoloGeladoFlavor: (flavor) => set((state) => ({ 

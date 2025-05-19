@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { formatCPF, formatPhone, formatCEP } from '@/utils/formatter.tsx';
 import { useProductsStore } from '@/data/products';
@@ -14,6 +13,7 @@ import { FormData, UseOrderFormReturn, AdditionalSelection, ProductType } from '
 export { type FlavorSelection } from './orderForm/types';
 export { type FormData } from './orderForm/types';
 export { type ProductType } from './orderForm/types';
+export { type AdditionalSelection } from './orderForm/types';
 
 export function useOrderForm(): UseOrderFormReturn {
   const { toast } = useToast();
