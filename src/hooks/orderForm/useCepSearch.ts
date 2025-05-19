@@ -29,7 +29,7 @@ export const useCepSearch = (
       setIsLoadingCep(true);
       const cleanCep = formData.cep.replace(/\D/g, '');
       
-      // Fix: Use HTTPS instead of HTTP for the ViaCEP API
+      // Make sure to use HTTPS for the ViaCEP API
       const response = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
       
       if (!response.ok) {
@@ -48,13 +48,13 @@ export const useCepSearch = (
       }
 
       // Update form data with address information
-      setFormData({
-        ...formData,
+      setFormData(prevData => ({
+        ...prevData,
         street: data.logradouro || '',
         neighborhood: data.bairro || '',
         city: data.localidade || '',
         state: data.uf || '',
-      });
+      }));
 
       toast({
         title: "Endereço encontrado",
