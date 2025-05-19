@@ -1,15 +1,13 @@
 
 import React from 'react';
-import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Flavor, BoloGeladoFlavor, RibbonColor, PackageColor, Additional } from '@/data/products';
-import { FlavorSelection as FlavorSelectionType, ProductType, AdditionalSelection } from '@/hooks/useOrderForm';
-import { FlavorSelection } from './order-details/FlavorSelection';
+import { FlavorSelection as FlavorSelectionType, ProductType, AdditionalSelection } from '@/hooks/orderForm/types';
+import { ProductTypeSelector } from './order-details/ProductTypeSelector';
+import { FlavorControls } from './order-details/FlavorControls';
+import { BoloGeladoMessage } from './order-details/BoloGeladoMessage';
 import { ColorSelectors } from './order-details/ColorSelectors';
+import { AdditionalSelectors } from './order-details/AdditionalSelectors';
+import { ObservationsInput } from './order-details/ObservationsInput';
 import { OrderTotal } from './order-details/OrderTotal';
 
 interface OrderDetailsFormProps {
@@ -81,8 +79,6 @@ const OrderDetailsForm: React.FC<OrderDetailsFormProps> = ({
     ? flavorSelections.reduce((sum, item) => sum + (item.quantity || 0), 0)
     : boloGeladoSelections.reduce((sum, item) => sum + (item.quantity || 0), 0);
     
-  const showMinimumWarning = totalQuantity > 0 && totalQuantity < 20;
-
   const currentFlavors = formData.productType === 'bem-casado' ? flavors : boloGeladoFlavors;
   const currentSelections = formData.productType === 'bem-casado' ? flavorSelections : boloGeladoSelections;
   const handleCurrentFlavorChange = formData.productType === 'bem-casado' ? handleFlavorChange : handleBoloGeladoFlavorChange;
@@ -94,52 +90,23 @@ const OrderDetailsForm: React.FC<OrderDetailsFormProps> = ({
     <div className="space-y-4 text-center">
       <h3 className="text-lg font-medium">Detalhes do Pedido</h3>
       
-      <div className="mb-4">
-        <RadioGroup 
-          value={formData.productType}
-          onValueChange={(val) => handleProductTypeChange(val as ProductType)}
-          className="flex justify-center gap-8"
-        >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="bem-casado" id="order-bem-casado" />
-            <Label htmlFor="order-bem-casado" className="font-medium">Bem-Casado</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="bolo-gelado" id="order-bolo-gelado" />
-            <Label htmlFor="order-bolo-gelado" className="font-medium">Bolo Gelado</Label>
-          </div>
-        </RadioGroup>
-      </div>
+      <ProductTypeSelector 
+        productType={formData.productType} 
+        handleProductTypeChange={handleProductTypeChange}
+      />
       
-      {currentSelections.map((selection, index) => (
-        <FlavorSelection 
-          key={selection.id}
-          selection={selection}
-          index={index}
-          flavors={currentFlavors}
-          errors={errors}
-          isRemovable={currentSelections.length > 1}
-          onRemove={handleRemoveCurrentFlavor}
-          onFlavorChange={handleCurrentFlavorChange}
-          onQuantityChange={handleCurrentQuantityChange}
-        />
-      ))}
+      <FlavorControls
+        productType={formData.productType}
+        flavors={currentFlavors}
+        selections={currentSelections}
+        errors={errors}
+        handleAddFlavor={handleAddCurrentFlavor}
+        handleRemoveFlavor={handleRemoveCurrentFlavor}
+        handleFlavorChange={handleCurrentFlavorChange}
+        handleQuantityChange={handleCurrentQuantityChange}
+      />
       
-      <Button 
-        type="button"
-        variant="outline" 
-        onClick={handleAddCurrentFlavor}
-        className="w-full flex items-center justify-center gap-2 h-10 rounded-full"
-      >
-        <PlusCircle className="h-4 w-4" />
-        Adicionar outro sabor
-      </Button>
-      
-      {formData.productType === 'bolo-gelado' && (
-        <div className="text-center p-4 bg-gray-50 rounded-xl text-gray-600">
-          <p>Fita e embalagem não estão disponíveis para o Bolo Gelado.</p>
-        </div>
-      )}
+      {formData.productType === 'bolo-gelado' && <BoloGeladoMessage />}
       
       {formData.productType === 'bem-casado' && (
         <>
@@ -151,48 +118,18 @@ const OrderDetailsForm: React.FC<OrderDetailsFormProps> = ({
             handleSelectChange={handleSelectChange}
           />
           
-          <div className="w-full border border-gray-200 rounded-xl p-4 mb-4">
-            <h4 className="font-medium mb-3">Adicionais</h4>
-            <div className="space-y-3">
-              {additionals.map((additional) => {
-                const selection = additionalSelections.find(a => a.id === additional.id);
-                return (
-                  <div key={additional.id} className="flex justify-between items-center">
-                    <div className="flex items-start space-x-2">
-                      <Checkbox
-                        id={`order-additional-${additional.id}`}
-                        checked={selection?.selected || false}
-                        onCheckedChange={(checked) => 
-                          handleAdditionalChange(additional.id, checked === true)
-                        }
-                      />
-                      <Label 
-                        htmlFor={`order-additional-${additional.id}`}
-                        className="text-sm leading-tight"
-                      >
-                        {additional.name}
-                      </Label>
-                    </div>
-                    <span className="text-sm text-gray-600">+ R$ {additional.price.toFixed(2)}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+          <AdditionalSelectors
+            additionals={additionals}
+            additionalSelections={additionalSelections}
+            handleAdditionalChange={handleAdditionalChange}
+          />
         </>
       )}
 
-      <div className="text-center">
-        <Label htmlFor="observations" className="text-base">Observações (opcional)</Label>
-        <Textarea
-          id="observations"
-          name="observations"
-          value={formData.observations || ""}
-          onChange={handleInputChange}
-          placeholder="Alguma observação sobre seu pedido?"
-          className="min-h-[100px] rounded-2xl text-center"
-        />
-      </div>
+      <ObservationsInput 
+        observations={formData.observations} 
+        handleInputChange={handleInputChange} 
+      />
 
       <OrderTotal 
         totalQuantity={totalQuantity} 
