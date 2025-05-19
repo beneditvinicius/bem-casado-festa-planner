@@ -5,17 +5,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { QuantityField } from "@/components/ui/quantity-field";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { X } from "lucide-react";
-import { Flavor } from '@/data/types';
-import { FlavorSelection } from '@/hooks/useCalculator';
+import { Flavor, BoloGeladoFlavor } from '@/data/types';
+import { FlavorSelection, ProductType } from '@/hooks/useCalculator';
 
 interface FlavorSelectorProps {
   flavors: Flavor[];
+  boloGeladoFlavors: BoloGeladoFlavor[];
   selection: FlavorSelection;
   onFlavorChange: (id: string, flavorId: string) => void;
   onQuantityChange: (id: string, value: number | null) => void;
-  onIncrement?: (id: string) => void;
-  onDecrement?: (id: string) => void;
+  onProductTypeChange: (id: string, productType: ProductType) => void;
   onRemove: (id: string) => void;
   canRemove: boolean;
   hideButtons?: boolean;
@@ -23,11 +24,11 @@ interface FlavorSelectorProps {
 
 const FlavorSelector: React.FC<FlavorSelectorProps> = ({
   flavors,
+  boloGeladoFlavors,
   selection,
   onFlavorChange,
   onQuantityChange,
-  onIncrement,
-  onDecrement,
+  onProductTypeChange,
   onRemove,
   canRemove,
   hideButtons = false
@@ -36,9 +37,30 @@ const FlavorSelector: React.FC<FlavorSelectorProps> = ({
     onQuantityChange(selection.id, value);
   };
   
+  // Determine which flavor list to use based on product type
+  const currentFlavors = selection.productType === 'bem-casado' ? flavors : boloGeladoFlavors;
+  
   return (
     <Card className="w-full mb-4 rounded-3xl relative">
       <CardContent className="p-4">
+        <div className="mb-4">
+          <Label className="text-center block mb-2">Tipo de Produto</Label>
+          <RadioGroup 
+            value={selection.productType}
+            onValueChange={(value) => onProductTypeChange(selection.id, value as ProductType)}
+            className="flex justify-center gap-6"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="bem-casado" id={`bem-casado-${selection.id}`} />
+              <Label htmlFor={`bem-casado-${selection.id}`} className="font-medium">Bem-Casado</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="bolo-gelado" id={`bolo-gelado-${selection.id}`} />
+              <Label htmlFor={`bolo-gelado-${selection.id}`} className="font-medium">Bolo Gelado</Label>
+            </div>
+          </RadioGroup>
+        </div>
+
         <div className="flex flex-col sm:flex-row items-center gap-4">
           <div className="w-full sm:w-2/3">
             <Label htmlFor={`flavor-${selection.id}`} className="text-center block">Sabor</Label>
@@ -50,7 +72,7 @@ const FlavorSelector: React.FC<FlavorSelectorProps> = ({
                 <SelectValue placeholder="Selecione um sabor" />
               </SelectTrigger>
               <SelectContent>
-                {flavors.map((flavor) => (
+                {currentFlavors.map((flavor) => (
                   <SelectItem key={flavor.id} value={flavor.id}>
                     {flavor.name} - R$ {flavor.price.toFixed(2)}
                   </SelectItem>

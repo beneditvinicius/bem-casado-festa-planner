@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { useToast } from "@/hooks/use-toast";
-import { FlavorSelection } from './types';
+import { FlavorSelection, ProductType } from './types';
 import { Flavor } from '@/data/types';
 
 interface UseFlavorManagementReturn {
@@ -10,13 +10,14 @@ interface UseFlavorManagementReturn {
   handleRemoveFlavor: (id: string) => void;
   handleFlavorChange: (id: string, flavorId: string) => void;
   handleFlavorQuantityChange: (id: string, value: string) => void;
+  handleItemProductTypeChange: (id: string, type: ProductType) => void;
   calculateTotal: (flavors: Flavor[]) => string;
 }
 
 export const useFlavorManagement = (initialFlavors: Flavor[]): UseFlavorManagementReturn => {
   const { toast } = useToast();
   const [flavorSelections, setFlavorSelections] = useState<FlavorSelection[]>([
-    { id: '1', flavorId: initialFlavors[0]?.id || '', quantity: null }
+    { id: '1', flavorId: initialFlavors[0]?.id || '', quantity: null, productType: 'bem-casado' }
   ]);
 
   const handleAddFlavor = () => {
@@ -24,7 +25,8 @@ export const useFlavorManagement = (initialFlavors: Flavor[]): UseFlavorManageme
     setFlavorSelections(prev => [...prev, { 
       id: newId, 
       flavorId: initialFlavors[0]?.id || '', 
-      quantity: null 
+      quantity: null,
+      productType: 'bem-casado'
     }]);
   };
 
@@ -56,6 +58,12 @@ export const useFlavorManagement = (initialFlavors: Flavor[]): UseFlavorManageme
     ));
   };
 
+  const handleItemProductTypeChange = (id: string, productType: ProductType) => {
+    setFlavorSelections(prev => prev.map(item => 
+      item.id === id ? { ...item, productType } : item
+    ));
+  };
+
   const handleFlavorQuantityChange = (id: string, value: string) => {
     const quantity = value === '' ? null : parseInt(value);
     
@@ -83,6 +91,7 @@ export const useFlavorManagement = (initialFlavors: Flavor[]): UseFlavorManageme
     handleRemoveFlavor,
     handleFlavorChange,
     handleFlavorQuantityChange,
+    handleItemProductTypeChange,
     calculateTotal
   };
 };

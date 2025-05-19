@@ -14,9 +14,9 @@ export const useWhatsappMessageCreator = () => {
     packageColors: PackageColor[],
     additionals: Additional[]
   ) => {
-    const { name, cpf, phone, eventDate, cep, street, number, complement, neighborhood, city, state, productType, ribbonId, packageId, observations } = formData;
+    const { name, cpf, phone, eventDate, cep, street, number, complement, neighborhood, city, state, ribbonId, packageId, observations } = formData;
     
-    // Get ribbon and package info if product type is bem-casado
+    // Get ribbon and package info
     const ribbonColor = ribbonColors.find(r => r.id === ribbonId);
     const packageColor = packageColors.find(p => p.id === packageId);
     
@@ -25,15 +25,23 @@ export const useWhatsappMessageCreator = () => {
     
     const addressInfo = `*Endereço de Entrega*\nCEP: ${cep}\nRua: ${street}\nNúmero: ${number}\nComplemento: ${complement || 'Não informado'}\nBairro: ${neighborhood}\nCidade: ${city}\nEstado: ${state}\n\n`;
     
-    // Build product info based on product type
-    let productInfo = '';
+    let productInfo = `*Pedido*\n`;
     
-    if (productType === 'bem-casado') {
-      const totalQuantity = flavorSelections.reduce((sum, item) => sum + (item.quantity || 0), 0);
+    const bemCasadoSelections = flavorSelections.filter(selection => 
+      selection.productType === 'bem-casado' && selection.quantity && selection.quantity > 0
+    );
+    
+    const boloGeladoSelections = flavorSelections.filter(selection => 
+      selection.productType === 'bolo-gelado' && selection.quantity && selection.quantity > 0
+    );
+    
+    // Only include bem-casado section if there are bem-casado selections
+    if (bemCasadoSelections.length > 0) {
+      const totalBemCasadoQuantity = bemCasadoSelections.reduce((sum, item) => sum + (item.quantity || 0), 0);
       
-      productInfo = `*Pedido - Bem Casado*\nQuantidade Total: ${totalQuantity}\n\n*Sabores Selecionados*\n`;
+      productInfo += `\n*Bem-Casados*\nQuantidade Total: ${totalBemCasadoQuantity}\n\n*Sabores Selecionados*\n`;
       
-      flavorSelections.forEach(selection => {
+      bemCasadoSelections.forEach(selection => {
         if (selection.quantity && selection.quantity > 0) {
           const flavor = flavors.find(f => f.id === selection.flavorId);
           if (flavor) {
@@ -61,10 +69,13 @@ export const useWhatsappMessageCreator = () => {
           }
         });
       }
-    } else {
-      const totalQuantity = boloGeladoSelections.reduce((sum, item) => sum + (item.quantity || 0), 0);
+    }
+    
+    // Only include bolo gelado section if there are bolo gelado selections
+    if (boloGeladoSelections.length > 0) {
+      const totalBoloGeladoQuantity = boloGeladoSelections.reduce((sum, item) => sum + (item.quantity || 0), 0);
       
-      productInfo = `*Pedido - Bolo Gelado*\nQuantidade Total: ${totalQuantity}\n\n*Sabores Selecionados*\n`;
+      productInfo += `\n*Bolos Gelados*\nQuantidade Total: ${totalBoloGeladoQuantity}\n\n*Sabores Selecionados*\n`;
       
       boloGeladoSelections.forEach(selection => {
         if (selection.quantity && selection.quantity > 0) {

@@ -8,6 +8,7 @@ export interface FlavorSelection {
   id: string;
   flavorId: string;
   quantity: number | null;
+  productType: ProductType;
 }
 
 export interface AdditionalSelection {
@@ -24,20 +25,12 @@ export const useCalculator = (
 ) => {
   const { toast } = useToast();
   
-  // Product Type Selection
-  const [productType, setProductType] = useState<ProductType>('bem-casado');
-  
   // Initial flavor selection
   const initialSelection = {
     id: uuidv4(),
     flavorId: flavors.length > 0 ? flavors[0].id : '',
-    quantity: null
-  };
-  
-  const initialBoloGeladoSelection = {
-    id: uuidv4(),
-    flavorId: boloGeladoFlavors.length > 0 ? boloGeladoFlavors[0].id : '',
-    quantity: null
+    quantity: null,
+    productType: 'bem-casado' as ProductType
   };
   
   // Initialize additionals selections
@@ -47,18 +40,13 @@ export const useCalculator = (
   }));
   
   const [flavorSelections, setFlavorSelections] = useState<FlavorSelection[]>([initialSelection]);
-  const [boloGeladoSelections, setBoloGeladoSelections] = useState<FlavorSelection[]>([initialBoloGeladoSelection]);
   const [additionalSelections, setAdditionalSelections] = useState<AdditionalSelection[]>(initialAdditionalSelections);
   const [total, setTotal] = useState(0);
   const [showMinimumWarning, setShowMinimumWarning] = useState(false);
   
   // Function to get the total quantity
   const getTotalQuantity = (): number => {
-    if (productType === 'bem-casado') {
-      return flavorSelections.reduce((acc, selection) => acc + (selection.quantity || 0), 0);
-    } else {
-      return boloGeladoSelections.reduce((acc, selection) => acc + (selection.quantity || 0), 0);
-    }
+    return flavorSelections.reduce((acc, selection) => acc + (selection.quantity || 0), 0);
   };
   
   // Function to validate minimum quantity
@@ -83,43 +71,43 @@ export const useCalculator = (
     return isValid;
   };
   
-  // Handle product type change
-  const handleProductTypeChange = (value: ProductType) => {
-    setProductType(value);
+  // Handle product type change for a specific selection
+  const handleProductTypeChange = (id: string, value: ProductType) => {
+    setFlavorSelections(prev => 
+      prev.map(selection => {
+        if (selection.id === id) {
+          // Reset flavor selection when switching product types
+          const newFlavorId = value === 'bem-casado' 
+            ? (flavors.length > 0 ? flavors[0].id : '')
+            : (boloGeladoFlavors.length > 0 ? boloGeladoFlavors[0].id : '');
+            
+          return { 
+            ...selection, 
+            productType: value,
+            flavorId: newFlavorId
+          };
+        }
+        return selection;
+      })
+    );
   };
   
   // Handle flavor change
   const handleFlavorChange = (id: string, flavorId: string) => {
-    if (productType === 'bem-casado') {
-      setFlavorSelections(prev => 
-        prev.map(selection => 
-          selection.id === id ? { ...selection, flavorId } : selection
-        )
-      );
-    } else {
-      setBoloGeladoSelections(prev => 
-        prev.map(selection => 
-          selection.id === id ? { ...selection, flavorId } : selection
-        )
-      );
-    }
+    setFlavorSelections(prev => 
+      prev.map(selection => 
+        selection.id === id ? { ...selection, flavorId } : selection
+      )
+    );
   };
   
   // Handle quantity change
   const handleQuantityChange = (id: string, value: number | null) => {
-    if (productType === 'bem-casado') {
-      setFlavorSelections(prev => 
-        prev.map(selection => 
-          selection.id === id ? { ...selection, quantity: value } : selection
-        )
-      );
-    } else {
-      setBoloGeladoSelections(prev => 
-        prev.map(selection => 
-          selection.id === id ? { ...selection, quantity: value } : selection
-        )
-      );
-    }
+    setFlavorSelections(prev => 
+      prev.map(selection => 
+        selection.id === id ? { ...selection, quantity: value } : selection
+      )
+    );
   };
   
   // Handle additional selection change
@@ -133,38 +121,35 @@ export const useCalculator = (
   
   // Add new flavor selection
   const addFlavorSelection = () => {
-    if (productType === 'bem-casado') {
-      const newSelection: FlavorSelection = {
-        id: uuidv4(),
-        flavorId: flavors.length > 0 ? flavors[0].id : '',
-        quantity: null
-      };
-      
-      setFlavorSelections(prev => [...prev, newSelection]);
-    } else {
-      const newSelection: FlavorSelection = {
-        id: uuidv4(),
-        flavorId: boloGeladoFlavors.length > 0 ? boloGeladoFlavors[0].id : '',
-        quantity: null
-      };
-      
-      setBoloGeladoSelections(prev => [...prev, newSelection]);
-    }
+    const newSelection: FlavorSelection = {
+      id: uuidv4(),
+      flavorId: flavors.length > 0 ? flavors[0].id : '',
+      quantity: null,
+      productType: 'bem-casado'
+    };
+    
+    setFlavorSelections(prev => [...prev, newSelection]);
   };
   
   // Remove flavor selection
   const removeFlavorSelection = (id: string) => {
-    if (productType === 'bem-casado') {
-      setFlavorSelections(prev => prev.filter(selection => selection.id !== id));
-    } else {
-      setBoloGeladoSelections(prev => prev.filter(selection => selection.id !== id));
+    if (flavorSelections.length <= 1) {
+      toast({
+        title: "Ação não permitida",
+        description: "Você precisa ter pelo menos um sabor selecionado.",
+      });
+      return;
     }
+    
+    setFlavorSelections(prev => prev.filter(selection => selection.id !== id));
   };
   
   // Reset calculator
   const handleReset = () => {
-    setFlavorSelections([initialSelection]);
-    setBoloGeladoSelections([initialBoloGeladoSelection]);
+    setFlavorSelections([{
+      ...initialSelection,
+      id: uuidv4()
+    }]);
     setAdditionalSelections(initialAdditionalSelections);
     setTotal(0);
     setShowMinimumWarning(false);
@@ -174,16 +159,15 @@ export const useCalculator = (
   useEffect(() => {
     let newTotal = 0;
     
-    if (productType === 'bem-casado') {
-      // Calculate flavors subtotal
-      newTotal = flavorSelections.reduce((acc, selection) => {
-        if (!selection.flavorId || !selection.quantity) return acc;
-        
-        // Only count valid quantities (>= 20)
-        if (selection.quantity < 20) return acc;
-        
+    flavorSelections.forEach(selection => {
+      if (!selection.flavorId || !selection.quantity) return;
+      
+      // Only count valid quantities (>= 20)
+      if (selection.quantity < 20) return;
+      
+      if (selection.productType === 'bem-casado') {
         const flavor = flavors.find(f => f.id === selection.flavorId);
-        if (!flavor) return acc;
+        if (!flavor) return;
         
         // Calculate additionals price per unit
         const additionalsPricePerUnit = additionalSelections
@@ -193,30 +177,21 @@ export const useCalculator = (
             return sum + (additional ? additional.price : 0);
           }, 0);
         
-        return acc + (flavor.price + additionalsPricePerUnit) * selection.quantity;
-      }, 0);
-    } else {
-      // Calculate bolo gelado subtotal
-      newTotal = boloGeladoSelections.reduce((acc, selection) => {
-        if (!selection.flavorId || !selection.quantity) return acc;
+        newTotal += (flavor.price + additionalsPricePerUnit) * selection.quantity;
+      } else {
+        // Handle bolo gelado pricing
+        const boloFlavor = boloGeladoFlavors.find(f => f.id === selection.flavorId);
+        if (!boloFlavor) return;
         
-        // Only count valid quantities (>= 20)
-        if (selection.quantity < 20) return acc;
-        
-        const flavor = boloGeladoFlavors.find(f => f.id === selection.flavorId);
-        if (!flavor) return acc;
-        
-        return acc + flavor.price * selection.quantity;
-      }, 0);
-    }
+        newTotal += boloFlavor.price * selection.quantity;
+      }
+    });
     
     setTotal(newTotal);
-  }, [flavorSelections, boloGeladoSelections, additionalSelections, productType, flavors, boloGeladoFlavors, additionals]);
+  }, [flavorSelections, additionalSelections, flavors, boloGeladoFlavors, additionals]);
   
   return {
-    productType,
     flavorSelections,
-    boloGeladoSelections,
     additionalSelections,
     total,
     showMinimumWarning,
