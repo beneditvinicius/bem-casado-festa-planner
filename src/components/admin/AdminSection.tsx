@@ -7,6 +7,11 @@ import FlavorManagement from './flavors/FlavorManagement';
 import BoloGeladoManagement from './bolos/BoloGeladoManagement';
 import AdditionalsManagement from './additionals/AdditionalsManagement';
 
+// Define the proper type for the ColorManagement component
+interface ColorManagementProps {
+  tabType: 'ribbon' | 'package';
+}
+
 const AdminSection: React.FC = () => {
   return (
     <div className="container mx-auto py-8">

@@ -1,4 +1,3 @@
-
 export interface Flavor {
   id: string;
   name: string;
@@ -14,6 +13,7 @@ export interface BoloGeladoFlavor {
   price: number;
   isNew?: boolean;
   imageUrl?: string;
+  categoryId: string; // Add this field to make it compatible with Flavor
 }
 
 export interface Additional {
