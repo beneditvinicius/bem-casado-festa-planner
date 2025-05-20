@@ -23,15 +23,11 @@ const AnimatedWeddingDivider = () => {
   
   return (
     <div className="py-12 flex justify-center overflow-hidden">
-      <div className="flex items-center">
-        <div className="h-[1px] bg-gray-200 w-20 sm:w-32"></div>
-        <CurrentIcon 
-          className="mx-6 text-[#eb6824] animate-pulse" 
-          strokeWidth={1.5} 
-          size={32} 
-        />
-        <div className="h-[1px] bg-gray-200 w-20 sm:w-32"></div>
-      </div>
+      <CurrentIcon 
+        className="text-[#eb6824] animate-pulse" 
+        strokeWidth={1.5} 
+        size={32} 
+      />
     </div>
   );
 };

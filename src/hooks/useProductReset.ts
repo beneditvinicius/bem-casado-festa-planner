@@ -61,12 +61,14 @@ export function useProductReset({
         handleAddFlavor();
       }
       
-      // Always reset ribbon and package to first options
+      // Always reset ribbon and package to first options if available
       if (ribbonColors.length > 0) {
+        // Make sure to always reset to the first ribbon option
         handleSelectChange('ribbonId', ribbonColors[0].id);
       }
       
       if (packageColors.length > 0) {
+        // Make sure to always reset to the first package option
         handleSelectChange('packageId', packageColors[0].id);
       }
       
