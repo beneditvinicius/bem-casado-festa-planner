@@ -39,24 +39,45 @@ const OrderForm: React.FC = () => {
     searchCep
   } = useOrderForm();
   
+  // Convert additionalSelections to selectedAdditionals format for useProductReset
+  const selectedAdditionals = additionalSelections.reduce((acc, item) => {
+    acc[item.id] = item.selected;
+    return acc;
+  }, {} as Record<string, boolean>);
+  
+  // Set dummy function for setSelectedAdditionals since we use a different approach with handleAdditionalChange
+  const setSelectedAdditionals = (additionals: Record<string, boolean>) => {
+    Object.entries(additionals).forEach(([id, selected]) => {
+      handleAdditionalChange(id, selected);
+    });
+  };
+  
   // Use the product reset hook with direct access to all handlers
   const { resetProducts } = useProductReset({
     productType: formData.productType,
     flavorSelections,
-    boloGeladoSelections,
-    ribbonColors,
-    packageColors,
-    additionalSelections,
-    handleRemoveFlavor,
-    handleFlavorChange,
-    handleFlavorQuantityChange,
-    handleRemoveBoloGeladoFlavor,
-    handleBoloGeladoFlavorChange,
-    handleBoloGeladoQuantityChange,
-    handleAdditionalChange,
+    setFlavorSelections: (selections) => {
+      // Clear existing selections
+      flavorSelections.forEach(sel => handleRemoveFlavor(sel.id));
+      // Add new selections
+      selections.forEach(sel => {
+        handleAddFlavor();
+        const newId = flavorSelections[flavorSelections.length - 1].id;
+        handleFlavorChange(newId, sel.id);
+        handleFlavorQuantityChange(newId, sel.quantity.toString());
+      });
+    },
+    selectedAdditionals,
+    setSelectedAdditionals,
+    boloGeladoFlavor: boloGeladoSelections[0]?.flavorId || null,
+    setBoloGeladoFlavor: (flavor) => {
+      if (flavor) {
+        handleBoloGeladoFlavorChange(boloGeladoSelections[0]?.id || '', flavor);
+      }
+    },
     handleSelectChange,
     handleAddFlavor,
-    handleAddBoloGeladoFlavor,
+    handleAddAdditional: (id) => handleAdditionalChange(id, true)
   });
   
   const handleScrollToVisualizer = () => {

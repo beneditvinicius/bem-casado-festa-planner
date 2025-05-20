@@ -10,6 +10,7 @@ interface UseProductResetProps {
   setSelectedAdditionals: (additionals: Record<string, boolean>) => void;
   boloGeladoFlavor: string | null;
   setBoloGeladoFlavor: (flavor: string | null) => void;
+  boloGeladoSelections?: { id: string; flavorId: string; quantity: number }[];
   handleSelectChange: (name: string, value: string) => void;
   handleAddFlavor: () => void;
   handleAddAdditional: (id: string) => void;
@@ -23,6 +24,7 @@ export const useProductReset = ({
   setSelectedAdditionals,
   boloGeladoFlavor,
   setBoloGeladoFlavor,
+  boloGeladoSelections,
   handleSelectChange,
   handleAddFlavor,
   handleAddAdditional
