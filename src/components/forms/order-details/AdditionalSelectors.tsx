@@ -1,70 +1,80 @@
 
-import React from 'react';
-import { Label } from "@/components/ui/label";
+import React, { useState } from 'react';
 import { Checkbox } from "@/components/ui/checkbox";
-import { Additional } from '@/data/products';
-import { cn } from '@/lib/utils';
+import { Label } from "@/components/ui/label";
+import { Additional } from '@/data/types';
 import { AdditionalSelection } from '@/hooks/orderForm/types';
+import { Button } from "@/components/ui/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 interface AdditionalSelectorsProps {
   additionals: Additional[];
-  selectedAdditionals?: Record<string, boolean>;
-  additionalSelections?: AdditionalSelection[];
-  onChange?: (additionalId: string) => void;
-  handleAdditionalChange?: (id: string, selected: boolean) => void;
+  additionalSelections: AdditionalSelection[];
+  handleAdditionalChange: (id: string, selected: boolean) => void;
 }
 
-export const AdditionalSelectors: React.FC<AdditionalSelectorsProps> = ({ 
-  additionals, 
-  selectedAdditionals, 
-  additionalSelections, 
-  onChange, 
-  handleAdditionalChange 
+export const AdditionalSelectors: React.FC<AdditionalSelectorsProps> = ({
+  additionals,
+  additionalSelections,
+  handleAdditionalChange
 }) => {
-  // Function to determine if an additional is selected, checking both selection methods
-  const isSelected = (id: string) => {
-    if (additionalSelections) {
-      const selection = additionalSelections.find(sel => sel.id === id);
-      return selection ? selection.selected : false;
-    }
-    return selectedAdditionals?.[id] || false;
-  };
-
-  // Function to handle changes, using the appropriate callback
-  const handleChange = (id: string) => {
-    if (handleAdditionalChange) {
-      const currentSelected = isSelected(id);
-      handleAdditionalChange(id, !currentSelected);
-    } else if (onChange) {
-      onChange(id);
-    }
-  };
+  const [isOpen, setIsOpen] = useState(false);
+  
+  // Get only the selected additionals
+  const selectedAdditionals = additionalSelections
+    .filter(selection => selection.selected)
+    .map(selection => additionals.find(a => a.id === selection.id))
+    .filter(Boolean);
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h3 className="text-base font-medium mb-3">Gostaria de algum adicional?</h3>
-        <div className="grid grid-cols-1 gap-4">
-          {additionals.map((additional) => (
-            <div key={additional.id} className="flex items-start space-x-3 py-2">
-              <Checkbox
-                id={additional.id}
-                checked={isSelected(additional.id)}
-                onCheckedChange={() => handleChange(additional.id)}
-                className={cn("rounded-md data-[state=checked]:bg-[#eb6824] border-gray-300")}
-              />
-              <div className="grid gap-1.5 leading-none">
-                <Label
-                  htmlFor={additional.id}
-                  className="text-sm cursor-pointer peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  {additional.name} (+R$ {additional.price.toFixed(2)})
-                </Label>
-              </div>
+    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-full">
+      <CollapsibleTrigger asChild>
+        <Button 
+          variant="outline" 
+          className="w-full flex justify-between items-center rounded-full"
+        >
+          <span>Escolha os adicionais</span>
+          {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+        </Button>
+      </CollapsibleTrigger>
+      
+      {/* Show selected items even when collapsed */}
+      {!isOpen && selectedAdditionals.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-2">
+          {selectedAdditionals.map(additional => (
+            <div key={additional?.id} className="bg-orange-100 text-sm px-3 py-1 rounded-full text-orange-800">
+              {additional?.name}
             </div>
           ))}
         </div>
-      </div>
-    </div>
+      )}
+      
+      <CollapsibleContent className="mt-4 space-y-3">
+        {additionals.map((additional) => {
+          const selection = additionalSelections.find(a => a.id === additional.id);
+          return (
+            <div key={additional.id} className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-full">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id={`order-additional-${additional.id}`}
+                  checked={selection?.selected || false}
+                  onCheckedChange={(checked) => 
+                    handleAdditionalChange(additional.id, checked === true)
+                  }
+                />
+                <Label 
+                  htmlFor={`order-additional-${additional.id}`}
+                  className="text-sm leading-tight cursor-pointer"
+                >
+                  {additional.name}
+                </Label>
+              </div>
+              <span className="text-sm font-medium text-gray-600">+ R$ {additional.price.toFixed(2)}</span>
+            </div>
+          );
+        })}
+      </CollapsibleContent>
+    </Collapsible>
   );
 };

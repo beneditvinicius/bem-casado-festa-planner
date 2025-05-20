@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import BannerImageUploader from './BannerImageUploader';
 import PasswordManagement from './PasswordManagement';
-import { ExternalLink } from 'lucide-react';
 
 const ConfigManagement = () => {
   const { toast } = useToast();
@@ -16,16 +15,10 @@ const ConfigManagement = () => {
   const setWhatsappNumber = useProductsStore(state => state.setWhatsappNumber);
   const headerImageUrl = useProductsStore(state => state.headerImageUrl);
   const setHeaderImageUrl = useProductsStore(state => state.setHeaderImageUrl);
-  const catalogBemCasadosUrl = useProductsStore(state => state.catalogBemCasadosUrl);
-  const setCatalogBemCasadosUrl = useProductsStore(state => state.setCatalogBemCasadosUrl);
-  const catalogBolosGeladosUrl = useProductsStore(state => state.catalogBolosGeladosUrl);
-  const setCatalogBolosGeladosUrl = useProductsStore(state => state.setCatalogBolosGeladosUrl);
 
   const [number, setNumber] = React.useState(whatsappNumber);
-  const [bemCasadosUrl, setBemCasadosUrl] = React.useState(catalogBemCasadosUrl || '');
-  const [bolosGeladosUrl, setBolosGeladosUrl] = React.useState(catalogBolosGeladosUrl || '');
 
-  const handleSaveWhatsApp = () => {
+  const handleSave = () => {
     const cleanNumber = number.replace(/\D/g, '');
     
     if (cleanNumber.length < 10) {
@@ -45,30 +38,8 @@ const ConfigManagement = () => {
     });
   };
 
-  const handleSaveCatalogLinks = () => {
-    setCatalogBemCasadosUrl(bemCasadosUrl);
-    setCatalogBolosGeladosUrl(bolosGeladosUrl);
-    
-    toast({
-      title: 'Links de catálogo salvos',
-      description: 'Os links para os catálogos foram atualizados com sucesso.',
-    });
-  };
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNumber(e.target.value);
-  };
-
-  const openCatalogLink = (url: string | null) => {
-    if (url) {
-      window.open(url, '_blank');
-    } else {
-      toast({
-        title: 'Link não configurado',
-        description: 'O link para este catálogo ainda não foi configurado.',
-        variant: 'destructive',
-      });
-    }
   };
 
   return (
@@ -83,71 +54,6 @@ const ConfigManagement = () => {
         <CardContent>
           <BannerImageUploader imageUrl={headerImageUrl || ''} onChange={setHeaderImageUrl} />
         </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Links dos Catálogos</CardTitle>
-          <CardDescription>
-            Configure os links para seus catálogos de produtos.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="bemCasados">Link do Catálogo de Bem-Casados</Label>
-              <Input
-                id="bemCasados"
-                placeholder="https://exemplo.com/bem-casados"
-                value={bemCasadosUrl}
-                onChange={(e) => setBemCasadosUrl(e.target.value)}
-                className="rounded-full"
-              />
-              {bemCasadosUrl && (
-                <div className="mt-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => openCatalogLink(bemCasadosUrl)}
-                    className="text-sm"
-                  >
-                    <ExternalLink className="h-4 w-4 mr-2" /> Visualizar
-                  </Button>
-                </div>
-              )}
-            </div>
-            <div>
-              <Label htmlFor="bolosGelados">Link do Catálogo de Bolos Gelados</Label>
-              <Input
-                id="bolosGelados"
-                placeholder="https://exemplo.com/bolos-gelados"
-                value={bolosGeladosUrl}
-                onChange={(e) => setBolosGeladosUrl(e.target.value)}
-                className="rounded-full"
-              />
-              {bolosGeladosUrl && (
-                <div className="mt-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => openCatalogLink(bolosGeladosUrl)}
-                    className="text-sm"
-                  >
-                    <ExternalLink className="h-4 w-4 mr-2" /> Visualizar
-                  </Button>
-                </div>
-              )}
-            </div>
-          </div>
-        </CardContent>
-        <CardFooter>
-          <Button 
-            onClick={handleSaveCatalogLinks} 
-            className="w-full rounded-full bg-[#eb6824] hover:bg-[#d25618]"
-          >
-            Salvar Links de Catálogo
-          </Button>
-        </CardFooter>
       </Card>
 
       <Card>
@@ -174,7 +80,7 @@ const ConfigManagement = () => {
         </CardContent>
         <CardFooter>
           <Button 
-            onClick={handleSaveWhatsApp} 
+            onClick={handleSave} 
             className="w-full rounded-full bg-[#eb6824] hover:bg-[#d25618]"
           >
             Salvar Configuração
