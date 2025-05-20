@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { Palette } from "lucide-react"; // Changed from ColorSwatch to Palette
+import { Palette } from "lucide-react"; 
 import { useProductsStore } from '@/data/store';
 
 interface MiniVisualizerProps {

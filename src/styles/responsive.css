@@ -15,7 +15,7 @@
     }
     
     .card-content {
-      padding: 1rem;
+      padding: 0.75rem;
     }
     
     /* Adjust body padding for smaller header on mobile */
@@ -23,14 +23,20 @@
       padding-top: calc(var(--header-height-mobile) + 20px); /* Aumentado com margem extra para evitar sobreposição */
     }
     
-    /* Adicionar margem superior extra para a primeira seção */
-    #calculator {
-      margin-top: 15px;
-    }
-    
     /* Make navigation text smaller on mobile */
     header nav button {
       font-size: 13px;
+    }
+    
+    /* Make form spacing tighter on mobile */
+    .space-y-4 {
+      margin-bottom: 0.5rem;
+    }
+    
+    /* Make form fields more compact */
+    input, select, textarea {
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
     }
   }
 }
@@ -64,6 +70,11 @@
   /* Adjust header nav spacing on mobile */
   header nav {
     gap: 2px !important;
+  }
+  
+  /* Add more compact spacing for form sections */
+  .section-container {
+    margin-bottom: 1.5rem;
   }
 }
 

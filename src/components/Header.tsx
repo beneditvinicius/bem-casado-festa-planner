@@ -63,12 +63,6 @@ const Header: React.FC = () => {
         
         <nav className="flex flex-wrap justify-center gap-4 sm:gap-6">
           <button 
-            onClick={() => scrollToSection('calculator')} 
-            className="text-white hover:text-[#FED7C3] transition-colors px-1 sm:px-2"
-          >
-            Calculadora
-          </button>
-          <button 
             onClick={() => scrollToSection('pedido')} 
             className="text-white hover:text-[#FED7C3] transition-colors px-1 sm:px-2"
           >

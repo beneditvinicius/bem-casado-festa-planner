@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import OrderForm from '@/components/OrderForm';
@@ -45,9 +46,9 @@ const Index: React.FC = () => {
   const sections = [
     {
       id: 'pedido',
-      title: 'Faça seu Pedido',
+      title: null, // Remove title as it's now part of the component
       component: <OrderForm />,
-      description: 'Agora que já sabe qual será o seu orçamento, preencha seus dados para recebermos tudo prontinho no nosso WhatsApp para lançarmos seu pedido!'
+      description: null // Remove description as it's now part of the component
     },
     {
       id: 'visualizer',
@@ -71,17 +72,9 @@ const Index: React.FC = () => {
         {sections.map((section) => (
           <React.Fragment key={section.id}>
             <section id={section.id} className="section-container">
-              <div className="bg-white rounded-3xl shadow-md p-6 mb-6 text-center">
-                <h2 className="text-xl sm:text-2xl font-semibold mb-3">{section.title}</h2>
-                {section.id === 'pedido' && (
-                  <>
-                    <p className="mb-4 text-center">{section.description}</p>
-                    <p className="text-xs text-gray-500 mb-4">Seus dados estão seguros! Usamos essas informações apenas para o lançamento no sistema.</p>
-                  </>
-                )}
-                {section.id !== 'pedido' && section.description && (
-                  <p className="mb-4 text-center">{section.description}</p>
-                )}
+              <div className="bg-white rounded-3xl shadow-md p-4 sm:p-6 mb-6 text-center">
+                {section.title && <h2 className="text-xl sm:text-2xl font-semibold mb-3">{section.title}</h2>}
+                {section.description && <p className="mb-4 text-center">{section.description}</p>}
                 {section.component}
               </div>
             </section>

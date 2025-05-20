@@ -1,12 +1,10 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, Palette } from "lucide-react";
 import PersonalInfoForm from './forms/PersonalInfoForm';
 import EventInfoForm from './forms/EventInfoForm';
 import OrderDetailsForm from './forms/OrderDetailsForm';
-import MiniVisualizer from './visualizer/MiniVisualizer';
 import { useOrderForm } from '@/hooks/useOrderForm';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -43,6 +41,45 @@ const OrderForm: React.FC = () => {
   } = useOrderForm();
   const isMobile = useIsMobile();
   
+  const [showMiniTest, setShowMiniTest] = useState(true);
+  
+  // Reset only product details fields
+  const handleResetProducts = () => {
+    // Reset flavor selections and product type but not personal info
+    if (flavorSelections.length > 0) {
+      flavorSelections.forEach(selection => {
+        handleRemoveFlavor(selection.id);
+      });
+    }
+    if (boloGeladoSelections.length > 0) {
+      boloGeladoSelections.forEach(selection => {
+        handleRemoveBoloGeladoFlavor(selection.id);
+      });
+    }
+    
+    // Add back one empty flavor selection
+    handleAddFlavor();
+  };
+  
+  // Reset only personal info fields
+  const handleResetPersonalInfo = () => {
+    // Reset personal info, event info, and observations but keep product selections
+    const personalFields = ['name', 'cpf', 'phone', 'cep', 'street', 'number', 
+                           'complement', 'neighborhood', 'city', 'observations',
+                           'eventLocation', 'eventType'];
+    
+    personalFields.forEach(field => {
+      if (field in formData) {
+        handleInputChange({
+          target: { name: field, value: '' }
+        } as React.ChangeEvent<HTMLInputElement>);
+      }
+    });
+    
+    // Reset event date
+    handleDateChange(undefined);
+  };
+  
   const handleScrollToVisualizer = () => {
     const visualizerElement = document.getElementById('visualizer');
     if (visualizerElement) {
@@ -54,6 +91,14 @@ const OrderForm: React.FC = () => {
     <Card className="w-full rounded-3xl" id="pedido">
       <CardContent className="pt-6 card-content">
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Updated Title and introduction */}
+          <div className="text-center mb-6">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-2">Faça seu Orçamento</h2>
+            <p className="text-gray-600 text-sm sm:text-base">
+              Utilize essa calculadora para estimar o preço dos seus produtos de acordo com a quantidade e sabores desejados.
+            </p>
+          </div>
+          
           {/* Order Details Section */}
           <OrderDetailsForm 
             formData={formData}
@@ -81,15 +126,32 @@ const OrderForm: React.FC = () => {
             calculateTotal={calculateTotal}
           />
           
+          {/* Product action buttons */}
+          <div className={`flex ${isMobile ? 'flex-col' : 'justify-center'} gap-3 mt-4`}>
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={handleResetProducts} 
+              className={`h-12 rounded-full ${isMobile ? 'w-full' : 'px-6'}`}
+            >
+              Limpar Tudo
+            </Button>
+            <Button 
+              type="button" 
+              onClick={handleScrollToVisualizer} 
+              className={`h-12 rounded-full bg-[#eb6824] hover:bg-[#d25618] text-white ${isMobile ? 'w-full' : 'px-6'}`}
+            >
+              <Palette className="mr-2 h-4 w-4" />
+              Teste as cores do bem casado
+            </Button>
+          </div>
+          
           {/* Incentive Message */}
-          <div className="w-full text-center bg-[#fef7cd] p-4 rounded-lg my-6">
+          <div className="w-full text-center py-6 my-6">
             <p className="font-medium text-gray-800">
               Achou interessante? Agora preencha seus dados e mande seu pedido para nosso WhatsApp.
             </p>
           </div>
-          
-          {/* Mini Visualizer */}
-          <MiniVisualizer onExpandClick={handleScrollToVisualizer} />
           
           {/* Personal Info and Event Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -104,17 +166,31 @@ const OrderForm: React.FC = () => {
             />
             
             {/* Informações do Evento */}
-            <EventInfoForm 
-              formData={formData} 
-              errors={errors} 
-              handleInputChange={handleInputChange} 
-              handleDateChange={handleDateChange}
-              handleSelectChange={handleSelectChange}
-            />
+            <div className="space-y-6">
+              <EventInfoForm 
+                formData={formData} 
+                errors={errors} 
+                handleInputChange={handleInputChange} 
+                handleDateChange={handleDateChange}
+                handleSelectChange={handleSelectChange}
+              />
+              
+              {/* Observations field moved here */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Observações</h3>
+                <textarea
+                  name="observations"
+                  placeholder="Alguma observação ou detalhe importante sobre o pedido?"
+                  value={formData.observations}
+                  onChange={handleInputChange}
+                  className="w-full rounded-xl border-gray-300 h-24"
+                />
+              </div>
+            </div>
           </div>
           
-          <div className={`flex ${isMobile ? 'flex-col gap-2' : 'justify-center gap-4'} pt-4`}>
-            <Button type="button" variant="outline" onClick={handleReset} className={`h-12 rounded-full ${isMobile ? 'w-full' : 'px-6'}`}>
+          <div className={`flex ${isMobile ? 'flex-col gap-2' : 'justify-center gap-4'} pt-6`}>
+            <Button type="button" variant="outline" onClick={handleResetPersonalInfo} className={`h-12 rounded-full ${isMobile ? 'w-full' : 'px-6'}`}>
               Limpar Tudo
             </Button>
             <Button type="submit" className={`h-12 rounded-full bg-[#eb6824] hover:bg-[#d25618] text-white ${isMobile ? 'w-full' : 'px-6'}`}>
