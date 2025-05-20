@@ -1,9 +1,9 @@
 
 import React from 'react';
-import { Ring, Heart, Gift, CalendarHeart, Stars, Cake } from "lucide-react";
+import { CircleDashed, Heart, Gift, Calendar, Star, CircleDot } from "lucide-react";
 
 const AnimatedWeddingDivider = () => {
-  const icons = [Ring, Heart, Gift, CalendarHeart, Stars, Cake];
+  const icons = [CircleDashed, Heart, Gift, Calendar, Star, CircleDot];
   
   return (
     <div className="py-8 flex justify-center overflow-hidden">
