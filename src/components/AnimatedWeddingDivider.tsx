@@ -1,41 +1,16 @@
 
 import React from 'react';
-import { Heart, Calendar, Gift, MapPin, Cake, Star, User } from "lucide-react";
+import { Heart } from "lucide-react";
 
 const AnimatedWeddingDivider = () => {
-  // Collection of wedding-themed icons
-  const icons = [
-    { icon: Heart, label: 'Coração' },
-    { icon: Gift, label: 'Presente' },
-    { icon: Calendar, label: 'Calendário' },
-    { icon: Cake, label: 'Bolo' },
-    { icon: Star, label: 'Estrela' },
-    { icon: MapPin, label: 'Localização' },
-    { icon: User, label: 'Usuário' },
-    { icon: Heart, label: 'Coração' },
-    { icon: Gift, label: 'Presente' },
-    { icon: Calendar, label: 'Calendário' },
-    { icon: Cake, label: 'Bolo' },
-    { icon: Star, label: 'Estrela' },
-    { icon: MapPin, label: 'Localização' },
-    { icon: User, label: 'Usuário' },
-  ];
-  
   return (
-    <div className="py-8 overflow-hidden relative">
-      <div className="flex animate-marquee">
-        {icons.map((item, index) => {
-          const IconComponent = item.icon;
-          return (
-            <div key={index} className="mx-6">
-              <IconComponent 
-                className="text-[#eb6824]" 
-                strokeWidth={1.5} 
-                size={24} 
-              />
-            </div>
-          );
-        })}
+    <div className="py-8 flex justify-center relative">
+      <div className="relative">
+        <Heart 
+          className="text-[#eb6824] animate-pulse" 
+          strokeWidth={1.5} 
+          size={36} 
+        />
       </div>
     </div>
   );
