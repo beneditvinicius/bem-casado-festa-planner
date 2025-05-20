@@ -80,7 +80,7 @@ const Index: React.FC = () => {
                 {section.component}
               </div>
             </section>
-            {/* Add divider between sections */}
+            {/* Add divider between pedido and visualizer sections only */}
             {index < sections.length - 1 && section.id === 'pedido' && <AnimatedWeddingDivider />}
           </React.Fragment>
         ))}

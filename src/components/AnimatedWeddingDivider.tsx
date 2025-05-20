@@ -1,9 +1,18 @@
 
 import React, { useState, useEffect } from 'react';
-import { CircleDashed, Heart, Gift, Calendar, Star, CircleDot } from "lucide-react";
+import { Heart, Calendar, Wedding, MapPin, Cake, User } from "lucide-react";
 
 const AnimatedWeddingDivider = () => {
-  const icons = [CircleDashed, Heart, Gift, Calendar, Star, CircleDot];
+  // Collection of wedding-themed icons
+  const icons = [
+    { icon: Heart, label: 'Coração' },
+    { icon: Wedding, label: 'Aliança' },
+    { icon: Calendar, label: 'Calendário' },
+    { icon: Cake, label: 'Bolo' },
+    { icon: User, label: 'Noivos' },
+    { icon: MapPin, label: 'Localização' },
+  ];
+  
   const [currentIconIndex, setCurrentIconIndex] = useState(0);
   
   useEffect(() => {
@@ -19,7 +28,7 @@ const AnimatedWeddingDivider = () => {
     return () => clearInterval(interval);
   }, []);
   
-  const CurrentIcon = icons[currentIconIndex];
+  const CurrentIcon = icons[currentIconIndex].icon;
   
   return (
     <div className="py-12 flex justify-center overflow-hidden">

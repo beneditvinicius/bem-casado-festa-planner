@@ -9,7 +9,6 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { ImageExistenceProvider } from './visualizer/ImageExistenceProvider';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import AnimatedWeddingDivider from './AnimatedWeddingDivider';
 
 const Visualizer: React.FC = () => {
   const ribbonColors = useProductsStore(state => state.ribbonColors);
