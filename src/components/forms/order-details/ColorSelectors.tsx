@@ -27,6 +27,10 @@ export const ColorSelectors: React.FC<ColorSelectorsProps> = ({
   handleSelectChange,
   onVisualizerClick
 }) => {
+  // Force re-render when formData.ribbonId or formData.packageId changes
+  const ribbonId = formData.ribbonId || (ribbonColors.length > 0 ? ribbonColors[0].id : '');
+  const packageId = formData.packageId || (packageColors.length > 0 ? packageColors[0].id : '');
+
   return (
     <div className="space-y-4">
       <div className="flex justify-center">
@@ -43,7 +47,8 @@ export const ColorSelectors: React.FC<ColorSelectorsProps> = ({
       <div>
         <Label htmlFor="ribbonColor" className="text-base">Cor da Fita</Label>
         <Select 
-          value={formData.ribbonId} 
+          key={`ribbon-${ribbonId}`}
+          value={ribbonId}
           onValueChange={(value) => handleSelectChange('ribbonId', value)}
         >
           <SelectTrigger id="ribbonColor" className={cn("h-12", errors.ribbonId && "border-red-500")}>
@@ -69,7 +74,8 @@ export const ColorSelectors: React.FC<ColorSelectorsProps> = ({
       <div>
         <Label htmlFor="packageColor" className="text-base">Cor da Embalagem</Label>
         <Select 
-          value={formData.packageId} 
+          key={`package-${packageId}`}
+          value={packageId}
           onValueChange={(value) => handleSelectChange('packageId', value)}
         >
           <SelectTrigger id="packageColor" className={cn("h-12", errors.packageId && "border-red-500")}>

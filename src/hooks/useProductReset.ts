@@ -61,14 +61,22 @@ export function useProductReset({
         handleAddFlavor();
       }
       
-      // Reset ribbon color to the first option - FIXANDO CORREÇÃO AQUI
+      // Always reset ribbon color to the first option, ensuring this happens regardless of other operations
       if (ribbonColors.length > 0) {
-        handleSelectChange('ribbonId', ribbonColors[0].id);
+        console.log("Resetting ribbon color to:", ribbonColors[0].id);
+        // Force immediate update with the first ribbon color
+        setTimeout(() => {
+          handleSelectChange('ribbonId', ribbonColors[0].id);
+        }, 0);
       }
       
-      // Reset package color to the first option - FIXANDO CORREÇÃO AQUI
+      // Always reset package color to the first option, ensuring this happens regardless of other operations
       if (packageColors.length > 0) {
-        handleSelectChange('packageId', packageColors[0].id);
+        console.log("Resetting package color to:", packageColors[0].id);
+        // Force immediate update with the first package color
+        setTimeout(() => {
+          handleSelectChange('packageId', packageColors[0].id);
+        }, 0);
       }
       
       // Reset additionals

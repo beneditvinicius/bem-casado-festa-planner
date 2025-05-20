@@ -39,7 +39,7 @@ const OrderForm: React.FC = () => {
     searchCep
   } = useOrderForm();
   
-  // Use the product reset hook
+  // Use the product reset hook with direct access to all handlers
   const { resetProducts } = useProductReset({
     productType: formData.productType,
     flavorSelections,
