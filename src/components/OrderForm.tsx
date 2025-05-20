@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -44,24 +43,56 @@ const OrderForm: React.FC = () => {
   } = useOrderForm();
   const isMobile = useIsMobile();
   
-  const [showMiniTest, setShowMiniTest] = useState(true);
-  
   // Reset only product details fields
   const handleResetProducts = () => {
-    // Reset flavor selections and product type but not personal info
-    if (flavorSelections.length > 0) {
-      flavorSelections.forEach(selection => {
-        handleRemoveFlavor(selection.id);
+    // Reset flavor selections but not personal info
+    if (formData.productType === 'bem-casado') {
+      if (flavorSelections.length > 1) {
+        // Keep the first one and remove the rest
+        for (let i = flavorSelections.length - 1; i > 0; i--) {
+          handleRemoveFlavor(flavorSelections[i].id);
+        }
+        // Reset the first one
+        handleFlavorChange(flavorSelections[0].id, '');
+        handleFlavorQuantityChange(flavorSelections[0].id, '');
+      } else if (flavorSelections.length === 1) {
+        // Reset the only one
+        handleFlavorChange(flavorSelections[0].id, '');
+        handleFlavorQuantityChange(flavorSelections[0].id, '');
+      } else {
+        // Add one if there's none
+        handleAddFlavor();
+      }
+      
+      // Reset ribbon and package
+      handleSelectChange('ribbonId', ribbonColors[0]?.id || '');
+      handleSelectChange('packageId', packageColors[0]?.id || '');
+      
+      // Reset additionals
+      additionalSelections.forEach(additional => {
+        if (additional.selected) {
+          handleAdditionalChange(additional.id, false);
+        }
       });
+    } else {
+      // For bolo gelado
+      if (boloGeladoSelections.length > 1) {
+        // Keep the first one and remove the rest
+        for (let i = boloGeladoSelections.length - 1; i > 0; i--) {
+          handleRemoveBoloGeladoFlavor(boloGeladoSelections[i].id);
+        }
+        // Reset the first one
+        handleBoloGeladoFlavorChange(boloGeladoSelections[0].id, '');
+        handleBoloGeladoQuantityChange(boloGeladoSelections[0].id, '');
+      } else if (boloGeladoSelections.length === 1) {
+        // Reset the only one
+        handleBoloGeladoFlavorChange(boloGeladoSelections[0].id, '');
+        handleBoloGeladoQuantityChange(boloGeladoSelections[0].id, '');
+      } else {
+        // Add one if there's none
+        handleAddBoloGeladoFlavor();
+      }
     }
-    if (boloGeladoSelections.length > 0) {
-      boloGeladoSelections.forEach(selection => {
-        handleRemoveBoloGeladoFlavor(selection.id);
-      });
-    }
-    
-    // Add back one empty flavor selection
-    handleAddFlavor();
   };
   
   // Reset only personal info fields
@@ -149,9 +180,9 @@ const OrderForm: React.FC = () => {
             </Button>
           </div>
           
-          {/* Incentive Message with increased prominence */}
-          <div className="w-full text-center py-8 my-6">
-            <p className="font-medium text-gray-800 text-lg">
+          {/* Incentive Message with increased prominence - now with orange background */}
+          <div className="w-full text-center py-10 my-8 bg-orange-50 rounded-xl">
+            <p className="font-medium text-orange-800 text-xl">
               Achou interessante? Agora preencha seus dados e mande seu pedido para nosso WhatsApp.
             </p>
           </div>
@@ -161,7 +192,7 @@ const OrderForm: React.FC = () => {
             {/* Informações Pessoais */}
             <PersonalInfoForm 
               formData={formData} 
-              errors={errors} 
+              errors={{}} 
               isLoadingCep={isLoadingCep} 
               handleInputChange={handleInputChange} 
               handleSelectChange={handleSelectChange} 
@@ -172,7 +203,7 @@ const OrderForm: React.FC = () => {
             <div className="space-y-6">
               <EventInfoForm 
                 formData={formData} 
-                errors={errors} 
+                errors={{}} 
                 handleInputChange={handleInputChange} 
                 handleDateChange={handleDateChange}
                 handleSelectChange={handleSelectChange}

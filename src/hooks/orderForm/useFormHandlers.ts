@@ -57,11 +57,10 @@ export const useFormHandlers = ({
       city: '',
       state: 'MT',
       eventDate: undefined,
-      eventLocation: '',
-      eventType: 'Casamento',  // Add the missing property
-      productType: 'bem-casado',  // Add the missing property
-      ribbonId: '',  // Will be set to first ribbon in main hook
-      packageId: '', // Will be set to first package in main hook
+      eventType: 'Casamento',
+      productType: 'bem-casado',
+      ribbonId: '',
+      packageId: '',
       observations: ''
     });
     
