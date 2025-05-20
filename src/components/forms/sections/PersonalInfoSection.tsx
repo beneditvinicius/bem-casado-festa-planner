@@ -2,7 +2,8 @@
 import React from 'react';
 import PersonalInfoForm from '../PersonalInfoForm';
 import EventInfoForm from '../EventInfoForm';
-import { FormData } from '@/hooks/orderForm/types';
+import { ObservationsInput } from '../order-details/ObservationsInput';
+import { FormData } from '@/hooks/useOrderForm';
 
 interface PersonalInfoSectionProps {
   formData: FormData;
@@ -11,49 +12,46 @@ interface PersonalInfoSectionProps {
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   handleSelectChange: (name: string, value: string) => void;
   handleDateChange: (date: Date | undefined) => void;
-  searchCep: () => void;
+  searchCep: (cep: string) => Promise<void>;
 }
 
-export const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
+const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
   formData,
   errors,
   isLoadingCep,
   handleInputChange,
   handleSelectChange,
   handleDateChange,
-  searchCep,
+  searchCep
 }) => {
   return (
-    <>
-      <div className="w-full py-6 my-4">
-        <div className="bg-bem-light rounded-2xl py-5 px-4 shadow-sm">
-          <p className="font-semibold text-bem text-base sm:text-lg text-center">
-            Achou interessante? Agora preencha seus dados e mande seu pedido para nosso WhatsApp.
-          </p>
-        </div>
+    <div className="space-y-6">
+      <div className="text-center my-6">
+        <p className="text-lg font-medium text-[#eb6824]">Achou interessante? Preencha seus dados para receber o orçamento completo!</p>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Informações Pessoais */}
-        <PersonalInfoForm 
-          formData={formData} 
-          errors={errors} 
-          isLoadingCep={isLoadingCep} 
-          handleInputChange={handleInputChange} 
-          handleSelectChange={handleSelectChange} 
-          searchCep={searchCep} 
-        />
-        
-        {/* Informações do Evento */}
-        <EventInfoForm 
-          formData={formData} 
-          errors={errors} 
-          handleInputChange={handleInputChange} 
-          handleDateChange={handleDateChange}
-          handleSelectChange={handleSelectChange}
-        />
-      </div>
-    </>
+      <PersonalInfoForm 
+        formData={formData}
+        errors={errors}
+        isLoadingCep={isLoadingCep}
+        handleInputChange={handleInputChange}
+        handleSelectChange={handleSelectChange}
+        searchCep={searchCep}
+      />
+      
+      <EventInfoForm 
+        formData={formData}
+        errors={errors}
+        handleInputChange={handleInputChange}
+        handleSelectChange={handleSelectChange}
+        handleDateChange={handleDateChange}
+      />
+      
+      <ObservationsInput
+        observations={formData.observations}
+        handleInputChange={handleInputChange}
+      />
+    </div>
   );
 };
 

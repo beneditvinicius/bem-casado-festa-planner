@@ -6,7 +6,6 @@ import VisualizationArea from './visualizer/VisualizationArea';
 import Disclaimer from './visualizer/Disclaimer';
 import DebugInfo from './visualizer/DebugInfo';
 import { useIsMobile } from '@/hooks/use-mobile';
-import CombinationToastNotifier from './visualizer/CombinationToastNotifier';
 import { ImageExistenceProvider } from './visualizer/ImageExistenceProvider';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -39,14 +38,15 @@ const Visualizer: React.FC = () => {
   
   return (
     <div className="flex flex-col space-y-4">
-      <Button 
-        onClick={handleReturnToOrder} 
-        variant="outline" 
-        className="mb-2 rounded-full flex items-center gap-2 self-start"
-      >
-        <ArrowLeft size={16} />
-        Retorne para o Orçamento
-      </Button>
+      <div className="flex justify-center mb-2">
+        <Button 
+          onClick={handleReturnToOrder} 
+          className="bg-[#eb6824] hover:bg-[#d25618] text-white rounded-full flex items-center gap-2"
+        >
+          <ArrowLeft size={16} />
+          Retorne para o Orçamento
+        </Button>
+      </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <ColorSelector 
@@ -80,12 +80,6 @@ const Visualizer: React.FC = () => {
             packageName={selectedPackage?.name || ''}
             packageColor={selectedPackage?.color || ''}
             fallbackCombinationImage={fallbackCombinationImage}
-          />
-          <CombinationToastNotifier
-            ribbonCode={selectedRibbon?.code || ''}
-            packageCode={selectedPackage?.code || ''}
-            ribbonName={selectedRibbon?.name || ''}
-            packageName={selectedPackage?.name || ''}
           />
         </ImageExistenceProvider>
       </div>
