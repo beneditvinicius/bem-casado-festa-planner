@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { ColorSwatch } from "lucide-react";
+import { Palette } from "lucide-react"; // Changed from ColorSwatch to Palette
 import { useProductsStore } from '@/data/store';
 
 interface MiniVisualizerProps {
@@ -16,7 +16,7 @@ const MiniVisualizer: React.FC<MiniVisualizerProps> = ({ onExpandClick }) => {
         onClick={onExpandClick} 
         className="w-full flex items-center justify-center gap-2 py-2 rounded-full"
       >
-        <ColorSwatch className="h-4 w-4" />
+        <Palette className="h-4 w-4" /> 
         Teste as cores do seu bem-casado
       </Button>
     </div>
