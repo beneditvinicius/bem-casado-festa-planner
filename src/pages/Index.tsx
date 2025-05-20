@@ -5,6 +5,7 @@ import OrderForm from '@/components/OrderForm';
 import Visualizer from '@/components/Visualizer';
 import Faq from '@/components/Faq';
 import AdminPanel from '@/components/AdminPanel';
+import CatalogsSection from '@/components/CatalogsSection';
 import { Button } from "@/components/ui/button";
 import { Lock, Unlock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -71,6 +72,9 @@ const Index: React.FC = () => {
       <Header />
       
       <main className="pb-12">
+        {/* Catalogs Section - Added as the first section */}
+        <CatalogsSection />
+        
         {sections.map((section, index) => (
           <React.Fragment key={section.id}>
             <section id={section.id} className="section-container">

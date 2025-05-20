@@ -1,127 +1,95 @@
 
 import { useCallback } from 'react';
-import { FlavorSelection, ProductType } from './orderForm/types';
+import { useProductsStore } from '@/data/products';
 
 interface UseProductResetProps {
-  productType: ProductType;
-  flavorSelections: FlavorSelection[];
-  boloGeladoSelections: FlavorSelection[];
-  ribbonColors: { id: string }[];
-  packageColors: { id: string }[];
-  additionalSelections: { id: string; selected: boolean }[];
-  handleRemoveFlavor: (id: string) => void;
-  handleFlavorChange: (id: string, flavorId: string) => void;
-  handleFlavorQuantityChange: (id: string, value: string) => void;
-  handleRemoveBoloGeladoFlavor: (id: string) => void;
-  handleBoloGeladoFlavorChange: (id: string, flavorId: string) => void;
-  handleBoloGeladoQuantityChange: (id: string, value: string) => void;
-  handleAdditionalChange: (id: string, selected: boolean) => void;
+  productType: string;
+  flavorSelections: { id: string; quantity: number }[];
+  setFlavorSelections: (selections: { id: string; quantity: number }[]) => void;
+  selectedAdditionals: Record<string, boolean>;
+  setSelectedAdditionals: (additionals: Record<string, boolean>) => void;
+  boloGeladoFlavor: string | null;
+  setBoloGeladoFlavor: (flavor: string | null) => void;
   handleSelectChange: (name: string, value: string) => void;
   handleAddFlavor: () => void;
-  handleAddBoloGeladoFlavor: () => void;
+  handleAddAdditional: (id: string) => void;
 }
 
-export function useProductReset({
+export const useProductReset = ({
   productType,
   flavorSelections,
-  boloGeladoSelections,
-  ribbonColors,
-  packageColors,
-  additionalSelections,
-  handleRemoveFlavor,
-  handleFlavorChange,
-  handleFlavorQuantityChange,
-  handleRemoveBoloGeladoFlavor,
-  handleBoloGeladoFlavorChange,
-  handleBoloGeladoQuantityChange,
-  handleAdditionalChange,
+  setFlavorSelections,
+  selectedAdditionals,
+  setSelectedAdditionals,
+  boloGeladoFlavor,
+  setBoloGeladoFlavor,
   handleSelectChange,
   handleAddFlavor,
-  handleAddBoloGeladoFlavor,
-}: UseProductResetProps) {
+  handleAddAdditional
+}: UseProductResetProps) => {
+  const flavors = useProductsStore(state => state.flavors);
+  const additionals = useProductsStore(state => state.additionals);
+  const ribbonColors = useProductsStore(state => state.ribbonColors);
+  const packageColors = useProductsStore(state => state.packageColors);
   
-  // Reset only product details fields
   const resetProducts = useCallback(() => {
-    // Reset flavor selections but not personal info
+    // Reset flavor selections
     if (productType === 'bem-casado') {
-      if (flavorSelections.length > 1) {
-        // Keep the first one and remove the rest
-        for (let i = flavorSelections.length - 1; i > 0; i--) {
-          handleRemoveFlavor(flavorSelections[i].id);
-        }
-        // Reset the first one
-        handleFlavorChange(flavorSelections[0].id, '');
-        handleFlavorQuantityChange(flavorSelections[0].id, '');
-      } else if (flavorSelections.length === 1) {
-        // Reset the only one
-        handleFlavorChange(flavorSelections[0].id, '');
-        handleFlavorQuantityChange(flavorSelections[0].id, '');
-      } else {
-        // Add one if there's none
-        handleAddFlavor();
-      }
+      // For bem-casado, reset to zero quantities and select first flavor
+      setFlavorSelections([]);
       
-      // Always reset ribbon color to the first option, ensuring this happens regardless of other operations
-      if (ribbonColors.length > 0) {
-        console.log("Resetting ribbon color to:", ribbonColors[0].id);
-        // Force immediate update with the first ribbon color
-        setTimeout(() => {
-          handleSelectChange('ribbonId', ribbonColors[0].id);
-        }, 0);
+      if (flavors.length > 0) {
+        const defaultFlavor = {
+          id: flavors[0].id,
+          quantity: 50
+        };
+        
+        setFlavorSelections([defaultFlavor]);
       }
-      
-      // Always reset package color to the first option, ensuring this happens regardless of other operations
-      if (packageColors.length > 0) {
-        console.log("Resetting package color to:", packageColors[0].id);
-        // Force immediate update with the first package color
-        setTimeout(() => {
-          handleSelectChange('packageId', packageColors[0].id);
-        }, 0);
-      }
-      
-      // Reset additionals
-      additionalSelections.forEach(additional => {
-        if (additional.selected) {
-          handleAdditionalChange(additional.id, false);
-        }
-      });
-    } else {
-      // For bolo gelado
-      if (boloGeladoSelections.length > 1) {
-        // Keep the first one and remove the rest
-        for (let i = boloGeladoSelections.length - 1; i > 0; i--) {
-          handleRemoveBoloGeladoFlavor(boloGeladoSelections[i].id);
-        }
-        // Reset the first one
-        handleBoloGeladoFlavorChange(boloGeladoSelections[0].id, '');
-        handleBoloGeladoQuantityChange(boloGeladoSelections[0].id, '');
-      } else if (boloGeladoSelections.length === 1) {
-        // Reset the only one
-        handleBoloGeladoFlavorChange(boloGeladoSelections[0].id, '');
-        handleBoloGeladoQuantityChange(boloGeladoSelections[0].id, '');
-      } else {
-        // Add one if there's none
-        handleAddBoloGeladoFlavor();
-      }
+    } else if (productType === 'bolo-gelado') {
+      // For bolo-gelado, simply reset to null
+      setBoloGeladoFlavor(null);
+    }
+    
+    // Reset additionals
+    const resetAdditionals: Record<string, boolean> = {};
+    additionals.forEach(additional => {
+      resetAdditionals[additional.id] = false;
+    });
+    
+    setSelectedAdditionals(resetAdditionals);
+    
+    // If bem-casado, reset the first flavor to default quantity
+    if (productType === 'bem-casado' && flavors.length > 0 && flavorSelections.length === 0) {
+      handleAddFlavor();
+    }
+    
+    // Always reset ribbon color to the first option, using the first item from the ribbonColors array
+    if (ribbonColors.length > 0) {
+      console.log("Resetting ribbon color to:", ribbonColors[0].id);
+      // Directly set the ribbon color to the first option
+      handleSelectChange('ribbonId', ribbonColors[0].id);
+    }
+    
+    // Always reset package color to the first option, using the first item from the packageColors array
+    if (packageColors.length > 0) {
+      console.log("Resetting package color to:", packageColors[0].id);
+      // Directly set the package color to the first option
+      handleSelectChange('packageId', packageColors[0].id);
     }
   }, [
     productType,
-    flavorSelections,
-    boloGeladoSelections,
+    flavors,
+    additionals,
     ribbonColors,
     packageColors,
-    additionalSelections,
-    handleRemoveFlavor,
-    handleFlavorChange,
-    handleFlavorQuantityChange,
-    handleRemoveBoloGeladoFlavor,
-    handleBoloGeladoFlavorChange,
-    handleBoloGeladoQuantityChange,
-    handleAdditionalChange,
+    flavorSelections.length,
+    setFlavorSelections,
+    setSelectedAdditionals,
+    setBoloGeladoFlavor,
     handleSelectChange,
-    handleAddFlavor,
-    handleAddBoloGeladoFlavor,
+    handleAddFlavor
   ]);
-
+  
   return { resetProducts };
-}
+};
