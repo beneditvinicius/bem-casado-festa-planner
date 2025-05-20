@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import OrderDetailsForm from './forms/order-details/OrderDetailsForm';
@@ -5,6 +6,7 @@ import { useOrderForm } from '@/hooks/useOrderForm';
 import PersonalInfoSection from './forms/sections/PersonalInfoSection';
 import ProductResetActions from './forms/sections/ProductResetActions';
 import SubmitButton from './forms/sections/SubmitButton';
+import { useProductReset } from '@/hooks/useProductReset';
 
 const OrderForm: React.FC = () => {
   const {
@@ -37,57 +39,25 @@ const OrderForm: React.FC = () => {
     searchCep
   } = useOrderForm();
   
-  // Reset only product details fields
-  const handleResetProducts = () => {
-    // Reset flavor selections but not personal info
-    if (formData.productType === 'bem-casado') {
-      if (flavorSelections.length > 1) {
-        // Keep the first one and remove the rest
-        for (let i = flavorSelections.length - 1; i > 0; i--) {
-          handleRemoveFlavor(flavorSelections[i].id);
-        }
-        // Reset the first one
-        handleFlavorChange(flavorSelections[0].id, '');
-        handleFlavorQuantityChange(flavorSelections[0].id, '');
-      } else if (flavorSelections.length === 1) {
-        // Reset the only one
-        handleFlavorChange(flavorSelections[0].id, '');
-        handleFlavorQuantityChange(flavorSelections[0].id, '');
-      } else {
-        // Add one if there's none
-        handleAddFlavor();
-      }
-      
-      // Reset ribbon and package to first options
-      handleSelectChange('ribbonId', ribbonColors[0]?.id || '');
-      handleSelectChange('packageId', packageColors[0]?.id || '');
-      
-      // Reset additionals
-      additionalSelections.forEach(additional => {
-        if (additional.selected) {
-          handleAdditionalChange(additional.id, false);
-        }
-      });
-    } else {
-      // For bolo gelado
-      if (boloGeladoSelections.length > 1) {
-        // Keep the first one and remove the rest
-        for (let i = boloGeladoSelections.length - 1; i > 0; i--) {
-          handleRemoveBoloGeladoFlavor(boloGeladoSelections[i].id);
-        }
-        // Reset the first one
-        handleBoloGeladoFlavorChange(boloGeladoSelections[0].id, '');
-        handleBoloGeladoQuantityChange(boloGeladoSelections[0].id, '');
-      } else if (boloGeladoSelections.length === 1) {
-        // Reset the only one
-        handleBoloGeladoFlavorChange(boloGeladoSelections[0].id, '');
-        handleBoloGeladoQuantityChange(boloGeladoSelections[0].id, '');
-      } else {
-        // Add one if there's none
-        handleAddBoloGeladoFlavor();
-      }
-    }
-  };
+  // Use the product reset hook
+  const { resetProducts } = useProductReset({
+    productType: formData.productType,
+    flavorSelections,
+    boloGeladoSelections,
+    ribbonColors,
+    packageColors,
+    additionalSelections,
+    handleRemoveFlavor,
+    handleFlavorChange,
+    handleFlavorQuantityChange,
+    handleRemoveBoloGeladoFlavor,
+    handleBoloGeladoFlavorChange,
+    handleBoloGeladoQuantityChange,
+    handleAdditionalChange,
+    handleSelectChange,
+    handleAddFlavor,
+    handleAddBoloGeladoFlavor,
+  });
   
   const handleScrollToVisualizer = () => {
     const visualizerElement = document.getElementById('visualizer');
@@ -137,7 +107,7 @@ const OrderForm: React.FC = () => {
           />
           
           {/* Product action buttons */}
-          <ProductResetActions onResetProducts={handleResetProducts} />
+          <ProductResetActions onResetProducts={resetProducts} />
           
           {/* Personal Info and Event Info */}
           <PersonalInfoSection 
