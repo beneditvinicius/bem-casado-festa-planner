@@ -6,7 +6,6 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import BannerManagement from './BannerManagement';
 import BannerImageUploader from './BannerImageUploader';
 import PasswordManagement from './PasswordManagement';
 
@@ -89,7 +88,6 @@ const ConfigManagement = () => {
         </CardFooter>
       </Card>
 
-      <BannerManagement />
       <PasswordManagement />
     </div>
   );

@@ -1,9 +1,8 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { Image, Save, X } from "lucide-react";
+import { Image, X } from "lucide-react";
 
 interface BannerImageUploaderProps {
   imageUrl: string;
@@ -11,21 +10,22 @@ interface BannerImageUploaderProps {
 }
 
 const BannerImageUploader: React.FC<BannerImageUploaderProps> = ({ imageUrl, onChange }) => {
-  const [showUrlInput, setShowUrlInput] = useState(false);
-  const [tempUrl, setTempUrl] = useState(imageUrl);
   const { toast } = useToast();
-
-  const handleConfirmUrl = () => {
-    onChange(tempUrl);
-    setShowUrlInput(false);
-    toast({
-      title: "URL da imagem atualizada",
-    });
-  };
-
-  const handleCancel = () => {
-    setTempUrl(imageUrl);
-    setShowUrlInput(false);
+  
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        // Convert file to data URL
+        const result = reader.result as string;
+        onChange(result);
+        toast({
+          title: "Imagem do banner atualizada",
+        });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleRemove = () => {
@@ -55,41 +55,20 @@ const BannerImageUploader: React.FC<BannerImageUploaderProps> = ({ imageUrl, onC
         </div>
       )}
 
-      {!showUrlInput ? (
-        <Button 
-          variant="outline" 
-          className="w-full rounded-full"
-          onClick={() => setShowUrlInput(true)}
-        >
-          <Image className="mr-2 h-4 w-4" />
-          {imageUrl ? "Alterar imagem do banner" : "Adicionar imagem do banner"}
-        </Button>
-      ) : (
-        <div className="space-y-2">
-          <Input
-            placeholder="Cole a URL da imagem aqui"
-            value={tempUrl}
-            onChange={(e) => setTempUrl(e.target.value)}
+      <div className="flex justify-center">
+        <label className="cursor-pointer">
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFileChange}
           />
-          <div className="flex gap-2 justify-center">
-            <Button 
-              variant="outline" 
-              size="sm"
-              className="rounded-full"
-              onClick={handleCancel}
-            >
-              <X className="mr-2 h-4 w-4" /> Cancelar
-            </Button>
-            <Button 
-              size="sm"
-              className="rounded-full bg-[#eb6824] hover:bg-[#d25618]"
-              onClick={handleConfirmUrl}
-            >
-              <Save className="mr-2 h-4 w-4" /> Salvar URL
-            </Button>
+          <div className="flex items-center justify-center px-4 py-2 bg-white border border-gray-300 rounded-full hover:bg-gray-50">
+            <Image className="mr-2 h-4 w-4" />
+            {imageUrl ? "Alterar imagem do banner" : "Adicionar imagem do banner"}
           </div>
-        </div>
-      )}
+        </label>
+      </div>
     </div>
   );
 };
