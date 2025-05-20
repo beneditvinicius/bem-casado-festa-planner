@@ -1,7 +1,5 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/Header';
-import Calculator from '@/components/Calculator';
 import OrderForm from '@/components/OrderForm';
 import Visualizer from '@/components/Visualizer';
 import Faq from '@/components/Faq';
@@ -45,12 +43,6 @@ const Index: React.FC = () => {
   };
   
   const sections = [
-    {
-      id: 'calculator',
-      title: 'Calculadora de Bem-Casados',
-      component: <Calculator />,
-      description: ''
-    },
     {
       id: 'pedido',
       title: 'Faça seu Pedido',

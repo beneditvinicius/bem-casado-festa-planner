@@ -88,7 +88,7 @@ const OrderDetailsForm: React.FC<OrderDetailsFormProps> = ({
 
   return (
     <div className="space-y-4 text-center">
-      <h3 className="text-lg font-medium">Detalhes do Pedido</h3>
+      <h3 className="text-lg font-medium">Detalhes do Produto</h3>
       
       <ProductTypeSelector 
         productType={formData.productType} 
