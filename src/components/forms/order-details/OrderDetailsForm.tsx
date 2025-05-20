@@ -2,12 +2,12 @@
 import React from 'react';
 import { Flavor, BoloGeladoFlavor, RibbonColor, PackageColor, Additional } from '@/data/products';
 import { FlavorSelection as FlavorSelectionType, ProductType, AdditionalSelection } from '@/hooks/orderForm/types';
-import { ProductTypeSelector } from './order-details/ProductTypeSelector';
-import { FlavorControls } from './order-details/FlavorControls';
-import { BoloGeladoMessage } from './order-details/BoloGeladoMessage';
-import { ColorSelectors } from './order-details/ColorSelectors';
-import { AdditionalSelectors } from './order-details/AdditionalSelectors';
-import { OrderTotal } from './order-details/OrderTotal';
+import { ProductTypeSelector } from './ProductTypeSelector';
+import { FlavorControls } from './FlavorControls';
+import { BoloGeladoMessage } from './BoloGeladoMessage';
+import { ColorSelectors } from './ColorSelectors';
+import { AdditionalSelectors } from './AdditionalSelectors';
+import { OrderTotal } from './OrderTotal';
 
 interface OrderDetailsFormProps {
   formData: {
