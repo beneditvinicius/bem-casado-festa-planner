@@ -7,7 +7,6 @@ import PersonalInfoSection from './forms/sections/PersonalInfoSection';
 import ProductResetActions from './forms/sections/ProductResetActions';
 import SubmitButton from './forms/sections/SubmitButton';
 import { useProductReset } from '@/hooks/useProductReset';
-import AnimatedWeddingDivider from './AnimatedWeddingDivider';
 
 const OrderForm: React.FC = () => {
   const {
@@ -125,9 +124,6 @@ const OrderForm: React.FC = () => {
           <SubmitButton />
         </form>
       </CardContent>
-      
-      {/* Animated Wedding Divider */}
-      <AnimatedWeddingDivider />
     </div>
   );
 };

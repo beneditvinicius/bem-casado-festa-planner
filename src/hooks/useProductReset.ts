@@ -1,4 +1,3 @@
-
 import { useCallback } from 'react';
 import { FlavorSelection, ProductType } from './orderForm/types';
 
@@ -61,18 +60,14 @@ export function useProductReset({
         handleAddFlavor();
       }
       
-      // Force reset ribbon color to the first option
+      // Reset ribbon color to the first option - FIXED
       if (ribbonColors.length > 0) {
-        setTimeout(() => {
-          handleSelectChange('ribbonId', ribbonColors[0].id);
-        }, 0);
+        handleSelectChange('ribbonId', ribbonColors[0].id);
       }
       
-      // Force reset package color to the first option
+      // Reset package color to the first option - FIXED
       if (packageColors.length > 0) {
-        setTimeout(() => {
-          handleSelectChange('packageId', packageColors[0].id);
-        }, 0);
+        handleSelectChange('packageId', packageColors[0].id);
       }
       
       // Reset additionals
