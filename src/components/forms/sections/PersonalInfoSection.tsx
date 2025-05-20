@@ -25,10 +25,12 @@ export const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
 }) => {
   return (
     <>
-      <div className="w-full text-center py-4 my-2">
-        <p className="font-medium text-[#eb6824] text-sm">
-          Achou interessante? Agora preencha seus dados e mande seu pedido para nosso WhatsApp.
-        </p>
+      <div className="w-full py-6 my-4">
+        <div className="bg-bem-light rounded-2xl py-5 px-4 shadow-sm">
+          <p className="font-semibold text-bem text-base sm:text-lg text-center">
+            Achou interessante? Agora preencha seus dados e mande seu pedido para nosso WhatsApp.
+          </p>
+        </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
