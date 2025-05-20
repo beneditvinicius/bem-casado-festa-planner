@@ -1,15 +1,15 @@
 
 import React, { useState, useEffect } from 'react';
-import { Heart, Calendar, Wedding, MapPin, Cake, User } from "lucide-react";
+import { Heart, Calendar, Gift, MapPin, Cake, Star } from "lucide-react";
 
 const AnimatedWeddingDivider = () => {
   // Collection of wedding-themed icons
   const icons = [
     { icon: Heart, label: 'Coração' },
-    { icon: Wedding, label: 'Aliança' },
+    { icon: Gift, label: 'Presente' },
     { icon: Calendar, label: 'Calendário' },
     { icon: Cake, label: 'Bolo' },
-    { icon: User, label: 'Noivos' },
+    { icon: Star, label: 'Estrela' },
     { icon: MapPin, label: 'Localização' },
   ];
   
