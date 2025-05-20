@@ -17,9 +17,6 @@ export const useFormValidation = (
   const validateForm = (): boolean => {
     const newErrors: { [key: string]: string } = {};
     
-    // We're not showing these errors in the UI anymore, but we still validate them
-    // for form submission purposes
-    
     // Order validation
     let totalQuantity = 0;
     let hasValidFlavor = false;

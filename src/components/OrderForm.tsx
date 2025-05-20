@@ -64,7 +64,7 @@ const OrderForm: React.FC = () => {
         handleAddFlavor();
       }
       
-      // Reset ribbon and package
+      // Reset ribbon and package to first options
       handleSelectChange('ribbonId', ribbonColors[0]?.id || '');
       handleSelectChange('packageId', packageColors[0]?.id || '');
       
@@ -180,9 +180,9 @@ const OrderForm: React.FC = () => {
             </Button>
           </div>
           
-          {/* Incentive Message with increased prominence - now with orange background */}
-          <div className="w-full text-center py-10 my-8 bg-orange-50 rounded-xl">
-            <p className="font-medium text-orange-800 text-xl">
+          {/* Incentive Message with orange text only */}
+          <div className="w-full text-center py-6 my-6">
+            <p className="font-medium text-[#eb6824] text-lg">
               Achou interessante? Agora preencha seus dados e mande seu pedido para nosso WhatsApp.
             </p>
           </div>
@@ -209,7 +209,7 @@ const OrderForm: React.FC = () => {
                 handleSelectChange={handleSelectChange}
               />
               
-              {/* Observations field moved here */}
+              {/* Observations field */}
               <div className="space-y-2">
                 <Label htmlFor="observations" className="block text-base">Observações (opcional)</Label>
                 <Textarea
@@ -227,10 +227,7 @@ const OrderForm: React.FC = () => {
             </div>
           </div>
           
-          <div className={`flex ${isMobile ? 'flex-col gap-2' : 'justify-center gap-4'} pt-6`}>
-            <Button type="button" variant="outline" onClick={handleResetPersonalInfo} className={`h-12 rounded-full ${isMobile ? 'w-full' : 'px-6'}`}>
-              Limpar Tudo
-            </Button>
+          <div className={`flex ${isMobile ? 'flex-col gap-2' : 'justify-center'} pt-6`}>
             <Button type="submit" className={`h-12 rounded-full bg-[#eb6824] hover:bg-[#d25618] text-white ${isMobile ? 'w-full' : 'px-6'}`}>
               <MessageSquare className="mr-2 h-4 w-4" />
               Enviar Pedido via WhatsApp
