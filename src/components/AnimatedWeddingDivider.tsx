@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Heart, Calendar, Gift, MapPin, Cake, Star, User, Ring } from "lucide-react";
+import { Heart, Calendar, Gift, MapPin, Cake, Star, User } from "lucide-react";
 
 const AnimatedWeddingDivider = () => {
   // Collection of wedding-themed icons
