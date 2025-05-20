@@ -11,12 +11,14 @@ const AnimatedWeddingDivider = () => {
     { icon: Cake, label: 'Bolo' },
     { icon: Star, label: 'Estrela' },
     { icon: MapPin, label: 'Localização' },
+    { icon: User, label: 'Usuário' },
     { icon: Heart, label: 'Coração' },
     { icon: Gift, label: 'Presente' },
     { icon: Calendar, label: 'Calendário' },
     { icon: Cake, label: 'Bolo' },
     { icon: Star, label: 'Estrela' },
     { icon: MapPin, label: 'Localização' },
+    { icon: User, label: 'Usuário' },
   ];
   
   return (
