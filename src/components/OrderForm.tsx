@@ -1,12 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { MessageSquare } from "lucide-react";
-import PersonalInfoForm from './forms/PersonalInfoForm';
-import EventInfoForm from './forms/EventInfoForm';
 import OrderDetailsForm from './forms/order-details/OrderDetailsForm';
 import { useOrderForm } from '@/hooks/useOrderForm';
-import { useIsMobile } from '@/hooks/use-mobile';
+import PersonalInfoSection from './forms/sections/PersonalInfoSection';
+import ProductResetActions from './forms/sections/ProductResetActions';
+import SubmitButton from './forms/sections/SubmitButton';
 
 const OrderForm: React.FC = () => {
   const {
@@ -35,11 +33,9 @@ const OrderForm: React.FC = () => {
     handleAdditionalChange,
     handleProductTypeChange,
     handleSubmit,
-    handleReset,
     calculateTotal,
     searchCep
   } = useOrderForm();
-  const isMobile = useIsMobile();
   
   // Reset only product details fields
   const handleResetProducts = () => {
@@ -93,25 +89,6 @@ const OrderForm: React.FC = () => {
     }
   };
   
-  // Reset only personal info fields
-  const handleResetPersonalInfo = () => {
-    // Reset personal info, event info, and observations but keep product selections
-    const personalFields = ['name', 'cpf', 'phone', 'cep', 'street', 'number', 
-                           'complement', 'neighborhood', 'city', 'observations',
-                           'eventLocation', 'eventType'];
-    
-    personalFields.forEach(field => {
-      if (field in formData) {
-        handleInputChange({
-          target: { name: field, value: '' }
-        } as React.ChangeEvent<HTMLInputElement>);
-      }
-    });
-    
-    // Reset event date
-    handleDateChange(undefined);
-  };
-  
   const handleScrollToVisualizer = () => {
     const visualizerElement = document.getElementById('visualizer');
     if (visualizerElement) {
@@ -160,52 +137,21 @@ const OrderForm: React.FC = () => {
           />
           
           {/* Product action buttons */}
-          <div className={`flex justify-center mt-4`}>
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={handleResetProducts} 
-              className={`h-12 rounded-full ${isMobile ? 'w-full' : 'px-6'}`}
-            >
-              Limpar Tudo
-            </Button>
-          </div>
-          
-          {/* Incentive Message with orange text only */}
-          <div className="w-full text-center py-6 my-6">
-            <p className="font-medium text-[#eb6824] text-lg">
-              Achou interessante? Agora preencha seus dados e mande seu pedido para nosso WhatsApp.
-            </p>
-          </div>
+          <ProductResetActions onResetProducts={handleResetProducts} />
           
           {/* Personal Info and Event Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Informações Pessoais */}
-            <PersonalInfoForm 
-              formData={formData} 
-              errors={{}} 
-              isLoadingCep={isLoadingCep} 
-              handleInputChange={handleInputChange} 
-              handleSelectChange={handleSelectChange} 
-              searchCep={searchCep} 
-            />
-            
-            {/* Informações do Evento */}
-            <EventInfoForm 
-              formData={formData} 
-              errors={{}} 
-              handleInputChange={handleInputChange} 
-              handleDateChange={handleDateChange}
-              handleSelectChange={handleSelectChange}
-            />
-          </div>
+          <PersonalInfoSection 
+            formData={formData}
+            errors={errors}
+            isLoadingCep={isLoadingCep}
+            handleInputChange={handleInputChange}
+            handleSelectChange={handleSelectChange}
+            handleDateChange={handleDateChange}
+            searchCep={searchCep}
+          />
           
-          <div className={`flex ${isMobile ? 'flex-col gap-2' : 'justify-center'} pt-6`}>
-            <Button type="submit" className={`h-12 rounded-full bg-[#eb6824] hover:bg-[#d25618] text-white ${isMobile ? 'w-full' : 'px-6'}`}>
-              <MessageSquare className="mr-2 h-4 w-4" />
-              Enviar Pedido via WhatsApp
-            </Button>
-          </div>
+          {/* Submit Button */}
+          <SubmitButton />
         </form>
       </CardContent>
     </Card>
