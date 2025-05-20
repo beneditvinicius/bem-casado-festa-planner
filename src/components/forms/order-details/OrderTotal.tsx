@@ -16,7 +16,7 @@ export const OrderTotal: React.FC<OrderTotalProps> = ({
 
   return (
     <div className="pt-4">
-      <div className="border border-gray-200 p-4 rounded-2xl mb-4 text-center">
+      <div className="border border-gray-200 p-4 rounded-2xl mb-4 text-center bg-[#FED7C3] bg-opacity-30">
         {showMinimumWarning && (
           <div className="text-red-500 text-sm font-medium mb-2 text-center">
             O pedido mínimo é de 20 unidades.

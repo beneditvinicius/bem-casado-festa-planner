@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,8 @@ import EventInfoForm from './forms/EventInfoForm';
 import OrderDetailsForm from './forms/OrderDetailsForm';
 import { useOrderForm } from '@/hooks/useOrderForm';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 const OrderForm: React.FC = () => {
   const {
@@ -146,9 +149,9 @@ const OrderForm: React.FC = () => {
             </Button>
           </div>
           
-          {/* Incentive Message */}
-          <div className="w-full text-center py-6 my-6">
-            <p className="font-medium text-gray-800">
+          {/* Incentive Message with increased prominence */}
+          <div className="w-full text-center py-8 my-6">
+            <p className="font-medium text-gray-800 text-lg">
               Achou interessante? Agora preencha seus dados e mande seu pedido para nosso WhatsApp.
             </p>
           </div>
@@ -176,15 +179,19 @@ const OrderForm: React.FC = () => {
               />
               
               {/* Observations field moved here */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium">Observações</h3>
-                <textarea
+              <div className="space-y-2">
+                <Label htmlFor="observations" className="block text-base">Observações (opcional)</Label>
+                <Textarea
+                  id="observations"
                   name="observations"
                   placeholder="Alguma observação ou detalhe importante sobre o pedido?"
                   value={formData.observations}
                   onChange={handleInputChange}
-                  className="w-full rounded-xl border-gray-300 h-24"
+                  className="w-full rounded-2xl border-gray-300 min-h-[100px]"
                 />
+                <p className="text-xs text-gray-500 mt-1 text-center">
+                  Seus dados estão seguros! Usamos essas informações apenas para o lançamento do seu pedido no sistema.
+                </p>
               </div>
             </div>
           </div>

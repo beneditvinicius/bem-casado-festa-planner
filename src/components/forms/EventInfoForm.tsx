@@ -86,9 +86,6 @@ const EventInfoForm: React.FC<EventInfoFormProps> = ({
             />
           </PopoverContent>
         </Popover>
-        {errors.eventDate && (
-          <p className="text-sm text-red-500 mt-1">{errors.eventDate}</p>
-        )}
       </div>
       
       <div>

@@ -38,6 +38,12 @@
       padding-top: 0.5rem;
       padding-bottom: 0.5rem;
     }
+    
+    /* Incentive message spacing */
+    .py-8 {
+      padding-top: 1.5rem;
+      padding-bottom: 1.5rem;
+    }
   }
 }
 
@@ -75,6 +81,11 @@
   /* Add more compact spacing for form sections */
   .section-container {
     margin-bottom: 1.5rem;
+  }
+  
+  /* Total value highlight */
+  .bg-[#FED7C3] {
+    background-color: #FED7C3;
   }
 }
 

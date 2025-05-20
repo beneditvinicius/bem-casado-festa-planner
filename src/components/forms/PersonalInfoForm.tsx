@@ -53,8 +53,9 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
           placeholder="Digite seu nome completo" 
           value={formData.name}
           onChange={handleInputChange}
-          className={`w-full rounded-full border-gray-300 ${errors.name && 'border-red-500'}`}
+          className="w-full rounded-full border-gray-300"
         />
+        {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -69,8 +70,9 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
             placeholder="000.000.000-00" 
             value={formData.cpf}
             onChange={handleInputChange}
-            className={`w-full rounded-full border-gray-300 ${errors.cpf && 'border-red-500'}`}
+            className="w-full rounded-full border-gray-300"
           />
+          {errors.cpf && <p className="text-red-500 text-sm mt-1">{errors.cpf}</p>}
         </div>
         
         <div>
@@ -84,8 +86,9 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
             placeholder="(00) 00000-0000" 
             value={formData.phone}
             onChange={handleInputChange}
-            className={`w-full rounded-full border-gray-300 ${errors.phone && 'border-red-500'}`}
+            className="w-full rounded-full border-gray-300"
           />
+          {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
         </div>
       </div>
       
@@ -101,7 +104,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
             placeholder="00000-000" 
             value={formData.cep}
             onChange={handleInputChange}
-            className={`w-full rounded-full border-gray-300 ${errors.cep && 'border-red-500'}`}
+            className="w-full rounded-full border-gray-300"
           />
           <Button
             type="button"
@@ -117,6 +120,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
             )}
           </Button>
         </div>
+        {errors.cep && <p className="text-red-500 text-sm mt-1">{errors.cep}</p>}
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-x-4 gap-y-4">
@@ -131,8 +135,9 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
             placeholder="Nome da rua" 
             value={formData.street}
             onChange={handleInputChange}
-            className={`w-full rounded-full border-gray-300 ${errors.street && 'border-red-500'}`}
+            className="w-full rounded-full border-gray-300"
           />
+          {errors.street && <p className="text-red-500 text-sm mt-1">{errors.street}</p>}
         </div>
         
         <div>
@@ -146,8 +151,9 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
             placeholder="Nº" 
             value={formData.number}
             onChange={handleInputChange}
-            className={`w-full rounded-full border-gray-300 ${errors.number && 'border-red-500'}`}
+            className="w-full rounded-full border-gray-300"
           />
+          {errors.number && <p className="text-red-500 text-sm mt-1">{errors.number}</p>}
         </div>
       </div>
       
@@ -177,8 +183,9 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
           placeholder="Nome do bairro" 
           value={formData.neighborhood}
           onChange={handleInputChange}
-          className={`w-full rounded-full border-gray-300 ${errors.neighborhood && 'border-red-500'}`}
+          className="w-full rounded-full border-gray-300"
         />
+        {errors.neighborhood && <p className="text-red-500 text-sm mt-1">{errors.neighborhood}</p>}
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -193,8 +200,9 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
             placeholder="Nome da cidade" 
             value={formData.city}
             onChange={handleInputChange}
-            className={`w-full rounded-full border-gray-300 ${errors.city && 'border-red-500'}`}
+            className="w-full rounded-full border-gray-300"
           />
+          {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city}</p>}
         </div>
         
         <div>
@@ -205,7 +213,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
             value={formData.state}
             onValueChange={(value) => handleSelectChange('state', value)}
           >
-            <SelectTrigger className={`w-full rounded-full h-10 border-gray-300 ${errors.state && 'border-red-500'}`}>
+            <SelectTrigger className="w-full rounded-full h-10 border-gray-300">
               <SelectValue placeholder="Selecione um estado" />
             </SelectTrigger>
             <SelectContent>
@@ -238,6 +246,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
               <SelectItem value="TO">Tocantins</SelectItem>
             </SelectContent>
           </Select>
+          {errors.state && <p className="text-red-500 text-sm mt-1">{errors.state}</p>}
         </div>
       </div>
     </div>
