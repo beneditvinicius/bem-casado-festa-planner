@@ -57,6 +57,7 @@ export const useFormHandlers = ({
       city: '',
       state: 'MT',
       eventDate: undefined,
+      eventLocation: '', // Added this missing field
       eventType: 'Casamento',
       productType: 'bem-casado',
       ribbonId: '',
