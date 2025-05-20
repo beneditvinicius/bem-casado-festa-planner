@@ -29,14 +29,16 @@ export const ColorSelectors: React.FC<ColorSelectorsProps> = ({
 }) => {
   return (
     <div className="space-y-4">
-      <Button 
-        type="button"
-        onClick={onVisualizerClick}
-        className="rounded-full bg-[#eb6824] hover:bg-[#d25618] text-white w-full"
-      >
-        <Palette className="mr-2 h-4 w-4" />
-        Teste as cores do bem casado
-      </Button>
+      <div className="flex justify-center">
+        <Button 
+          type="button"
+          onClick={onVisualizerClick}
+          className="rounded-full bg-[#eb6824] hover:bg-[#d25618] text-white"
+        >
+          <Palette className="mr-2 h-4 w-4" />
+          Teste as cores do bem casado
+        </Button>
+      </div>
       
       <div>
         <Label htmlFor="ribbonColor" className="text-base">Cor da Fita</Label>

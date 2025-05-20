@@ -29,6 +29,14 @@ const EventInfoForm: React.FC<EventInfoFormProps> = ({
   handleDateChange,
   handleSelectChange
 }) => {
+  const [isCalendarOpen, setIsCalendarOpen] = React.useState(false);
+
+  const handleDateSelect = (date: Date | undefined) => {
+    handleDateChange(date);
+    // Auto-close the calendar when a date is selected
+    setIsCalendarOpen(false);
+  };
+
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-medium text-center mb-4">Informações do Evento</h3>
@@ -62,7 +70,7 @@ const EventInfoForm: React.FC<EventInfoFormProps> = ({
         <Label htmlFor="eventDate" className="block text-gray-700 mb-1">
           Data do Evento *
         </Label>
-        <Popover>
+        <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
@@ -80,9 +88,10 @@ const EventInfoForm: React.FC<EventInfoFormProps> = ({
             <Calendar
               mode="single"
               selected={formData.eventDate}
-              onSelect={handleDateChange}
+              onSelect={handleDateSelect}
               initialFocus
               locale={ptBR}
+              className="pointer-events-auto"
             />
           </PopoverContent>
         </Popover>

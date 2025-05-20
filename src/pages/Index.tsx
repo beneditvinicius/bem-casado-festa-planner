@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import OrderForm from '@/components/OrderForm';
 import Visualizer from '@/components/Visualizer';
@@ -8,13 +8,14 @@ import AdminPanel from '@/components/AdminPanel';
 import { Button } from "@/components/ui/button";
 import { Lock, Unlock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useProductsStore } from '@/data/products';
 
 const Index: React.FC = () => {
   const { toast } = useToast();
   const [adminMode, setAdminMode] = useState(false);
   const [password, setPassword] = useState('');
   const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
-  const ADMIN_PASSWORD = "libertines12";
+  const adminPassword = useProductsStore(state => state.adminPassword);
   
   const handleAdminToggle = () => {
     if (adminMode) {
@@ -28,7 +29,7 @@ const Index: React.FC = () => {
   };
   
   const handlePasswordSubmit = () => {
-    if (password === ADMIN_PASSWORD) {
+    if (password === adminPassword) {
       setAdminMode(true);
       setShowPasswordPrompt(false);
       setPassword('');
@@ -46,9 +47,9 @@ const Index: React.FC = () => {
   const sections = [
     {
       id: 'pedido',
-      title: null, // Remove title as it's now part of the component
+      title: null, 
       component: <OrderForm />,
-      description: null // Remove description as it's now part of the component
+      description: null
     },
     {
       id: 'visualizer',
@@ -72,7 +73,7 @@ const Index: React.FC = () => {
         {sections.map((section) => (
           <React.Fragment key={section.id}>
             <section id={section.id} className="section-container">
-              <div className="bg-white rounded-3xl shadow-md p-4 sm:p-6 mb-6 text-center">
+              <div className="mb-6 text-center">
                 {section.title && <h2 className="text-xl sm:text-2xl font-semibold mb-3">{section.title}</h2>}
                 {section.description && <p className="mb-4 text-center">{section.description}</p>}
                 {section.component}
@@ -83,7 +84,7 @@ const Index: React.FC = () => {
         
         {adminMode && (
           <section id="admin" className="section-container">
-            <div className="bg-white rounded-3xl shadow-md p-6 mb-6 text-center">
+            <div className="mb-6 text-center">
               <h2 className="text-xl sm:text-2xl font-semibold mb-3">Administração</h2>
               <AdminPanel />
             </div>

@@ -67,7 +67,7 @@ const OrderForm: React.FC = () => {
   };
   
   return (
-    <div className="w-full rounded-3xl shadow-sm border border-gray-100 bg-white" id="pedido">
+    <div id="pedido">
       <CardContent className="pt-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Title and introduction */}

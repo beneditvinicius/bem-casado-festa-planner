@@ -8,9 +8,9 @@ interface CombinationToastNotifierProps {
   packageName?: string;
 }
 
-// We're removing the notification functionality as requested
+// We're completely removing the notification functionality as requested
 const CombinationToastNotifier: React.FC<CombinationToastNotifierProps> = () => {
-  // Este componente não faz mais nada, conforme solicitado
+  // This component doesn't do anything anymore, as requested
   return null;
 };
 

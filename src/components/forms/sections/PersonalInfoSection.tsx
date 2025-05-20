@@ -1,18 +1,32 @@
 
 import React from 'react';
-import PersonalInfoForm from '../PersonalInfoForm';
-import EventInfoForm from '../EventInfoForm';
-import { ObservationsInput } from '../order-details/ObservationsInput';
-import { FormData } from '@/hooks/useOrderForm';
+import PersonalInfoForm from '@/components/forms/PersonalInfoForm';
+import EventInfoForm from '@/components/forms/EventInfoForm';
+import { ObservationsInput } from '@/components/forms/order-details/ObservationsInput';
 
 interface PersonalInfoSectionProps {
-  formData: FormData;
+  formData: {
+    name: string;
+    cpf: string;
+    phone: string;
+    cep: string;
+    street: string;
+    number: string;
+    complement: string;
+    neighborhood: string;
+    city: string;
+    state: string;
+    eventDate: Date | undefined;
+    eventLocation: string;
+    eventType: string;
+    observations: string;
+  };
   errors: { [key: string]: string };
   isLoadingCep: boolean;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   handleSelectChange: (name: string, value: string) => void;
   handleDateChange: (date: Date | undefined) => void;
-  searchCep: (cep: string) => Promise<void>;
+  searchCep: () => void;
 }
 
 const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
@@ -26,11 +40,13 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
 }) => {
   return (
     <div className="space-y-6">
-      <div className="text-center my-6">
-        <p className="text-lg font-medium text-[#eb6824]">Achou interessante? Preencha seus dados para receber o orçamento completo!</p>
+      <div className="text-center mt-6 mb-6">
+        <p className="text-[#eb6824] font-medium text-lg">
+          Gostou do orçamento? Preencha o restante do formulário e nos mande seu pedido completo!
+        </p>
       </div>
       
-      <PersonalInfoForm 
+      <PersonalInfoForm
         formData={formData}
         errors={errors}
         isLoadingCep={isLoadingCep}
@@ -39,7 +55,7 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
         searchCep={searchCep}
       />
       
-      <EventInfoForm 
+      <EventInfoForm
         formData={formData}
         errors={errors}
         handleInputChange={handleInputChange}
@@ -47,7 +63,7 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
         handleDateChange={handleDateChange}
       />
       
-      <ObservationsInput
+      <ObservationsInput 
         observations={formData.observations}
         handleInputChange={handleInputChange}
       />

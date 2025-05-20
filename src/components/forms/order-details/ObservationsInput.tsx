@@ -23,7 +23,7 @@ export const ObservationsInput: React.FC<ObservationsInputProps> = ({
         placeholder="Alguma observação sobre seu pedido?"
         className="min-h-[100px] rounded-2xl text-center"
       />
-      <p className="text-sm text-gray-500 mt-1">Seus dados estão seguros! Usamos essas informações apenas para o lançamento do seu pedido no sistema.</p>
+      <p className="text-xs text-gray-500 mt-1">Seus dados estão seguros! Usamos essas informações apenas para o lançamento do seu pedido no sistema.</p>
     </div>
   );
 };

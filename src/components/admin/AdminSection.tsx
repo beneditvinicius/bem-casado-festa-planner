@@ -7,15 +7,18 @@ import FlavorManagement from './flavors/FlavorManagement';
 import BoloGeladoManagement from './bolos/BoloGeladoManagement';
 import AdditionalsManagement from './additionals/AdditionalsManagement';
 import FaqManagement from './faq/FaqManagement';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const AdminSection: React.FC = () => {
+  const isMobile = useIsMobile();
+
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-2xl font-bold mb-6 text-center">Painel de Administração</h1>
       
       <Tabs defaultValue="flavors" className="animate-fade-in">
-        <div className="flex justify-center mb-6">
-          <TabsList className="grid grid-cols-7 w-full max-w-4xl rounded-xl p-1">
+        <div className="flex justify-center mb-6 overflow-x-auto">
+          <TabsList className={`grid ${isMobile ? 'grid-cols-3' : 'grid-cols-7'} w-full max-w-4xl rounded-xl p-1`}>
             <TabsTrigger value="flavors" className="rounded-full data-[state=active]:bg-[#eb6824] data-[state=active]:text-white transition-all duration-300">
               Sabores
             </TabsTrigger>
@@ -25,20 +28,49 @@ const AdminSection: React.FC = () => {
             <TabsTrigger value="packages" className="rounded-full data-[state=active]:bg-[#eb6824] data-[state=active]:text-white transition-all duration-300">
               Embalagens
             </TabsTrigger>
-            <TabsTrigger value="bolo-gelado" className="rounded-full data-[state=active]:bg-[#eb6824] data-[state=active]:text-white transition-all duration-300">
-              Bolo Gelado
-            </TabsTrigger>
-            <TabsTrigger value="additionals" className="rounded-full data-[state=active]:bg-[#eb6824] data-[state=active]:text-white transition-all duration-300">
-              Adicionais
-            </TabsTrigger>
-            <TabsTrigger value="faq" className="rounded-full data-[state=active]:bg-[#eb6824] data-[state=active]:text-white transition-all duration-300">
-              FAQ
-            </TabsTrigger>
-            <TabsTrigger value="config" className="rounded-full data-[state=active]:bg-[#eb6824] data-[state=active]:text-white transition-all duration-300">
-              Config.
-            </TabsTrigger>
+            
+            {isMobile && (
+              <React.Fragment>
+                <TabsTrigger value="bolo-gelado" className="rounded-full data-[state=active]:bg-[#eb6824] data-[state=active]:text-white transition-all duration-300">
+                  Bolo Gelado
+                </TabsTrigger>
+                <TabsTrigger value="additionals" className="rounded-full data-[state=active]:bg-[#eb6824] data-[state=active]:text-white transition-all duration-300">
+                  Adicionais
+                </TabsTrigger>
+                <TabsTrigger value="faq" className="rounded-full data-[state=active]:bg-[#eb6824] data-[state=active]:text-white transition-all duration-300">
+                  FAQ
+                </TabsTrigger>
+              </React.Fragment>
+            )}
+            
+            {!isMobile && (
+              <React.Fragment>
+                <TabsTrigger value="bolo-gelado" className="rounded-full data-[state=active]:bg-[#eb6824] data-[state=active]:text-white transition-all duration-300">
+                  Bolo Gelado
+                </TabsTrigger>
+                <TabsTrigger value="additionals" className="rounded-full data-[state=active]:bg-[#eb6824] data-[state=active]:text-white transition-all duration-300">
+                  Adicionais
+                </TabsTrigger>
+                <TabsTrigger value="faq" className="rounded-full data-[state=active]:bg-[#eb6824] data-[state=active]:text-white transition-all duration-300">
+                  FAQ
+                </TabsTrigger>
+                <TabsTrigger value="config" className="rounded-full data-[state=active]:bg-[#eb6824] data-[state=active]:text-white transition-all duration-300">
+                  Config.
+                </TabsTrigger>
+              </React.Fragment>
+            )}
           </TabsList>
         </div>
+        
+        {isMobile && (
+          <div className="flex justify-center mb-4">
+            <TabsList className="grid grid-cols-1 w-full max-w-4xl rounded-xl p-1">
+              <TabsTrigger value="config" className="rounded-full data-[state=active]:bg-[#eb6824] data-[state=active]:text-white transition-all duration-300">
+                Configurações
+              </TabsTrigger>
+            </TabsList>
+          </div>
+        )}
         
         <TabsContent value="flavors" className="transition-all duration-300">
           <FlavorManagement />
