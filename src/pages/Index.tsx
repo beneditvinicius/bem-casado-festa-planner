@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Lock, Unlock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useProductsStore } from '@/data/products';
+import AnimatedWeddingDivider from '@/components/AnimatedWeddingDivider';
 
 const Index: React.FC = () => {
   const { toast } = useToast();
@@ -70,7 +71,7 @@ const Index: React.FC = () => {
       <Header />
       
       <main className="pb-12">
-        {sections.map((section) => (
+        {sections.map((section, index) => (
           <React.Fragment key={section.id}>
             <section id={section.id} className="section-container">
               <div className="mb-6 text-center">
@@ -79,6 +80,8 @@ const Index: React.FC = () => {
                 {section.component}
               </div>
             </section>
+            {/* Add divider between sections */}
+            {index < sections.length - 1 && section.id === 'pedido' && <AnimatedWeddingDivider />}
           </React.Fragment>
         ))}
         

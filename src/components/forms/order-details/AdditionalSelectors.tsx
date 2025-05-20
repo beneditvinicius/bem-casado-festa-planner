@@ -19,7 +19,13 @@ export const AdditionalSelectors: React.FC<AdditionalSelectorsProps> = ({
   additionalSelections,
   handleAdditionalChange
 }) => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  
+  // Get only the selected additionals
+  const selectedAdditionals = additionalSelections
+    .filter(selection => selection.selected)
+    .map(selection => additionals.find(a => a.id === selection.id))
+    .filter(Boolean);
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-full">
@@ -32,6 +38,18 @@ export const AdditionalSelectors: React.FC<AdditionalSelectorsProps> = ({
           {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
         </Button>
       </CollapsibleTrigger>
+      
+      {/* Show selected items even when collapsed */}
+      {!isOpen && selectedAdditionals.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-2">
+          {selectedAdditionals.map(additional => (
+            <div key={additional?.id} className="bg-orange-100 text-sm px-3 py-1 rounded-full text-orange-800">
+              {additional?.name}
+            </div>
+          ))}
+        </div>
+      )}
+      
       <CollapsibleContent className="mt-4 space-y-3">
         {additionals.map((additional) => {
           const selection = additionalSelections.find(a => a.id === additional.id);

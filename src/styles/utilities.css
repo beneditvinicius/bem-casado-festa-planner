@@ -20,4 +20,23 @@
   .animate-buzz {
     animation: buzz 0.5s cubic-bezier(.36,.07,.19,.97) both;
   }
+  
+  /* Animação para os ícones de casamento */
+  @keyframes slideIcons {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  
+  .animate-slideIcons {
+    animation: slideIcons 20s linear infinite;
+  }
+  
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
 }

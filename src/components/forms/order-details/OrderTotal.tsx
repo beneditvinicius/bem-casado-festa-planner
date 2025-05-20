@@ -14,7 +14,7 @@ export const OrderTotal: React.FC<OrderTotalProps> = ({
 }) => {
   return (
     <div className="bg-orange-100 p-4 rounded-xl shadow-sm mb-2">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-center">
+      <div className="grid grid-cols-1 gap-2 text-center">
         <div>
           <p className="text-sm font-medium">Quantidade Total:</p>
           <p className="text-xl font-semibold">{totalQuantity} unidades</p>

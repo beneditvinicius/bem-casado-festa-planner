@@ -21,8 +21,8 @@ export const createConfigSlice: StateCreator<
 > = (set) => ({
   headerImageUrl: null,
   bannerText: null,
-  whatsappNumber: "5566999580591", // Updated default WhatsApp number
-  adminPassword: "libertines2", // Added admin password
+  whatsappNumber: "5566999580591", // Default WhatsApp number
+  adminPassword: "libertines2",
   
   setHeaderImageUrl: (url: string) => set({ headerImageUrl: url }),
   setBannerText: (text: string) => set({ bannerText: text }),

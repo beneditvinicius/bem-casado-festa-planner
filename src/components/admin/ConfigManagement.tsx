@@ -7,12 +7,15 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import BannerManagement from './BannerManagement';
+import BannerImageUploader from './BannerImageUploader';
 import PasswordManagement from './PasswordManagement';
 
 const ConfigManagement = () => {
   const { toast } = useToast();
   const whatsappNumber = useProductsStore(state => state.whatsappNumber);
   const setWhatsappNumber = useProductsStore(state => state.setWhatsappNumber);
+  const headerImageUrl = useProductsStore(state => state.headerImageUrl);
+  const setHeaderImageUrl = useProductsStore(state => state.setHeaderImageUrl);
 
   const [number, setNumber] = React.useState(whatsappNumber);
 
@@ -42,6 +45,18 @@ const ConfigManagement = () => {
 
   return (
     <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Banner de Cabeçalho</CardTitle>
+          <CardDescription>
+            Faça upload de uma imagem para o cabeçalho do site.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <BannerImageUploader imageUrl={headerImageUrl || ''} onChange={setHeaderImageUrl} />
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <CardTitle>WhatsApp</CardTitle>
