@@ -8,6 +8,8 @@ import DebugInfo from './visualizer/DebugInfo';
 import { useIsMobile } from '@/hooks/use-mobile';
 import CombinationToastNotifier from './visualizer/CombinationToastNotifier';
 import { ImageExistenceProvider } from './visualizer/ImageExistenceProvider';
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 
 const Visualizer: React.FC = () => {
   const ribbonColors = useProductsStore(state => state.ribbonColors);
@@ -28,8 +30,24 @@ const Visualizer: React.FC = () => {
   const ribbonImagePath = selectedRibbon?.code ? `/lovable-uploads/fita_${selectedRibbon.code.toLowerCase()}.png` : '';
   const packageImagePath = selectedPackage?.code ? `/lovable-uploads/embalagem_${selectedPackage.code.toLowerCase()}.png` : '';
   
+  const handleReturnToOrder = () => {
+    const orderElement = document.getElementById('pedido');
+    if (orderElement) {
+      orderElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+  
   return (
     <div className="flex flex-col space-y-4">
+      <Button 
+        onClick={handleReturnToOrder} 
+        variant="outline" 
+        className="mb-2 rounded-full flex items-center gap-2 self-start"
+      >
+        <ArrowLeft size={16} />
+        Retorne para o Orçamento
+      </Button>
+      
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <ColorSelector 
           id="ribbon-color"

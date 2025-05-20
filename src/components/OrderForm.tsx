@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Palette } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 import PersonalInfoForm from './forms/PersonalInfoForm';
 import EventInfoForm from './forms/EventInfoForm';
-import OrderDetailsForm from './forms/OrderDetailsForm';
+import OrderDetailsForm from './forms/order-details/OrderDetailsForm';
 import { useOrderForm } from '@/hooks/useOrderForm';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 
 const OrderForm: React.FC = () => {
   const {
@@ -158,10 +156,11 @@ const OrderForm: React.FC = () => {
             handleBoloGeladoQuantityChange={handleBoloGeladoQuantityChange}
             handleAdditionalChange={handleAdditionalChange}
             calculateTotal={calculateTotal}
+            onVisualizerClick={handleScrollToVisualizer}
           />
           
           {/* Product action buttons */}
-          <div className={`flex ${isMobile ? 'flex-col' : 'justify-center'} gap-3 mt-4`}>
+          <div className={`flex justify-center mt-4`}>
             <Button 
               type="button" 
               variant="outline" 
@@ -169,14 +168,6 @@ const OrderForm: React.FC = () => {
               className={`h-12 rounded-full ${isMobile ? 'w-full' : 'px-6'}`}
             >
               Limpar Tudo
-            </Button>
-            <Button 
-              type="button" 
-              onClick={handleScrollToVisualizer} 
-              className={`h-12 rounded-full bg-[#eb6824] hover:bg-[#d25618] text-white ${isMobile ? 'w-full' : 'px-6'}`}
-            >
-              <Palette className="mr-2 h-4 w-4" />
-              Teste as cores do bem casado
             </Button>
           </div>
           
@@ -200,31 +191,13 @@ const OrderForm: React.FC = () => {
             />
             
             {/* Informações do Evento */}
-            <div className="space-y-6">
-              <EventInfoForm 
-                formData={formData} 
-                errors={{}} 
-                handleInputChange={handleInputChange} 
-                handleDateChange={handleDateChange}
-                handleSelectChange={handleSelectChange}
-              />
-              
-              {/* Observations field */}
-              <div className="space-y-2">
-                <Label htmlFor="observations" className="block text-base">Observações (opcional)</Label>
-                <Textarea
-                  id="observations"
-                  name="observations"
-                  placeholder="Alguma observação ou detalhe importante sobre o pedido?"
-                  value={formData.observations}
-                  onChange={handleInputChange}
-                  className="w-full rounded-2xl border-gray-300 min-h-[100px]"
-                />
-                <p className="text-xs text-gray-500 mt-1 text-center">
-                  Seus dados estão seguros! Usamos essas informações apenas para o lançamento do seu pedido no sistema.
-                </p>
-              </div>
-            </div>
+            <EventInfoForm 
+              formData={formData} 
+              errors={{}} 
+              handleInputChange={handleInputChange} 
+              handleDateChange={handleDateChange}
+              handleSelectChange={handleSelectChange}
+            />
           </div>
           
           <div className={`flex ${isMobile ? 'flex-col gap-2' : 'justify-center'} pt-6`}>

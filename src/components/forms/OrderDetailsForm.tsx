@@ -7,7 +7,6 @@ import { FlavorControls } from './order-details/FlavorControls';
 import { BoloGeladoMessage } from './order-details/BoloGeladoMessage';
 import { ColorSelectors } from './order-details/ColorSelectors';
 import { AdditionalSelectors } from './order-details/AdditionalSelectors';
-import { ObservationsInput } from './order-details/ObservationsInput';
 import { OrderTotal } from './order-details/OrderTotal';
 
 interface OrderDetailsFormProps {
@@ -39,6 +38,7 @@ interface OrderDetailsFormProps {
   handleBoloGeladoQuantityChange: (id: string, value: string) => void;
   handleAdditionalChange: (id: string, selected: boolean) => void;
   calculateTotal: () => string;
+  onVisualizerClick: () => void;
 }
 
 const OrderDetailsForm: React.FC<OrderDetailsFormProps> = ({
@@ -65,6 +65,7 @@ const OrderDetailsForm: React.FC<OrderDetailsFormProps> = ({
   handleBoloGeladoQuantityChange,
   handleAdditionalChange,
   calculateTotal,
+  onVisualizerClick
 }) => {
   const handleQuantityChange = (id: string, value: number | null) => {
     handleFlavorQuantityChange(id, value !== null ? value.toString() : '');
@@ -116,6 +117,7 @@ const OrderDetailsForm: React.FC<OrderDetailsFormProps> = ({
             ribbonColors={ribbonColors}
             packageColors={packageColors}
             handleSelectChange={handleSelectChange}
+            onVisualizerClick={onVisualizerClick}
           />
           
           <AdditionalSelectors
@@ -125,11 +127,6 @@ const OrderDetailsForm: React.FC<OrderDetailsFormProps> = ({
           />
         </>
       )}
-
-      <ObservationsInput 
-        observations={formData.observations} 
-        handleInputChange={handleInputChange} 
-      />
 
       <OrderTotal 
         totalQuantity={totalQuantity} 

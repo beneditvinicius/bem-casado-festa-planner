@@ -4,6 +4,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from '@/lib/utils';
 import { RibbonColor, PackageColor } from '@/data/products';
+import { Button } from "@/components/ui/button";
+import { Palette } from "lucide-react";
 
 interface ColorSelectorsProps {
   formData: {
@@ -14,6 +16,7 @@ interface ColorSelectorsProps {
   ribbonColors: RibbonColor[];
   packageColors: PackageColor[];
   handleSelectChange: (name: string, value: string) => void;
+  onVisualizerClick: () => void;
 }
 
 export const ColorSelectors: React.FC<ColorSelectorsProps> = ({
@@ -22,9 +25,19 @@ export const ColorSelectors: React.FC<ColorSelectorsProps> = ({
   ribbonColors,
   packageColors,
   handleSelectChange,
+  onVisualizerClick
 }) => {
   return (
     <>
+      <Button 
+        type="button"
+        onClick={onVisualizerClick}
+        className="rounded-full bg-[#eb6824] hover:bg-[#d25618] text-white w-full mb-4"
+      >
+        <Palette className="mr-2 h-4 w-4" />
+        Teste as cores do bem casado
+      </Button>
+      
       <div>
         <Label htmlFor="ribbonColor" className="text-base">Cor da Fita</Label>
         <Select 

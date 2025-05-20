@@ -38,6 +38,7 @@ interface OrderDetailsFormProps {
   handleBoloGeladoQuantityChange: (id: string, value: string) => void;
   handleAdditionalChange: (id: string, selected: boolean) => void;
   calculateTotal: () => string;
+  onVisualizerClick: () => void;
 }
 
 const OrderDetailsForm: React.FC<OrderDetailsFormProps> = ({
@@ -64,6 +65,7 @@ const OrderDetailsForm: React.FC<OrderDetailsFormProps> = ({
   handleBoloGeladoQuantityChange,
   handleAdditionalChange,
   calculateTotal,
+  onVisualizerClick,
 }) => {
   const handleQuantityChange = (id: string, value: number | null) => {
     handleFlavorQuantityChange(id, value !== null ? value.toString() : '');
@@ -115,6 +117,7 @@ const OrderDetailsForm: React.FC<OrderDetailsFormProps> = ({
             ribbonColors={ribbonColors}
             packageColors={packageColors}
             handleSelectChange={handleSelectChange}
+            onVisualizerClick={onVisualizerClick}
           />
           
           <AdditionalSelectors
