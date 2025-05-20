@@ -22,43 +22,41 @@ export const AdditionalSelectors: React.FC<AdditionalSelectorsProps> = ({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="w-full border border-gray-200 rounded-xl p-4 mb-4">
-      <Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-full">
-        <CollapsibleTrigger asChild>
-          <Button 
-            variant="outline" 
-            className="w-full flex justify-between items-center rounded-full"
-          >
-            <span>Escolha os adicionais</span>
-            {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-          </Button>
-        </CollapsibleTrigger>
-        <CollapsibleContent className="mt-4 space-y-3">
-          {additionals.map((additional) => {
-            const selection = additionalSelections.find(a => a.id === additional.id);
-            return (
-              <div key={additional.id} className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-full">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`order-additional-${additional.id}`}
-                    checked={selection?.selected || false}
-                    onCheckedChange={(checked) => 
-                      handleAdditionalChange(additional.id, checked === true)
-                    }
-                  />
-                  <Label 
-                    htmlFor={`order-additional-${additional.id}`}
-                    className="text-sm leading-tight cursor-pointer"
-                  >
-                    {additional.name}
-                  </Label>
-                </div>
-                <span className="text-sm font-medium text-gray-600">+ R$ {additional.price.toFixed(2)}</span>
+    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-full">
+      <CollapsibleTrigger asChild>
+        <Button 
+          variant="outline" 
+          className="w-full flex justify-between items-center rounded-full"
+        >
+          <span>Escolha os adicionais</span>
+          {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+        </Button>
+      </CollapsibleTrigger>
+      <CollapsibleContent className="mt-4 space-y-3">
+        {additionals.map((additional) => {
+          const selection = additionalSelections.find(a => a.id === additional.id);
+          return (
+            <div key={additional.id} className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-full">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id={`order-additional-${additional.id}`}
+                  checked={selection?.selected || false}
+                  onCheckedChange={(checked) => 
+                    handleAdditionalChange(additional.id, checked === true)
+                  }
+                />
+                <Label 
+                  htmlFor={`order-additional-${additional.id}`}
+                  className="text-sm leading-tight cursor-pointer"
+                >
+                  {additional.name}
+                </Label>
               </div>
-            );
-          })}
-        </CollapsibleContent>
-      </Collapsible>
-    </div>
+              <span className="text-sm font-medium text-gray-600">+ R$ {additional.price.toFixed(2)}</span>
+            </div>
+          );
+        })}
+      </CollapsibleContent>
+    </Collapsible>
   );
 };

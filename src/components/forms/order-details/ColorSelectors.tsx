@@ -28,11 +28,11 @@ export const ColorSelectors: React.FC<ColorSelectorsProps> = ({
   onVisualizerClick
 }) => {
   return (
-    <>
+    <div className="space-y-4">
       <Button 
         type="button"
         onClick={onVisualizerClick}
-        className="rounded-full bg-[#eb6824] hover:bg-[#d25618] text-white w-full mb-4"
+        className="rounded-full bg-[#eb6824] hover:bg-[#d25618] text-white w-full"
       >
         <Palette className="mr-2 h-4 w-4" />
         Teste as cores do bem casado
@@ -89,6 +89,6 @@ export const ColorSelectors: React.FC<ColorSelectorsProps> = ({
         </Select>
         {errors.packageId && <p className="text-red-500 text-sm mt-1">{errors.packageId}</p>}
       </div>
-    </>
+    </div>
   );
 };

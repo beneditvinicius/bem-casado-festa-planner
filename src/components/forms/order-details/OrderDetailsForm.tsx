@@ -88,8 +88,8 @@ const OrderDetailsForm: React.FC<OrderDetailsFormProps> = ({
   const handleRemoveCurrentFlavor = formData.productType === 'bem-casado' ? handleRemoveFlavor : handleRemoveBoloGeladoFlavor;
 
   return (
-    <div className="space-y-4 text-center">
-      <h3 className="text-lg font-medium">Detalhes do Produto</h3>
+    <div className="space-y-6">
+      <h3 className="text-lg font-medium text-center mb-2">Detalhes do Produto</h3>
       
       <ProductTypeSelector 
         productType={formData.productType} 

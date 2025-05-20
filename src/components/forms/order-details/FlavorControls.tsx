@@ -28,7 +28,7 @@ export const FlavorControls: React.FC<FlavorControlsProps> = ({
   handleQuantityChange
 }) => {
   return (
-    <>
+    <div className="space-y-4">
       {selections.map((selection, index) => (
         <FlavorSelection 
           key={selection.id}
@@ -52,6 +52,6 @@ export const FlavorControls: React.FC<FlavorControlsProps> = ({
         <PlusCircle className="h-4 w-4" />
         Adicionar outro sabor
       </Button>
-    </>
+    </div>
   );
 };

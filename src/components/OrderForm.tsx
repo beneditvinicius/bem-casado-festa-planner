@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Card, CardContent } from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card";
 import OrderDetailsForm from './forms/order-details/OrderDetailsForm';
 import { useOrderForm } from '@/hooks/useOrderForm';
 import PersonalInfoSection from './forms/sections/PersonalInfoSection';
@@ -67,10 +67,10 @@ const OrderForm: React.FC = () => {
   };
   
   return (
-    <Card className="w-full rounded-3xl" id="pedido">
-      <CardContent className="pt-6 card-content">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Updated Title and introduction */}
+    <div className="w-full rounded-3xl shadow-sm border border-gray-100 bg-white" id="pedido">
+      <CardContent className="pt-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Title and introduction */}
           <div className="text-center mb-6">
             <h2 className="text-xl sm:text-2xl font-semibold mb-2">Faça seu Orçamento</h2>
             <p className="text-gray-600 text-sm sm:text-base">
@@ -124,7 +124,7 @@ const OrderForm: React.FC = () => {
           <SubmitButton />
         </form>
       </CardContent>
-    </Card>
+    </div>
   );
 };
 
