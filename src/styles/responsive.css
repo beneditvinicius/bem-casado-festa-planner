@@ -45,9 +45,9 @@
       padding-bottom: 1rem;
     }
     
-    /* Catalog section mobile spacing */
+    /* Catalog section mobile spacing - more proportional */
     .section-container:first-child {
-      padding-top: 6rem;
+      padding-top: 3rem;
     }
   }
 }
@@ -91,6 +91,13 @@
   /* Total value highlight */
   .bg-[#FED7C3] {
     background-color: #FED7C3;
+  }
+}
+
+/* Desktop - reduce spacing between first and second section */
+@media (min-width: 641px) {
+  .section-container:first-child {
+    margin-bottom: 1rem;
   }
 }
 
