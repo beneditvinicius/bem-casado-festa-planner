@@ -39,9 +39,9 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
   searchCep
 }) => {
   return (
-    <div className="space-y-6">
-      <div className="text-center mt-6 mb-6">
-        <p className="text-[#eb6824] font-medium text-lg">
+    <div className="space-y-4">
+      <div className="text-center mt-4 mb-4">
+        <p className="text-[#eb6824] font-medium text-base">
           Gostou do orçamento? Preencha o restante do formulário e nos mande seu pedido completo!
         </p>
       </div>

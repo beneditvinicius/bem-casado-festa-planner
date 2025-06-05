@@ -70,12 +70,12 @@ const OrderForm: React.FC = () => {
   
   return (
     <div id="pedido">
-      <CardContent className="pt-6">
-        <form onSubmit={handleSubmit} className="space-y-6">
+      <CardContent className="pt-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           {/* Title and introduction */}
-          <div className="text-center mb-6">
-            <h2 className="text-xl sm:text-2xl font-semibold mb-2">Faça seu Orçamento</h2>
-            <p className="text-gray-600 text-sm sm:text-base">
+          <div className="text-center mb-4">
+            <h2 className="text-lg sm:text-xl font-semibold mb-2">Faça seu Orçamento</h2>
+            <p className="text-gray-600 text-sm">
               Utilize essa calculadora para estimar o preço dos seus produtos de acordo com a quantidade e sabores desejados.
             </p>
           </div>

@@ -27,15 +27,15 @@ const CatalogSection: React.FC = () => {
   return (
     <section className="section-container bg-gray-50">
       <div className="text-center">
-        <h2 className="text-xl sm:text-2xl font-semibold mb-6">
+        <h2 className="text-lg sm:text-xl font-semibold mb-4">
           Já viu nossos catálogos?
         </h2>
         
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
           {catalogoBemCasadosLink && (
             <Button 
               onClick={handleBemCasadosClick}
-              className="bg-[#eb6824] hover:bg-[#d25618] text-white px-6 py-3 rounded-full text-base"
+              className="bg-[#eb6824] hover:bg-[#d25618] text-white px-4 py-2 rounded-full text-sm"
             >
               Bem-Casados
             </Button>
@@ -44,7 +44,7 @@ const CatalogSection: React.FC = () => {
           {catalogoBolosGeladosLink && (
             <Button 
               onClick={handleBolosGeladosClick}
-              className="bg-[#eb6824] hover:bg-[#d25618] text-white px-6 py-3 rounded-full text-base"
+              className="bg-[#eb6824] hover:bg-[#d25618] text-white px-4 py-2 rounded-full text-sm"
             >
               Bolos Gelados
             </Button>
