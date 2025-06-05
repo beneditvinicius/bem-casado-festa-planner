@@ -5,6 +5,7 @@ import OrderForm from '@/components/OrderForm';
 import Visualizer from '@/components/Visualizer';
 import Faq from '@/components/Faq';
 import AdminPanel from '@/components/AdminPanel';
+import CatalogSection from '@/components/CatalogSection';
 import { Button } from "@/components/ui/button";
 import { Lock, Unlock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -47,6 +48,12 @@ const Index: React.FC = () => {
   
   const sections = [
     {
+      id: 'catalogos',
+      title: null, 
+      component: <CatalogSection />,
+      description: null
+    },
+    {
       id: 'pedido',
       title: null, 
       component: <OrderForm />,
@@ -81,7 +88,7 @@ const Index: React.FC = () => {
               </div>
             </section>
             {/* Add divider between pedido and visualizer sections only */}
-            {index === 0 && <AnimatedWeddingDivider />}
+            {index === 1 && <AnimatedWeddingDivider />}
           </React.Fragment>
         ))}
         

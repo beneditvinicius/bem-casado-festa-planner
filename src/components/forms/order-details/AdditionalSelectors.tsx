@@ -34,7 +34,7 @@ export const AdditionalSelectors: React.FC<AdditionalSelectorsProps> = ({
           variant="outline" 
           className="w-full flex justify-between items-center rounded-full"
         >
-          <span>Escolha os adicionais</span>
+          <span>Gostaria de algum adicional?</span>
           {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
         </Button>
       </CollapsibleTrigger>
