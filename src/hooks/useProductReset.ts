@@ -1,4 +1,3 @@
-
 import { useCallback } from 'react';
 import { FlavorSelection, ProductType } from './orderForm/types';
 
@@ -42,6 +41,8 @@ export function useProductReset({
   
   // Reset only product details fields
   const resetProducts = useCallback(() => {
+    console.log("Starting product reset...");
+    
     // Reset flavor selections but not personal info
     if (productType === 'bem-casado') {
       if (flavorSelections.length > 1) {
@@ -61,22 +62,16 @@ export function useProductReset({
         handleAddFlavor();
       }
       
-      // Always reset ribbon color to the first option, ensuring this happens regardless of other operations
+      // Reset ribbon color to the first option immediately
       if (ribbonColors.length > 0) {
         console.log("Resetting ribbon color to:", ribbonColors[0].id);
-        // Force immediate update with the first ribbon color
-        setTimeout(() => {
-          handleSelectChange('ribbonId', ribbonColors[0].id);
-        }, 0);
+        handleSelectChange('ribbonId', ribbonColors[0].id);
       }
       
-      // Always reset package color to the first option, ensuring this happens regardless of other operations
+      // Reset package color to the first option immediately
       if (packageColors.length > 0) {
         console.log("Resetting package color to:", packageColors[0].id);
-        // Force immediate update with the first package color
-        setTimeout(() => {
-          handleSelectChange('packageId', packageColors[0].id);
-        }, 0);
+        handleSelectChange('packageId', packageColors[0].id);
       }
       
       // Reset additionals
@@ -104,6 +99,8 @@ export function useProductReset({
         handleAddBoloGeladoFlavor();
       }
     }
+    
+    console.log("Product reset completed");
   }, [
     productType,
     flavorSelections,
