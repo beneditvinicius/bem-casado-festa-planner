@@ -44,6 +44,11 @@
       padding-top: 1rem;
       padding-bottom: 1rem;
     }
+    
+    /* Catalog section mobile spacing */
+    .section-container:first-child {
+      padding-top: 6rem;
+    }
   }
 }
 
@@ -80,7 +85,7 @@
   
   /* Add more compact spacing for form sections */
   .section-container {
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
   }
   
   /* Total value highlight */

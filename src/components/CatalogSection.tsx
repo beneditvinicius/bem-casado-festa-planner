@@ -25,7 +25,7 @@ const CatalogSection: React.FC = () => {
   }
 
   return (
-    <section className="section-container bg-gray-50">
+    <section className="section-container pt-20 mb-4">
       <div className="text-center">
         <h2 className="text-lg sm:text-xl font-semibold mb-4">
           Já viu nossos catálogos?
