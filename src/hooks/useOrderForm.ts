@@ -18,7 +18,7 @@ export { type FormData } from './orderForm/types';
 export { type ProductType } from './orderForm/types';
 export { type AdditionalSelection } from './orderForm/types';
 
-export function useOrderForm(): UseOrderFormReturn {
+export function useOrderForm(): UseOrderFormReturn & { setFormData: React.Dispatch<React.SetStateAction<FormData>> } {
   const { toast } = useToast();
   const flavors = useProductsStore((state) => state.flavors);
   const boloGeladoFlavors = useProductsStore((state) => state.boloGeladoFlavors);
@@ -109,6 +109,7 @@ export function useOrderForm(): UseOrderFormReturn {
 
   return {
     formData,
+    setFormData,
     errors,
     flavors,
     boloGeladoFlavors,

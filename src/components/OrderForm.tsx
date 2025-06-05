@@ -11,6 +11,7 @@ import { useProductReset } from '@/hooks/useProductReset';
 const OrderForm: React.FC = () => {
   const {
     formData,
+    setFormData,
     errors,
     flavors,
     boloGeladoFlavors,
@@ -57,6 +58,7 @@ const OrderForm: React.FC = () => {
     handleSelectChange,
     handleAddFlavor,
     handleAddBoloGeladoFlavor,
+    setFormData,
   });
   
   const handleScrollToVisualizer = () => {

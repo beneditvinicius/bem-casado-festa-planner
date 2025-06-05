@@ -1,4 +1,3 @@
-
 import { useCallback } from 'react';
 import { FlavorSelection, ProductType } from './orderForm/types';
 
@@ -19,6 +18,7 @@ interface UseProductResetProps {
   handleSelectChange: (name: string, value: string) => void;
   handleAddFlavor: () => void;
   handleAddBoloGeladoFlavor: () => void;
+  setFormData: React.Dispatch<React.SetStateAction<any>>;
 }
 
 export function useProductReset({
@@ -38,6 +38,7 @@ export function useProductReset({
   handleSelectChange,
   handleAddFlavor,
   handleAddBoloGeladoFlavor,
+  setFormData,
 }: UseProductResetProps) {
   
   // Reset only product details fields
@@ -63,20 +64,6 @@ export function useProductReset({
       } else {
         // Add one if there's none
         handleAddFlavor();
-      }
-      
-      // Reset ribbon color to the first option immediately
-      if (ribbonColors.length > 0) {
-        console.log("Resetting ribbon color to:", ribbonColors[0].id);
-        handleSelectChange('ribbonId', ribbonColors[0].id);
-        console.log("Ribbon color reset command sent");
-      }
-      
-      // Reset package color to the first option immediately
-      if (packageColors.length > 0) {
-        console.log("Resetting package color to:", packageColors[0].id);
-        handleSelectChange('packageId', packageColors[0].id);
-        console.log("Package color reset command sent");
       }
       
       // Reset additionals
@@ -105,6 +92,14 @@ export function useProductReset({
       }
     }
     
+    // Reset colors directly in the form data to ensure they reset
+    setFormData((prev: any) => ({
+      ...prev,
+      ribbonId: ribbonColors.length > 0 ? ribbonColors[0].id : '',
+      packageId: packageColors.length > 0 ? packageColors[0].id : '',
+    }));
+    
+    console.log("Colors reset directly in formData");
     console.log("Product reset completed");
   }, [
     productType,
@@ -123,6 +118,7 @@ export function useProductReset({
     handleSelectChange,
     handleAddFlavor,
     handleAddBoloGeladoFlavor,
+    setFormData,
   ]);
 
   return { resetProducts };
