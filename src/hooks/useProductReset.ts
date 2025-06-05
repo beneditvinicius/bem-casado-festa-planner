@@ -1,3 +1,4 @@
+
 import { useCallback } from 'react';
 import { FlavorSelection, ProductType } from './orderForm/types';
 
@@ -42,6 +43,8 @@ export function useProductReset({
   // Reset only product details fields
   const resetProducts = useCallback(() => {
     console.log("Starting product reset...");
+    console.log("Available ribbon colors:", ribbonColors);
+    console.log("Available package colors:", packageColors);
     
     // Reset flavor selections but not personal info
     if (productType === 'bem-casado') {
@@ -66,12 +69,14 @@ export function useProductReset({
       if (ribbonColors.length > 0) {
         console.log("Resetting ribbon color to:", ribbonColors[0].id);
         handleSelectChange('ribbonId', ribbonColors[0].id);
+        console.log("Ribbon color reset command sent");
       }
       
       // Reset package color to the first option immediately
       if (packageColors.length > 0) {
         console.log("Resetting package color to:", packageColors[0].id);
         handleSelectChange('packageId', packageColors[0].id);
+        console.log("Package color reset command sent");
       }
       
       // Reset additionals
