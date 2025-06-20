@@ -9,13 +9,127 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      otp_audit_logs: {
+        Row: {
+          action: string
+          created_at: string
+          email: string
+          id: string
+          ip_address: unknown | null
+          metadata: Json | null
+          purpose: string
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          email: string
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          purpose?: string
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          email?: string
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          purpose?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      otp_rate_limits: {
+        Row: {
+          blocked_until: string | null
+          created_at: string
+          email: string
+          id: string
+          purpose: string
+          request_count: number
+          updated_at: string
+          window_start: string
+        }
+        Insert: {
+          blocked_until?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          purpose?: string
+          request_count?: number
+          updated_at?: string
+          window_start?: string
+        }
+        Update: {
+          blocked_until?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          purpose?: string
+          request_count?: number
+          updated_at?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
+      otps: {
+        Row: {
+          attempts: number
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          max_attempts: number
+          otp_code: string
+          purpose: string
+          updated_at: string
+          used_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          email: string
+          expires_at: string
+          id?: string
+          max_attempts?: number
+          otp_code: string
+          purpose?: string
+          updated_at?: string
+          used_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          max_attempts?: number
+          otp_code?: string
+          purpose?: string
+          updated_at?: string
+          used_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      check_otp_rate_limit: {
+        Args: { p_email: string; p_purpose?: string }
+        Returns: Json
+      }
+      cleanup_expired_otps: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
     }
     Enums: {
       [_ in never]: never

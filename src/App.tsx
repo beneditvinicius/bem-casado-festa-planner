@@ -8,6 +8,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AdminPanel from "./components/AdminPanel";
+import OTPTestPage from "./pages/OTPTestPage";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -33,6 +34,7 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/admin" element={<AdminPage />} />
+            <Route path="/otp-test" element={<OTPTestPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
