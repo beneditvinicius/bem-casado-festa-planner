@@ -2,7 +2,6 @@
 import React from 'react';
 import SimpleRepresentation from './SimpleRepresentation';
 import CombinedImagesView from './CombinedImagesView';
-import { useImageExistenceContext } from './ImageExistenceProvider';
 
 interface VisualizationRendererProps {
   packageUrl: string;
@@ -12,6 +11,8 @@ interface VisualizationRendererProps {
   packageColor?: string;
   ribbonColor?: string;
   fallbackCombinationImage?: string;
+  ribbonExists?: boolean;
+  packageExists?: boolean;
 }
 
 const VisualizationRenderer: React.FC<VisualizationRendererProps> = ({
@@ -21,10 +22,10 @@ const VisualizationRenderer: React.FC<VisualizationRendererProps> = ({
   ribbonName,
   packageColor,
   ribbonColor,
-  fallbackCombinationImage
+  fallbackCombinationImage,
+  ribbonExists = false,
+  packageExists = false
 }) => {
-  const { ribbonExists, packageExists } = useImageExistenceContext();
-
   // Check if we have a direct fallback image first
   if (fallbackCombinationImage) {
     return (
@@ -39,7 +40,7 @@ const VisualizationRenderer: React.FC<VisualizationRendererProps> = ({
   }
   
   // If both images exist, show combined view
-  if (ribbonExists && packageExists) {
+  if (ribbonExists && packageExists && ribbonUrl && packageUrl) {
     return (
       <CombinedImagesView 
         packageImageUrl={packageUrl}

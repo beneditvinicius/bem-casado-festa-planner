@@ -1,8 +1,7 @@
 
 import React from 'react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-import { useProductsStore } from '@/data/products';
-import { ImageExistenceProvider } from './ImageExistenceProvider';
+import { useSupabaseImages } from '@/hooks/useSupabaseImages';
 import VisualizationRenderer from './VisualizationRenderer';
 import CombinationToastNotifier from './CombinationToastNotifier';
 
@@ -25,39 +24,38 @@ const VisualizationArea: React.FC<VisualizationAreaProps> = ({
   packageColor,
   fallbackCombinationImage
 }) => {
-  // Buscando do store a URL direta de cada imagem
-  const ribbonColors = useProductsStore(state => state.ribbonColors);
-  const packageColors = useProductsStore(state => state.packageColors);
-  
-  const ribbon = ribbonCode && ribbonColors.find(r => r.code === ribbonCode);
-  const pack = packageCode && packageColors.find(p => p.code === packageCode);
-  
-  // Fallback para URLs tradicionais caso não tenha imageUrl no store
-  const ribbonImagePath = ribbonCode ? `/lovable-uploads/fita_${ribbonCode.toLowerCase()}.png` : '';
-  const packageImagePath = packageCode ? `/lovable-uploads/embalagem_${packageCode.toLowerCase()}.png` : '';
-  
-  const ribbonUrl = ribbon?.imageUrl || ribbonImagePath;
-  const packageUrl = pack?.imageUrl || packageImagePath;
+  const { ribbonUrl, packageUrl, loading } = useSupabaseImages(ribbonCode, packageCode);
 
   return (
     <AspectRatio ratio={16 / 10} className="bg-muted rounded-md overflow-hidden">
-      <ImageExistenceProvider ribbonUrl={ribbonUrl} packageUrl={packageUrl}>
-        <VisualizationRenderer
-          packageUrl={packageUrl}
-          ribbonUrl={ribbonUrl}
-          packageName={packageName}
-          ribbonName={ribbonName}
-          packageColor={packageColor}
-          ribbonColor={ribbonColor}
-          fallbackCombinationImage={fallbackCombinationImage}
-        />
-        <CombinationToastNotifier
-          ribbonCode={ribbonCode}
-          packageCode={packageCode}
-          ribbonName={ribbonName}
-          packageName={packageName}
-        />
-      </ImageExistenceProvider>
+      {loading ? (
+        <div className="flex items-center justify-center h-full">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#eb6824] mx-auto"></div>
+            <p className="mt-2 text-sm text-gray-600">Carregando imagens...</p>
+          </div>
+        </div>
+      ) : (
+        <>
+          <VisualizationRenderer
+            packageUrl={packageUrl || ''}
+            ribbonUrl={ribbonUrl || ''}
+            packageName={packageName}
+            ribbonName={ribbonName}
+            packageColor={packageColor}
+            ribbonColor={ribbonColor}
+            fallbackCombinationImage={fallbackCombinationImage}
+            ribbonExists={!!ribbonUrl}
+            packageExists={!!packageUrl}
+          />
+          <CombinationToastNotifier
+            ribbonCode={ribbonCode}
+            packageCode={packageCode}
+            ribbonName={ribbonName}
+            packageName={packageName}
+          />
+        </>
+      )}
     </AspectRatio>
   );
 };

@@ -6,7 +6,6 @@ import VisualizationArea from './visualizer/VisualizationArea';
 import Disclaimer from './visualizer/Disclaimer';
 import DebugInfo from './visualizer/DebugInfo';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { ImageExistenceProvider } from './visualizer/ImageExistenceProvider';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
@@ -24,10 +23,6 @@ const Visualizer: React.FC = () => {
   
   // Since combinations are removed, we don't need a fallback combination image
   const fallbackCombinationImage = '';
-  
-  // Define image paths
-  const ribbonImagePath = selectedRibbon?.code ? `/lovable-uploads/fita_${selectedRibbon.code.toLowerCase()}.png` : '';
-  const packageImagePath = selectedPackage?.code ? `/lovable-uploads/embalagem_${selectedPackage.code.toLowerCase()}.png` : '';
   
   const handleReturnToOrder = () => {
     const orderElement = document.getElementById('pedido');
@@ -68,20 +63,15 @@ const Visualizer: React.FC = () => {
 
       {/* Visualization Area */}
       <div className="mt-6">
-        <ImageExistenceProvider 
-          ribbonUrl={ribbonImagePath} 
-          packageUrl={packageImagePath}
-        >
-          <VisualizationArea 
-            ribbonCode={selectedRibbon?.code || ''}
-            ribbonName={selectedRibbon?.name || ''}
-            ribbonColor={selectedRibbon?.color || ''}
-            packageCode={selectedPackage?.code || ''}
-            packageName={selectedPackage?.name || ''}
-            packageColor={selectedPackage?.color || ''}
-            fallbackCombinationImage={fallbackCombinationImage}
-          />
-        </ImageExistenceProvider>
+        <VisualizationArea 
+          ribbonCode={selectedRibbon?.code || ''}
+          ribbonName={selectedRibbon?.name || ''}
+          ribbonColor={selectedRibbon?.color || ''}
+          packageCode={selectedPackage?.code || ''}
+          packageName={selectedPackage?.name || ''}
+          packageColor={selectedPackage?.color || ''}
+          fallbackCombinationImage={fallbackCombinationImage}
+        />
       </div>
       
       {/* Debug info - only shown in dev mode */}
@@ -91,9 +81,9 @@ const Visualizer: React.FC = () => {
           ribbonCode={selectedRibbon?.code}
           packageId={selectedPackageId}
           packageCode={selectedPackage?.code}
-          ribbonImagePath={ribbonImagePath}
+          ribbonImagePath={`fita_${selectedRibbon?.code?.toLowerCase()}.png`}
           ribbonImageExists={false}
-          packageImagePath={packageImagePath}
+          packageImagePath={`embalagem_${selectedPackage?.code?.toLowerCase()}.png`}
           packageImageExists={false}
           fallbackCombinationImage={fallbackCombinationImage}
         />
