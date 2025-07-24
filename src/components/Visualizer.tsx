@@ -75,7 +75,7 @@ const Visualizer: React.FC = () => {
       </div>
       
       {/* Debug info - only shown in dev mode */}
-      {process.env.NODE_ENV === 'development' && (
+      {import.meta.env.DEV && (
         <DebugInfo 
           ribbonId={selectedRibbonId}
           ribbonCode={selectedRibbon?.code}
